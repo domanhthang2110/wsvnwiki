@@ -2,6 +2,7 @@ backend:
   name: github
   repo: domanhthang2110/wsvnwiki # <<< YOUR_USERNAME/YOUR_REPO_NAME
   branch: main # Use the main branch
+  auth_type: implicit 
   # site_domain: your-deployed-site.netlify.app # We'll uncomment/add this later
 
 publish_mode: editorial_workflow # Optional: enables drafts/review workflow
