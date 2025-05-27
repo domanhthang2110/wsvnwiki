@@ -1,0 +1,23 @@
+backend:
+  name: github
+  repo: domanhthang2110/wsvnwiki # <<< YOUR_USERNAME/YOUR_REPO_NAME
+  branch: main # Use the main branch
+  # site_domain: your-deployed-site.netlify.app # We'll uncomment/add this later
+
+publish_mode: editorial_workflow # Optional: enables drafts/review workflow
+
+media_folder: "public/images/uploads" # Where images uploaded via the CMS will go
+public_folder: "/images/uploads" # The public URL path for those images
+
+collections:
+  # We will add our actual collections (Skills, Classes, Guides) here soon.
+  # Let's add one simple one for now to test.
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - file: "content/settings.yml"
+        label: "General Settings"
+        name: "general"
+        fields:
+          - { label: "Site Title", name: "title", widget: "string" }
+          - { label: "Site Description", name: "description", widget: "text" }
