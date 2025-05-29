@@ -1,7 +1,10 @@
+// src/app/admin/classes/page.tsx
 'use client';
 
 import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { supabase } from '@/lib/supabaseClient'; // Adjust path if your alias for src is different
+import Link from 'next/link';
+import MediaFileExplorer from '@/components/admin/media/MediaFileExplorer'; // Import the new explorer
 
 // Define an interface for the structure of your Class data
 interface ClassItem {
@@ -13,27 +16,56 @@ interface ClassItem {
   skill_ids?: number[] | null; // Array of int8
 }
 
+// Simple CloseIcon component for the modal (You already have this)
+const CloseIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
+// NEW: Icon for Edit button
+const EditIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+  </svg>
+);
+
+// NEW: Icon for Delete button
+const DeleteIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+  </svg>
+);
+
 export default function AdminClassesPage() {
   // State for the list of classes
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [listLoading, setListLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
 
-  // State for the create class form
+  // State for the create/edit class form
   const [formName, setFormName] = useState('');
   const [formDescription, setFormDescription] = useState('');
-  const [formAvatarUrl, setFormAvatarUrl] = useState('');
+  const [formAvatarUrl, setFormAvatarUrl] = useState(''); // This will be set by the media explorer
+  // Add formSkillIdsString if you are editing skill_ids directly in this form
+  // const [formSkillIdsString, setFormSkillIdsString] = useState(''); 
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // Function to fetch classes
+  // State for controlling form visibility and mode (create/edit)
+  const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
+
+  // NEW: State to control the visibility of the media picker modal for avatar
+  const [showAvatarPickerModal, setShowAvatarPickerModal] = useState(false);
+
   const fetchClasses = useCallback(async () => {
     setListLoading(true);
     setListError(null);
     const { data, error: fetchError } = await supabase
       .from('classes')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('name', { ascending: true }); // Changed order to name
 
     if (fetchError) {
       setListError(fetchError.message);
@@ -44,12 +76,29 @@ export default function AdminClassesPage() {
     setListLoading(false);
   }, []);
 
-  // Fetch classes when the component mounts
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
 
-  // Handle form submission for creating a new class
+  // Effect to populate form when editingClass changes
+  useEffect(() => {
+    if (editingClass) {
+      setFormName(editingClass.name || '');
+      setFormDescription(editingClass.description || '');
+      setFormAvatarUrl(editingClass.avatar_url || '');
+      // setFormSkillIdsString(editingClass.skill_ids?.join(', ') || '');
+      setFormError(null);
+    } else {
+      // Reset for "create new" mode
+      setFormName('');
+      setFormDescription('');
+      setFormAvatarUrl('');
+      // setFormSkillIdsString('');
+      setFormError(null);
+    }
+  }, [editingClass]);
+
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -61,45 +110,109 @@ export default function AdminClassesPage() {
       return;
     }
 
-    const { error: insertError } = await supabase
-      .from('classes')
-      .insert([
-        {
-          name: formName,
-          description: formDescription,
-          avatar_url: formAvatarUrl || null,
-          // skill_ids will be managed when editing a class
-        },
-      ]);
+    // const skillIdsArray = formSkillIdsString
+    //   .split(',')
+    //   .map(id => parseInt(id.trim(), 10))
+    //   .filter(id => !isNaN(id));
 
+    const classDataToSubmit: Omit<ClassItem, 'id' | 'created_at'> = {
+      name: formName.trim(),
+      description: formDescription.trim() || null,
+      avatar_url: formAvatarUrl.trim() || null,
+      // skill_ids: skillIdsArray.length > 0 ? skillIdsArray : null,
+    };
+    
+    let error = null;
+
+    if (editingClass && editingClass.id) {
+      // Update existing class
+      const { error: updateError } = await supabase
+        .from('classes')
+        .update(classDataToSubmit)
+        .eq('id', editingClass.id);
+      error = updateError;
+    } else {
+      // Create new class
+      const { error: insertError } = await supabase
+        .from('classes')
+        .insert([classDataToSubmit]);
+      error = insertError;
+    }
+    
     setIsSubmitting(false);
 
-    if (insertError) {
-      setFormError(insertError.message);
-      console.error("Error inserting class:", insertError.message);
+    if (error) {
+      setFormError(error.message);
+      console.error("Error saving class:", error.message);
     } else {
-      // Success! Clear form and refresh the list of classes
-      setFormName('');
-      setFormDescription('');
-      setFormAvatarUrl('');
-      setFormError(null); // Clear any previous form errors
-      await fetchClasses(); // Re-fetch the list to show the new class
+      // Success! Clear form (or hide it), reset editingClass, and refresh list
+      setEditingClass(null); // This will also clear the form due to useEffect
+      await fetchClasses(); 
     }
+  };
+
+  const handleEditClick = (cls: ClassItem) => {
+    setEditingClass(cls);
+    document.getElementById('classFormContainer')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+const handleDeleteClass = async (classToDelete: ClassItem) => {
+    if (!window.confirm(`Are you sure you want to delete "${classToDelete.name || 'this class'}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const { error: deleteError } = await supabase
+        .from('classes')
+        .delete()
+        .eq('id', classToDelete.id);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      alert('Class deleted successfully.'); // Or use a more sophisticated notification
+      await fetchClasses(); // Refresh the list
+
+      // If the deleted class was the one being edited, clear the form
+      if (editingClass?.id === classToDelete.id) {
+        setEditingClass(null);
+      }
+    } catch (error: any) {
+      console.error('Error deleting class:', error.message);
+      setListError(`Failed to delete class: ${error.message}`); // Update listError state
+      // alert(`Failed to delete class: ${error.message}`); // Or use a proper notification
+    }
+  };
+
+  const handleCreateNewClick = () => {
+    setEditingClass(null); // Clears form for new entry
+     document.getElementById('classFormContainer')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Handler for when an avatar is selected from the MediaFileExplorer
+  const handleAvatarSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
+    setFormAvatarUrl(publicUrl);
+    setShowAvatarPickerModal(false); // Close the modal
   };
 
   return (
     <>
-      {/* Page Title - The AdminLayout provides overall page padding */}
-      <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
-        Manage Classes
-      </h1>
-
-      {/* Create New Class Form */}
-      <div className="mb-10 p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Create New Class</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="formName" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Class Name:</label>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
+          Manage Classes
+        </h1>
+      </div>
+      
+      {/* Form for Create/Edit Class */}
+      {/* We can always show the form, or make it toggleable with a showForm state */}
+      <div id="classFormContainer" className="mb-10 p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
+        <h2 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
+          {editingClass ? `Edit Class: ${editingClass.name}` : 'Create New Class'}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="formName" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Class Name:</label>
             <input
               type="text"
               id="formName"
@@ -109,8 +222,8 @@ export default function AdminClassesPage() {
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="formDescription" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Description:</label>
+          <div>
+            <label htmlFor="formDescription" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Description:</label>
             <textarea
               id="formDescription"
               value={formDescription}
@@ -119,30 +232,98 @@ export default function AdminClassesPage() {
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div className="mb-5">
-            <label htmlFor="formAvatarUrl" className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Avatar URL (Optional):</label>
+          
+          {/* Class Avatar Field with Modal Picker */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Class Avatar:
+            </label>
+            {formAvatarUrl && (
+              <div className="mb-2">
+                <img 
+                  src={formAvatarUrl} 
+                  alt="Current class avatar" 
+                  className="w-20 h-20 object-contain rounded border p-1 dark:border-gray-600 bg-gray-50 dark:bg-gray-700" 
+                />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowAvatarPickerModal(true)}
+              className="py-2 px-3 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+            >
+              {formAvatarUrl ? 'Change Avatar' : 'Select Avatar from Media'}
+            </button>
+          </div>
+          
+          {/* TODO: Add input for skill_ids later - for now it's managed by Class picks Skills */}
+          {/* For example:
+          <div>
+            <label htmlFor="formSkillIds" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                Skill IDs (comma-separated):
+            </label>
             <input
-              type="text"
-              id="formAvatarUrl"
-              placeholder="https://example.com/image.png"
-              value={formAvatarUrl}
-              onChange={(e) => setFormAvatarUrl(e.target.value)}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                type="text"
+                id="formSkillIds"
+                value={formSkillIdsString}
+                onChange={(e) => setFormSkillIdsString(e.target.value)}
+                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="e.g., 1, 2, 3"
             />
           </div>
-          {formError && <p className="text-red-500 dark:text-red-400 mb-3">Error: {formError}</p>}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="py-2 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 disabled:opacity-50"
-          >
-            {isSubmitting ? 'Creating...' : 'Create Class'}
-          </button>
+          */}
+
+          {formError && <p className="text-red-500 dark:text-red-400 mt-2">{formError}</p>}
+          <div className="flex items-center gap-4 pt-3 border-t dark:border-gray-600">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="py-2 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
+            >
+              {isSubmitting ? (editingClass ? 'Saving...' : 'Creating...') : (editingClass ? 'Save Changes' : 'Create Class')}
+            </button>
+            {editingClass && (
+              <button
+                type="button"
+                onClick={() => setEditingClass(null)} // This will clear the form via useEffect
+                className="py-2 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium rounded-lg border dark:border-gray-600"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
+      {/* Modal for Media File Explorer for Avatar */}
+      {showAvatarPickerModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-40 p-4 transition-opacity duration-300">
+          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4 pb-3 border-b dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">Select Class Avatar</h3>
+              <button 
+                onClick={() => setShowAvatarPickerModal(false)} 
+                className="p-1 text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
+                title="Close"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="flex-grow overflow-y-auto min-h-[300px]">
+              <MediaFileExplorer
+                bucketName="media" // Ensure this is your correct bucket name
+                initialPath="classes/avatars" // Suggest a starting path for class avatars
+                onFileSelect={handleAvatarSelectedFromPicker}
+                mode="select" 
+                accept="image/*"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* List of Existing Classes */}
-      <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Existing Classes</h2>
+      <h2 className="text-xl sm:text-2xl font-semibold mb-4 mt-10 text-gray-800 dark:text-gray-100">Existing Classes</h2>
       {listLoading && <p className="dark:text-gray-300">Loading classes...</p>}
       {listError && <p className="text-red-500 dark:text-red-400">Error loading classes: {listError}</p>}
       
@@ -153,18 +334,35 @@ export default function AdminClassesPage() {
       {!listLoading && !listError && classes.length > 0 && (
         <ul className="list-none p-0 space-y-4">
           {classes.map((cls) => (
-            <li key={cls.id} className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow">
+            <li key={cls.id} className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm">
               <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">{cls.name}</h3>
-                  {cls.description && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{cls.description}</p>}
+                <div className="flex items-start space-x-4">
                   {cls.avatar_url && (
-                    <div className="mt-2">
-                      <img src={cls.avatar_url} alt={cls.name} className="max-w-[80px] max-h-[80px] rounded object-cover" />
-                    </div>
+                    <img src={cls.avatar_url} alt={cls.name} className="w-16 h-16 object-cover rounded flex-shrink-0 border dark:border-gray-600" />
                   )}
+                  <div className="flex-grow">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">{cls.name}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">ID: {cls.id}</p>
+                    {cls.description && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{cls.description}</p>}
+                     {/* We'll display skill_ids or linked skills later */}
+                  </div>
                 </div>
-                {/* Edit/Delete buttons will go here later */}
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 flex-shrink-0 ml-2 items-center">
+                    <button 
+                        onClick={() => handleEditClick(cls)}
+                        className="p-1.5 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 rounded-full hover:bg-blue-100 dark:hover:bg-gray-700"
+                        title="Edit Class"
+                    >
+                        <EditIcon />
+                    </button>
+                    <button 
+                        onClick={() => handleDeleteClass(cls)}
+                        className="p-1.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 rounded-full hover:bg-red-100 dark:hover:bg-gray-700"
+                        title="Delete Class"
+                    >
+                        <DeleteIcon />
+                    </button>
+                </div>
               </div>
             </li>
           ))}

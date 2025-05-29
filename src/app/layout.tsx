@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,17 +15,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return ( // Make sure no stray spaces or newlines are introduced by formatting right after this
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+  return (
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-gray-900 text-gray-100 min-h-screen`}>
+        {children}
       </body>
       {/* Similarly, ensure NO WHITESPACE OR NEWLINES here, directly between 
         the closing '>' of the </body> tag and the opening '<' of the </html> tag.
