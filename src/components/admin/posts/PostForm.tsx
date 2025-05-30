@@ -187,8 +187,18 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     if (imageTarget === 'featured') {
       handleFeaturedImageChange(publicUrl);
     } else if (imageTarget === 'tiptap' && editorRef.current) {
-      editorRef.current.chain().focus().setImage({ src: publicUrl }).run();
-      // Content changed, Tiptap's onUpdate will handle setContentHtml
+      editorRef.current
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'image',
+          attrs: {
+            src: publicUrl,
+            alt: '',
+            class: 'inline-block align-middle m-0',
+          }
+        })
+        .run();
     }
     setShowMediaPickerModal(false);
     setImageTarget(null);

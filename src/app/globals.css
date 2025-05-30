@@ -122,13 +122,68 @@
   }
 }
 
-/* Add spacing around floated images so text doesn't touch them */
-img[style*="float: left;"] {
-  margin-right: 1rem;
-  margin-bottom: 0.5rem;
+.ProseMirror p div.image-resizer {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
 }
 
-img[style*="float: right;"] {
-  margin-left: 1rem;
-  margin-bottom: 0.5rem;
+.ProseMirror p div.image-resizer img {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+}
+
+.ProseMirror p div:has(.float-left) {
+  float: left;
+  margin-right: 5px;
+}
+
+.ProseMirror p div:has(.float-right) {
+  float: right;
+  margin-left: 5px;
+}
+
+.ProseMirror p div:has(.float-none) {
+  float: none;
+  margin: 0;
+}
+
+.ProseMirror p [contenteditable="false"] {
+  display: inline-block !important;
+}
+
+.ProseMirror p [draggable="true"] {
+  display: inline-block !important;
+}
+
+.ProseMirror p div.image-resizer,
+.ProseMirror p div:has(img) {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.ProseMirror p div:has(img) img {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.ProseMirror p img.align-top,
+.ProseMirror p div:has(img.align-top) {
+  vertical-align: top !important;
+}
+
+.ProseMirror p img.align-middle,
+.ProseMirror p div:has(img.align-middle) {
+  vertical-align: middle !important;
+}
+
+.ProseMirror p img.align-bottom,
+.ProseMirror p div:has(img.align-bottom) {
+  vertical-align: bottom !important;
+}
+
+.ProseMirror p img.align-baseline,
+.ProseMirror p div:has(img.align-baseline) {
+  vertical-align: baseline !important;
 }

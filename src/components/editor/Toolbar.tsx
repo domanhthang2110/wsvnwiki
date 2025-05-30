@@ -7,7 +7,6 @@ import {
   Bold, Strikethrough, Italic, List, ListOrdered, Heading2, Underline, Quote,
   Image as ImageIcon, Link as LinkIcon, Code, CornerUpLeft, CornerUpRight,
   AlignCenter, AlignLeft, AlignRight, Minus
-  // No new icons needed as we are reusing AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
@@ -26,24 +25,53 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
     editor.chain().focus().run(); // Ensure editor has focus
 
     const previousUrl = editor.getAttributes('link').href;
-    // Using a simple prompt for URL input. Consider a more robust UI for this in a real app.
-    let url = window.prompt('Enter URL (leave blank to remove link):', previousUrl || '');
+    const previousText = editor.state.doc.textBetween(
+      editor.state.selection.from, 
+      editor.state.selection.to,
+      ' '
+    );
+    
+    // Get URL
+    let url = window.prompt('Enter URL:', previousUrl || '');
+    if (url === null) return; // User pressed Cancel
 
-    if (url === null) { // User pressed Cancel
-      return;
-    }
-
-    if (url === '') { // User wants to remove the link
+    // If URL is empty, remove the link
+    if (url === '') {
       editor.chain().extendMarkRange('link').unsetLink().run();
       return;
     }
 
-    // Basic URL validation (optional, but good practice)
+    // Basic URL validation
     if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('mailto:') && !url.startsWith('#')) {
-        url = 'https://' + url;
+      url = 'https://' + url;
     }
-    
-    editor.chain().extendMarkRange('link').setLink({ href: url, target: '_blank' }).run();
+
+    // Get display text if no text is selected
+    if (!previousText) {
+      const displayText = window.prompt('Enter display text (leave empty to show URL):', '');
+      if (displayText === null) return; // User pressed Cancel
+      
+      // Insert new text node with link
+      editor
+        .chain()
+        .focus()
+        .insertContent([
+          {
+            type: 'text',
+            marks: [{ type: 'link', attrs: { href: url } }],
+            text: displayText || url
+          }
+        ])
+        .run();
+    } else {
+      // Just set link on existing selection
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run();
+    }
   };
 
   const handleImagePickerOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -139,7 +167,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
         {/* --- Action Group --- */}
         <Button type="button" size="sm" variant="ghost" onClick={handleSetLink} title="Set Link"><LinkIcon className="h-4 w-4" /></Button>
         <Button type="button" size="sm" variant="ghost" onClick={handleImagePickerOpen} title="Add Image">
-            <ImageIcon className="h-4 w-4" />
+          <ImageIcon className="h-4 w-4" />
         </Button>
 
         {/* ---- NEW IMAGE FLOAT CONTROLS (Only visible when a 'custom-image' is selected) ---- */}

@@ -13,8 +13,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
 import FontFamily from '@tiptap/extension-font-family';
-import ImageResize from 'tiptap-extension-resize-image';
-import { CustomImage } from '../editor/CustomImage';
+import { CustomImageResize } from './CustomImageResize';
 // --- End imports ---
 
 import { Toolbar } from './Toolbar';
@@ -28,30 +27,32 @@ interface TiptapEditorProps {
 export default function TiptapEditor({ content, onChange, onImagePickerOpen}: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
-      // Your full list of extensions
-      StarterKit, 
+      StarterKit.configure({
+        dropcursor: {
+          color: '#68cef8',
+          width: 2,
+        },
+      }), 
       Underline,       
       Image.configure({
         inline: true,
-        allowBase64: true,
+        allowBase64: false,
+        HTMLAttributes: {
+          class: 'inline-block align-bottom m-0',
+        },
       }), 
+      CustomImageResize,
       Link, 
       TextStyle, 
       Color, 
       TextAlign, 
-      FontFamily, 
-      ImageResize,
-      CustomImage, // Use your custom image extension
-
+      FontFamily,
     ],
     content: content,
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        // --- THIS LINE IS UPDATED ---
-        class: 'prose min-h-[300px] dark:prose-invert max-w-none focus:outline-none p-4 leading-normal',
-        // Try 'leading-normal' (tighter) or 'leading-relaxed' (looser) to find what you like.
-        // Also increased min-h-200 to min-h-[300px] for a better default editing area.
+        class: 'prose min-h-[300px] dark:prose-invert max-w-none focus:outline-none p-4 leading-normal [&_p]:my-0 [&_img]:my-0 [&_img]:mx-0 [&_img]:inline-block [&_img]:align-bottom',
       },
     },
     onUpdate: ({ editor }) => {
@@ -66,7 +67,7 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen}: Ti
   }, [content, editor]);
 
   return (
-      <div className="border border-neutral-700 bg-neutral-900 text-white rounded-lg overflow-hidden">
+      <div className="border border-neutral-700 bg-neutral-900 text-white overflow-hidden">
         <Toolbar editor={editor} onImagePickerOpen={() => {
           if (editor) {
             onImagePickerOpen(editor);
