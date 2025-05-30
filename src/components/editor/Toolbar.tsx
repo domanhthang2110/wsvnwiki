@@ -7,6 +7,7 @@ import {
   Bold, Strikethrough, Italic, List, ListOrdered, Heading2, Underline, Quote,
   Image as ImageIcon, Link as LinkIcon, Code, CornerUpLeft, CornerUpRight,
   AlignCenter, AlignLeft, AlignRight, Minus
+  // No new icons needed as we are reusing AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/toggle';
@@ -25,6 +26,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
     editor.chain().focus().run(); // Ensure editor has focus
 
     const previousUrl = editor.getAttributes('link').href;
+    // Using a simple prompt for URL input. Consider a more robust UI for this in a real app.
     let url = window.prompt('Enter URL (leave blank to remove link):', previousUrl || '');
 
     if (url === null) { // User pressed Cancel
@@ -50,6 +52,26 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
     onImagePickerOpen();
   };
 
+  // --- NEW FUNCTION TO HANDLE IMAGE FLOATING ---
+  const handleImageFloat = (newFloat: 'left' | 'right' | 'none') => {
+    if (!editor || !editor.isActive('custom-image')) { // Ensure this matches your custom image node name
+        return;
+    }
+    const currentAttrs = editor.getAttributes('custom-image');
+    // Set display to inline-block for floating, block for no float
+    const newDisplay = newFloat === 'none' ? 'block' : 'inline-block';
+    
+    // Preserve existing width or use 'auto'. Floating often works best with a defined width.
+    // If 'auto' causes issues, consider a default like '50%' or '300px'.
+    const width = currentAttrs.width || 'auto'; 
+
+    editor.chain().focus().updateAttributes('custom-image', { 
+        float: newFloat, 
+        display: newDisplay,
+        width: width 
+    }).run();
+  };
+
 
   return (
     <div className="border-b border-neutral-700 p-2 flex items-center flex-wrap gap-1 bg-neutral-800">
@@ -68,7 +90,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
         <select
           value={editor.getAttributes('textStyle').fontFamily || 'Inter'}
           onChange={(e) => editor.chain().focus().setFontFamily(e.target.value).run()}
-          className="bg-neutral-800 text-sm p-1 border border-neutral-600 rounded"
+          className="bg-neutral-800 text-sm p-1 border border-neutral-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
           title="Font Family"
         >
           <option value="Inter">Inter</option>
@@ -90,17 +112,18 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
           <input
             type="color"
             onInput={(event: React.ChangeEvent<HTMLInputElement>) => editor.chain().focus().setColor(event.target.value).run()}
-            value={editor.getAttributes('textStyle').color || '#ffffff'}
-            className="w-6 h-6 border-none bg-transparent cursor-pointer"
+            value={editor.getAttributes('textStyle').color || '#ffffff'} // Default to white if no color is set
+            className="w-6 h-6 border-none bg-transparent cursor-pointer p-0" // Ensure padding is 0 for better appearance
+            aria-label="Text color picker"
           />
         </div>
 
         <Separator orientation="vertical" className="h-8 mx-1" />
 
-        {/* --- Alignment Group --- */}
-        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'left' })} onPressedChange={() => editor.chain().focus().setTextAlign('left').run()} title="Align Left"><AlignLeft className="h-4 w-4" /></Toggle>
-        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'center' })} onPressedChange={() => editor.chain().focus().setTextAlign('center').run()} title="Align Center"><AlignCenter className="h-4 w-4" /></Toggle>
-        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'right' })} onPressedChange={() => editor.chain().focus().setTextAlign('right').run()} title="Align Right"><AlignRight className="h-4 w-4" /></Toggle>
+        {/* --- Alignment Group (For Text) --- */}
+        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'left' })} onPressedChange={() => editor.chain().focus().setTextAlign('left').run()} title="Align Text Left"><AlignLeft className="h-4 w-4" /></Toggle>
+        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'center' })} onPressedChange={() => editor.chain().focus().setTextAlign('center').run()} title="Align Text Center"><AlignCenter className="h-4 w-4" /></Toggle>
+        <Toggle type="button" size="sm" pressed={editor.isActive({ textAlign: 'right' })} onPressedChange={() => editor.chain().focus().setTextAlign('right').run()} title="Align Text Right"><AlignRight className="h-4 w-4" /></Toggle>
 
         <Separator orientation="vertical" className="h-8 mx-1" />
 
@@ -118,7 +141,46 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
         <Button type="button" size="sm" variant="ghost" onClick={handleImagePickerOpen} title="Add Image">
             <ImageIcon className="h-4 w-4" />
         </Button>
-        <Button type="button" size="sm" variant="ghost" onClick={() => editor.chain().focus().setHardBreak().run()} title="Hard Break">
+
+        {/* ---- NEW IMAGE FLOAT CONTROLS (Only visible when a 'custom-image' is selected) ---- */}
+        {editor.isActive('custom-image') && ( // Ensure 'custom-image' matches your node name
+          <>
+            <Separator orientation="vertical" className="h-8 mx-1" />
+            <Toggle 
+              type="button" 
+              size="sm" 
+              pressed={editor.getAttributes('custom-image').float === 'left'} 
+              onPressedChange={() => handleImageFloat('left')}
+              title="Float Image Left"
+            >
+              <AlignLeft className="h-4 w-4" />
+            </Toggle>
+            <Toggle 
+              type="button" 
+              size="sm" 
+              pressed={
+                editor.getAttributes('custom-image').float === 'none' || 
+                editor.getAttributes('custom-image').float === undefined
+              } 
+              onPressedChange={() => handleImageFloat('none')}
+              title="Image No Float / Block"
+            >
+              <AlignCenter className="h-4 w-4" /> {/* Using AlignCenter icon for 'no float' */}
+            </Toggle>
+            <Toggle 
+              type="button" 
+              size="sm" 
+              pressed={editor.getAttributes('custom-image').float === 'right'} 
+              onPressedChange={() => handleImageFloat('right')}
+              title="Float Image Right"
+            >
+              <AlignRight className="h-4 w-4" />
+            </Toggle>
+          </>
+        )}
+        {/* ---- END NEW IMAGE FLOAT CONTROLS ---- */}
+        
+        <Button type="button" size="sm" variant="ghost" onClick={() => editor.chain().focus().setHardBreak().run()} title="Hard Break (New Line)">
           <Minus className="h-4 w-4" />
         </Button>
       </div>

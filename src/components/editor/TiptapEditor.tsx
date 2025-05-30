@@ -13,7 +13,8 @@ import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
 import FontFamily from '@tiptap/extension-font-family';
-import Gapcursor from '@tiptap/extension-gapcursor';
+import ImageResize from 'tiptap-extension-resize-image';
+import { CustomImage } from '../editor/CustomImage';
 // --- End imports ---
 
 import { Toolbar } from './Toolbar';
@@ -28,14 +29,20 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen}: Ti
   const editor = useEditor({
     extensions: [
       // Your full list of extensions
-      StarterKit, Underline,       Image.configure({
-        inline: true, // This allows images to be inline
-        allowBase64: false, // Good practice if you're using URLs
-        // You can add HTMLAttributes here if needed for inline images
-        // HTMLAttributes: {
-        //   class: 'inline-image', // Example class for styling
-        // },
-      }), Link, TextStyle, Color, TextAlign, FontFamily, Gapcursor
+      StarterKit, 
+      Underline,       
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+      }), 
+      Link, 
+      TextStyle, 
+      Color, 
+      TextAlign, 
+      FontFamily, 
+      ImageResize,
+      CustomImage, // Use your custom image extension
+
     ],
     content: content,
     immediatelyRender: false,

@@ -121,3 +121,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Add spacing around floated images so text doesn't touch them */
+img[style*="float: left;"] {
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+img[style*="float: right;"] {
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
+}

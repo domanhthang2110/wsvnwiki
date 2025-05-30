@@ -8,18 +8,6 @@ import { CloseIcon } from '@/components/icons';
 import TiptapEditor from '@/components/editor/TiptapEditor'; 
 import { type Editor } from '@tiptap/react';
 
-// Helper function to generate slugs
-const slugify = (text: string): string => {
-  if (!text) return '';
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w-]+/g, '') // Remove all non-word chars
-    .replace(/--+/g, '-'); // Replace multiple - with single -
-};
-
 interface PostTypeItem {
   id: number;
   name: string;
@@ -33,15 +21,22 @@ interface PostFormProps {
   postType: 'guide' | 'other'; 
 }
 
+// Helper function to generate slugs (assuming it's defined elsewhere or here)
+const slugify = (text: string): string => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') 
+    .replace(/[^\w-]+/g, '') 
+    .replace(/--+/g, '-'); 
+};
+
 export default function PostForm({ onSubmit, initialData, isEditing, postType }: PostFormProps) {
   // --- 1. STATE DECLARATIONS ---
   const [title, setTitle] = useState('');
-  // REMOVED: No longer using useState for the slug
-  // const [slug, setSlug] = useState(''); 
-  
-  // --- NEW: Slug is now derived directly from the title state ---
-  const slug = slugify(title);
-
+  const slug = slugify(title); // Slug is derived
   const [contentHtml, setContentHtml] = useState('');
   const [featuredImageUrl, setFeaturedImageUrl] = useState('');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
@@ -55,59 +50,54 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   const [showMediaPickerModal, setShowMediaPickerModal] = useState(false);
   const [imageTarget, setImageTarget] = useState<'featured' | 'tiptap' | null>(null);
   const editorRef = useRef<Editor | null>(null);
-  const [isAutosaveEnabled, setIsAutosaveEnabled] = useState(true);
-  const [saveStatus, setSaveStatus] = useState<string>('Saved ✓');
-  const [isDirty, setIsDirty] = useState(false);
-  const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Removed autosave related state: isAutosaveEnabled, saveStatus, isDirty, autosaveTimeoutRef
 
   // --- 2. CALLBACKS & MEMOIZED FUNCTIONS ---
-  const triggerSave = useCallback(async (isAutosave: boolean = false): Promise<boolean> => {
-    if (!isAutosave) setIsSubmitting(true);
-    else setSaveStatus('Autosaving...');
-    
+  const triggerSave = useCallback(async (): Promise<boolean> => {
+    setIsSubmitting(true);
     setFormError(null);
+    
     if (!title.trim() || !slug.trim() || !contentHtml.trim() || selectedTypeId === '') {
       setFormError("Title, Slug, Content, and Type are required.");
-      if (!isAutosave) setIsSubmitting(false);
-      else setSaveStatus('Autosave failed');
+      setIsSubmitting(false);
       return false;
     }
 
     const postData: PostFormData = {
       title: title.trim(), 
-      slug: slug.trim(), // Use the derived slug constant
+      slug: slug.trim(), 
       content: contentHtml,
       featured_image_url: featuredImageUrl.trim() || null,
       status,
-      published_at: status === 'published' && (!initialData?.published_at || isDirty) ? new Date().toISOString() : initialData?.published_at,
+      // published_at logic depends on whether you want to update it on every save when 'published'
+      // For simplicity, let's set/update it if status is 'published'
+      published_at: status === 'published' ? new Date().toISOString() : (isEditing ? initialData?.published_at : null),
       tag_ids: Array.from(selectedTagIds),
       type_id: Number(selectedTypeId), 
     };
 
     try {
       const success = await onSubmit(postData);
-      if (success !== false) {
-        setIsDirty(false);
-        setSaveStatus('Saved ✓');
-        if (!isEditing && !isAutosave) {
+      if (success !== false) { // Assuming onSubmit returns true on success or void, and false/throws on error
+        if (!isEditing) { // Reset form only if creating a new post
           setTitle(''); 
-          // No need to reset slug, it will derive from the empty title
           setContentHtml('');
-          setFeaturedImageUrl(''); setStatus('draft'); setSelectedTagIds(new Set());
+          setFeaturedImageUrl(''); 
+          setStatus('draft'); 
+          setSelectedTagIds(new Set());
           setSelectedTypeId(''); 
         }
+        // Optionally, provide a success message to the user here (e.g., using a toast notification)
         return true;
       }
-      setSaveStatus('Save failed');
-      return false;
+      return false; // onSubmit indicated failure
     } catch (error: any) {
       setFormError(error.message || 'Failed to save post.');
-      if (isAutosave) setSaveStatus('Autosave Error!');
       return false;
     } finally {
-      if (!isAutosave) setIsSubmitting(false);
+      setIsSubmitting(false);
     }
-  }, [title, slug, contentHtml, featuredImageUrl, status, selectedTagIds, selectedTypeId, onSubmit, isEditing, initialData, isDirty]);
+  }, [title, slug, contentHtml, featuredImageUrl, status, selectedTagIds, selectedTypeId, onSubmit, isEditing, initialData]);
 
   // --- 3. SIDE EFFECTS (useEffect) ---
   useEffect(() => {
@@ -128,12 +118,10 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
   useEffect(() => {
     if (initialData) {
-      // We only need to set the title. The slug will be derived from it automatically.
       setTitle(initialData.title || '');
-      
-      // We no longer set the slug directly.
-      // setSlug(initialData.slug || ''); 
-
+      // Slug is derived, no need to set it from initialData directly unless you want to preserve old slugs
+      // If you want to preserve old slugs that might not match the current title:
+      // setSlugToPreserve(initialData.slug || ''); // And use this for the slug input if title hasn't changed
       setContentHtml(typeof initialData.content === 'string' ? initialData.content : '');
       setFeaturedImageUrl(initialData.featured_image_url || '');
       setStatus(initialData.status || 'draft');
@@ -146,64 +134,61 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         };
         fetchPostTags();
       }
-      setIsDirty(false);
-      setSaveStatus('Saved ✓');
     } else { 
       setTitle('');
-      // No need to set slug to empty string
       setContentHtml('');
-      setFeaturedImageUrl(''); setStatus('draft'); setSelectedTagIds(new Set());
+      setFeaturedImageUrl(''); 
+      setStatus('draft'); 
+      setSelectedTagIds(new Set());
       setSelectedTypeId(''); 
-      setIsDirty(false);
     }
   }, [initialData, isEditing]);
   
-  // REMOVED: The problematic useEffect for slug generation is no longer needed.
-
-  useEffect(() => {
-    if (!isAutosaveEnabled || !isDirty || !isEditing) {
-        if (isEditing && !isDirty) setSaveStatus('Saved ✓');
-        return;
-    }
-    if (autosaveTimeoutRef.current) clearTimeout(autosaveTimeoutRef.current);
-    setSaveStatus('Unsaved changes...');
-    autosaveTimeoutRef.current = setTimeout(() => {
-      triggerSave(true);
-    }, 3000);
-    return () => {
-      if (autosaveTimeoutRef.current) clearTimeout(autosaveTimeoutRef.current);
-    };
-  }, [isDirty, isAutosaveEnabled, isEditing, triggerSave]);
+  // Removed autosave useEffect
 
   // --- 4. OTHER HANDLER FUNCTIONS ---
-  // (These functions remain the same)
-  const handleFormValueChange = (setter: React.Dispatch<React.SetStateAction<any>>) => (value: any) => {
-    setter(value);
-    setIsDirty(true);
+  // Removed setIsDirty from these handlers
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
   };
+
   const handleContentChange = (newContent: string) => {
     setContentHtml(newContent);
-    setIsDirty(true);
   };
+
   const handleTagToggle = (tagId: number) => {
     setSelectedTagIds(prev => {
       const newSet = new Set(prev);
       newSet.has(tagId) ? newSet.delete(tagId) : newSet.add(tagId);
       return newSet;
     });
-    setIsDirty(true);
   };
+  
+  const handleFeaturedImageChange = (newUrl: string) => {
+    setFeaturedImageUrl(newUrl);
+  };
+
+  const handleStatusChange = (newStatus: 'draft' | 'published') => {
+    setStatus(newStatus);
+  };
+
+  const handleTypeChange = (newTypeId: number | '') => {
+    setSelectedTypeId(newTypeId);
+  };
+
+
   const openImagePicker = (target: 'featured' | 'tiptap', editor?: Editor) => {
     setImageTarget(target);
     if (editor) editorRef.current = editor; 
     setShowMediaPickerModal(true);
   };
+
   const handleFileSelectedFromPicker = (publicUrl: string) => {
     if (imageTarget === 'featured') {
-      handleFormValueChange(setFeaturedImageUrl) (publicUrl);
+      handleFeaturedImageChange(publicUrl);
     } else if (imageTarget === 'tiptap' && editorRef.current) {
       editorRef.current.chain().focus().setImage({ src: publicUrl }).run();
-      setIsDirty(true); 
+      // Content changed, Tiptap's onUpdate will handle setContentHtml
     }
     setShowMediaPickerModal(false);
     setImageTarget(null);
@@ -214,12 +199,11 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   // --- 5. RENDER ---
   return (
     <div className="mb-10 p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-      {/* (The rest of the JSX render remains the same, but the slug input now correctly displays the derived slug) */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
             {isEditing ? `Edit ${initialData?.title || 'Post'}` : `Create New ${postType}`}
         </h2>
-        {isEditing && <span className="text-sm text-gray-400 dark:text-gray-500">{saveStatus}</span>}
+        {/* Removed saveStatus display */}
       </div>
 
       {formError && (
@@ -228,14 +212,13 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         </div>
       )}
 
-      <form onSubmit={(e) => { e.preventDefault(); triggerSave(false); }} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); triggerSave(); }} className="space-y-6">
         <div>
           <label htmlFor="postTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title:</label>
-          <input type="text" id="postTitle" value={title} onChange={(e) => handleFormValueChange(setTitle)(e.target.value)} required className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          <input type="text" id="postTitle" value={title} onChange={(e) => handleTitleChange(e.target.value)} required className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
         </div>
         <div>
           <label htmlFor="postSlug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Slug:</label>
-          {/* This input's value now comes directly from the derived slug constant */}
           <input type="text" id="postSlug" value={slug} readOnly required className="mt-1 w-full p-2 border rounded-md bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed" />
         </div>
 
@@ -244,7 +227,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
           <select 
             id="postTypeSelector" 
             value={selectedTypeId} 
-            onChange={(e) => handleFormValueChange(setSelectedTypeId)(e.target.value)} 
+            onChange={(e) => handleTypeChange(e.target.value === '' ? '' : Number(e.target.value))} 
             required 
             className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[42px]"
           >
@@ -281,7 +264,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             
         <div>
           <label htmlFor="postStatus" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
-          <select id="postStatus" value={status} onChange={(e) => handleFormValueChange(setStatus)(e.target.value as 'draft' | 'published')} className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[42px]">
+          <select id="postStatus" value={status} onChange={(e) => handleStatusChange(e.target.value as 'draft' | 'published')} className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[42px]">
             <option value="draft">Draft</option>
             <option value="published">Published</option>
           </select>
@@ -317,7 +300,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <button onClick={() => {setShowMediaPickerModal(false); editorRef.current?.commands.focus();}} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
             </div>
             <div className="flex-grow overflow-y-auto min-h-[300px]">
-              <MediaFileExplorer bucketName="media" initialPath="" onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
+              <MediaFileExplorer bucketName="media" initialPath={imageTarget === 'featured' ? "posts/featured/" : "posts/content/"} onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
             </div>
           </div>
         </div>
