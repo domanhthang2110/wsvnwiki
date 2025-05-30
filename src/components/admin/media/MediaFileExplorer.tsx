@@ -169,7 +169,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
   if (event.dataTransfer.files?.length) { // Allow drop in any mode
     processAndUploadFiles(event.dataTransfer.files); 
   }
-  event.dataTransfer.clearData(); 
+  //event.dataTransfer.clearData(); 
 };
   const triggerFileInput = () => fileInputRef.current?.click();
 

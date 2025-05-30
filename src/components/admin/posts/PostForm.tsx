@@ -195,7 +195,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
           attrs: {
             src: publicUrl,
             alt: '',
-            class: 'inline-block align-middle m-0',
+            class: 'inline-block align-bottom m-0',
           }
         })
         .run();
@@ -266,6 +266,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             
         <div className="w-full">
           <TiptapEditor
+            key={initialData?.id || 'new-post'} // This 'key' is critical
             content={contentHtml}
             onChange={handleContentChange}
             onImagePickerOpen={(editor) => openImagePicker('tiptap', editor)}
@@ -310,7 +311,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <button onClick={() => {setShowMediaPickerModal(false); editorRef.current?.commands.focus();}} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
             </div>
             <div className="flex-grow overflow-y-auto min-h-[300px]">
-              <MediaFileExplorer bucketName="media" initialPath={imageTarget === 'featured' ? "posts/featured/" : "posts/content/"} onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
+              <MediaFileExplorer bucketName="media" onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
             </div>
           </div>
         </div>

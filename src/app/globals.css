@@ -124,13 +124,13 @@
 
 .ProseMirror p div.image-resizer {
   display: inline-block !important;
-  vertical-align: middle !important;
+  vertical-align: bottom !important;
   margin: 0 !important;
 }
 
 .ProseMirror p div.image-resizer img {
   display: inline-block !important;
-  vertical-align: middle !important;
+  vertical-align: bottom !important;
   margin: 0 !important;
 }
 
@@ -160,22 +160,17 @@
 .ProseMirror p div.image-resizer,
 .ProseMirror p div:has(img) {
   display: inline-block !important;
-  vertical-align: middle !important;
+  vertical-align: bottom !important;
 }
 
 .ProseMirror p div:has(img) img {
   display: inline-block !important;
-  vertical-align: middle !important;
+  vertical-align: bottom !important;
 }
 
 .ProseMirror p img.align-top,
 .ProseMirror p div:has(img.align-top) {
   vertical-align: top !important;
-}
-
-.ProseMirror p img.align-middle,
-.ProseMirror p div:has(img.align-middle) {
-  vertical-align: middle !important;
 }
 
 .ProseMirror p img.align-bottom,
@@ -187,3 +182,48 @@
 .ProseMirror p div:has(img.align-baseline) {
   vertical-align: baseline !important;
 }
+
+/* Editor toolbar styles */
+.editor-toolbar {
+  border-bottom: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.editor-toolbar .separator {
+  width: 1px;
+  background-color: var(--border);
+  margin: 0 0.5rem;
+}
+
+/* Text style controls */
+.editor-toolbar select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-position: right 0.25rem center;
+  background-repeat: no-repeat;
+  background-size: 1em 1em;
+  padding-right: 2rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.editor-toolbar select:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+
+.editor-toolbar select option {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Font size specific styles */
+.font-size-xs { font-size: 0.75rem; }
+.font-size-sm { font-size: 0.875rem; }
+.font-size-base { font-size: 1rem; }
+.font-size-lg { font-size: 1.125rem; }
+.font-size-xl { font-size: 1.25rem; }
+.font-size-2xl { font-size: 1.5rem; }
+.font-size-3xl { font-size: 1.875rem; }
+.font-size-4xl { font-size: 2.25rem; }
