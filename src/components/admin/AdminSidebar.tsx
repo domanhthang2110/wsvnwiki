@@ -7,11 +7,9 @@ const navItems = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/classes', label: 'Classes' },
   { href: '/admin/skills', label: 'Skills' },
-  { href: '/admin/guides', label: 'Guides' },
+  { href: '/admin/posts', label: 'Posts' },
   { href: '/admin/media', label: 'Media' },
-  { href: '/admin/others', label: 'Others' },
-  { href: '/admin/tags', label: 'Tags' },
-  { href: '/admin/settings', label: 'Site Settings' }, // Assuming you'll create a page for this
+  { href: '/admin/tags', label: 'Tags' }
 ];
 
 export function AdminSidebar() {
