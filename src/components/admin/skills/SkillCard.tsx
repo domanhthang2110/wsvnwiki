@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { SkillItem } from '@/types/skills';
 import { formatFullSkillDescription } from '@/utils/skillUtils';
+import { useFloating, offset, shift, flip, useHover, useInteractions } from '@floating-ui/react';
+import { createPortal } from 'react-dom';
 
 interface SkillCardProps {
   skill: SkillItem;
@@ -10,16 +12,20 @@ interface SkillCardProps {
 }
 
 export default function SkillCard({ skill, onEdit, onDelete, isSelected }: SkillCardProps) {
-  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    // Offset from cursor
-    setTooltipPosition({ x: e.clientX + 10, y: e.clientY + 10 });
-  };
+  const { refs, floatingStyles, context } = useFloating({
+    open: isTooltipOpen,
+    onOpenChange: setIsTooltipOpen,
+    middleware: [
+      offset(10),
+      shift({ padding: 5 }),
+      flip({ padding: 5 }),
+    ],
+  });
 
-  const handleMouseLeave = () => {
-    setTooltipPosition(null);
-  };
+  const hover = useHover(context);
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
   // Format energy cost for display
   const formatEnergyCost = (energyCost: Record<string, number> | undefined) => {
@@ -28,21 +34,21 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
   };
 
   // Format range for display
-  const formatRange = (range: string | undefined) => {
+  const formatRange = (range: number | undefined) => {
     if (!range) return undefined;
-    return range === '1' ? 'Melee' : range;
+    return range === 1 ? 'Melee' : range.toString();
   };
 
   return (
     <>
       <div 
-        className={`relative p-2 w-64 group border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all ${
+        ref={refs.setReference}
+        {...getReferenceProps()}
+        className={`relative p-2 w-64 group border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
           isSelected 
             ? 'border-blue-500 ring-2 ring-blue-500 ring-opacity-50' 
             : 'border-gray-700 hover:border-gray-600'
         }`}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
       >
         <div className="flex items-start">
           {/* Icon */}
@@ -104,15 +110,13 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
         </div>
       </div>
 
-      {/* Enhanced Tooltip */}
-      {tooltipPosition && (
+      {/* Floating UI Tooltip */}
+      {isTooltipOpen && createPortal(
         <div
-          className="fixed z-50 w-80 p-4 bg-gray-900 rounded-lg shadow-xl border border-gray-700"
-          style={{
-            left: tooltipPosition.x,
-            top: tooltipPosition.y,
-            pointerEvents: 'none'
-          }}
+          ref={refs.setFloating}
+          {...getFloatingProps()}
+          style={floatingStyles}
+          className="z-50 w-80 p-4 bg-gray-900 rounded-lg shadow-xl border border-gray-700"
         >
           <div className="space-y-3">
             {/* Header with Icon and Basic Info */}
@@ -120,7 +124,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
               {skill.icon_url && (
                 <img 
                   src={skill.icon_url} 
-                  alt={skill.name} 
+                  alt={skill.name || 'Skill details'} 
                   className="w-12 h-12 object-contain rounded"
                 />
               )}
@@ -166,7 +170,8 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
               <p className="text-gray-200">{formatFullSkillDescription(skill)}</p>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
