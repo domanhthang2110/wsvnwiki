@@ -10,6 +10,7 @@ import { MAX_SKILL_LEVEL_OPTIONS, SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } 
 import ParameterDefinitions from './ParameterDefinitions'; // Assuming this component exists
 import LevelValuesTable from './LevelValuesTable';     // Assuming this component exists
 import MediaFileExplorer from '../media/MediaFileExplorer'; // Import the new explorer
+import EnergyCostRow from './EnergyCostRow'; // Import the new energy cost row component
 
 // Icon for the close button in the modal
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
@@ -27,7 +28,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
   const [formActivationType, setFormActivationType] = useState<SkillItem['activation_type']>(ACTIVATION_TYPE_OPTIONS[0]);
   const [formMaxLevel, setFormMaxLevel] = useState<number>(5); 
   const [formCooldown, setFormCooldown] = useState('');
-  const [formEnergyCost, setFormEnergyCost] = useState('');
+  // Remove formEnergyCost state as it will be handled in formLevelValues
   const [formRange, setFormRange] = useState('');
   const [formReducedEnergyRegen, setFormReducedEnergyRegen] = useState('');
   const [formDescriptionTemplate, setFormDescriptionTemplate] = useState('');
@@ -43,6 +44,10 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
   // Renamed from showMediaGallery for clarity
   const [showIconPickerModal, setShowIconPickerModal] = useState(false); 
 
+  // NEW state for energy costs
+  const [energyCosts, setEnergyCosts] = useState<Record<number, string>>({});
+  // const [energyCostValues, setEnergyCostValues] = useState<string[]>(Array.from({ length: 5 }, () => '')); // Default to 5 empty strings
+
   // Effect to populate form when initialData changes (for editing)
   useEffect(() => {
     if (initialData) {
@@ -52,7 +57,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
       setFormActivationType(initialData.activation_type || ACTIVATION_TYPE_OPTIONS[0]);
       //setFormMaxLevel((initialData.max_level || 1).toString());
       setFormCooldown(initialData.cooldown?.toString() || '');
-      setFormEnergyCost(initialData.energy_cost?.toString() || '');
+      // Remove energy cost setting here as it will be handled by level values
       setFormRange(initialData.range?.toString() || '');
       setFormReducedEnergyRegen(initialData.reduced_energy_regen?.toString() || '');
       setFormDescriptionTemplate(initialData.description || '');
@@ -68,6 +73,17 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
       // Level values will be set by the next useEffect based on initialData.level_values
       // and current paramDefs & maxLevel. This simplifies logic.
       setFormLevelValues(initialData.level_values || []);
+
+      // Set energy costs from initialData
+      if (initialData.energy_cost) {
+        const costs: Record<number, string> = {};
+        Object.entries(initialData.energy_cost).forEach(([level, cost]) => {
+          costs[parseInt(level)] = cost.toString();
+        });
+        setEnergyCosts(costs);
+      } else {
+        setEnergyCosts({});
+      }
     } else {
       // Reset form for "create new" mode if initialData becomes null
       setFormName('');
@@ -76,12 +92,13 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
       setFormActivationType(ACTIVATION_TYPE_OPTIONS[0]);
       //setFormMaxLevel("1");
       setFormCooldown('');
-      setFormEnergyCost('');
+      // Remove energy cost reset
       setFormRange('');
       setFormReducedEnergyRegen('');
       setFormDescriptionTemplate('');
       setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage', label: 'Damage Value' }]);
       setFormLevelValues([]); // Will be populated by the effect below
+      setEnergyCosts({});
     }
   }, [initialData]);
 
@@ -165,6 +182,13 @@ useEffect(() => {
     setShowIconPickerModal(false); // Close the modal
   };
 
+  const handleEnergyCostChange = (level: number, value: string) => {
+    setEnergyCosts(prev => ({
+      ...prev,
+      [level]: value
+    }));
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -214,7 +238,16 @@ useEffect(() => {
 
       if (formActivationType === 'Active') {
         skillDataToSubmit.cooldown = formCooldown.trim() ? parseInt(formCooldown, 10) : null;
-        skillDataToSubmit.energy_cost = formEnergyCost.trim() ? parseInt(formEnergyCost, 10) : null;
+        
+        // Convert energy costs to the new format
+        const parsedEnergyCosts: Record<number, number> = {};
+        Object.entries(energyCosts).forEach(([level, value]) => {
+          if (value && !isNaN(parseInt(value))) {
+            parsedEnergyCosts[parseInt(level)] = parseInt(value);
+          }
+        });
+        skillDataToSubmit.energy_cost = Object.keys(parsedEnergyCosts).length > 0 ? parsedEnergyCosts : null;
+        
         skillDataToSubmit.range = formRange.trim() ? parseInt(formRange, 10) : null;
         skillDataToSubmit.reduced_energy_regen = formReducedEnergyRegen.trim() ? parseInt(formReducedEnergyRegen, 10) : null;
       } else {
@@ -234,7 +267,7 @@ useEffect(() => {
           setFormActivationType(ACTIVATION_TYPE_OPTIONS[0]);
           //setFormMaxLevel("1");
           setFormCooldown('');
-          setFormEnergyCost('');
+          // Remove energy cost reset
           setFormRange('');
           setFormReducedEnergyRegen('');
           setFormDescriptionTemplate('');
@@ -327,47 +360,47 @@ useEffect(() => {
         {formActivationType === 'Active' && (
           <div className="p-4 border border-gray-600 rounded-md space-y-4 mt-4">
             <h3 className="text-lg font-medium text-gray-300">Active Skill Properties</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="formCooldown" className="block mb-1 text-sm font-medium text-gray-300">Cooldown (number):</label>
-                <input 
-                  type="number" 
-                  id="formCooldown" 
-                  value={formCooldown} 
-                  onChange={(e) => setFormCooldown(e.target.value)} 
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-                />
+            <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="formCooldown" className="block mb-1 text-sm font-medium text-gray-300">
+                    Cooldown (number):
+                  </label>
+                  <input 
+                    type="number" 
+                    id="formCooldown" 
+                    value={formCooldown} 
+                    onChange={(e) => setFormCooldown(e.target.value)} 
+                    className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
+                  />
+                </div>
+                {/* Remove energy cost input from here */}
+                <div>
+                  <label htmlFor="formRange" className="block mb-1 text-sm font-medium text-gray-300">Range (Optional, number):</label>
+                  <input 
+                    type="number" 
+                    id="formRange" 
+                    value={formRange} 
+                    onChange={(e) => setFormRange(e.target.value)} 
+                    className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="formReducedEnergyRegen" className="block mb-1 text-sm font-medium text-gray-300">Reduced Regen (Optional, number):</label>
+                  <input 
+                    type="number" 
+                    id="formReducedEnergyRegen" 
+                    value={formReducedEnergyRegen} 
+                    onChange={(e) => setFormReducedEnergyRegen(e.target.value)} 
+                    className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="formEnergyCost" className="block mb-1 text-sm font-medium text-gray-300">Energy Cost (number):</label>
-                <input 
-                  type="number" 
-                  id="formEnergyCost" 
-                  value={formEnergyCost} 
-                  onChange={(e) => setFormEnergyCost(e.target.value)} 
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-                />
-              </div>
-              <div>
-                <label htmlFor="formRange" className="block mb-1 text-sm font-medium text-gray-300">Range (Optional, number):</label>
-                <input 
-                  type="number" 
-                  id="formRange" 
-                  value={formRange} 
-                  onChange={(e) => setFormRange(e.target.value)} 
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-                />
-              </div>
-              <div>
-                <label htmlFor="formReducedEnergyRegen" className="block mb-1 text-sm font-medium text-gray-300">Reduced Regen (Optional, number):</label>
-                <input 
-                  type="number" 
-                  id="formReducedEnergyRegen" 
-                  value={formReducedEnergyRegen} 
-                  onChange={(e) => setFormReducedEnergyRegen(e.target.value)} 
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-                />
-              </div>
+              <EnergyCostRow
+                maxLevel={formMaxLevel}
+                energyCosts={energyCosts}
+                onChange={handleEnergyCostChange}
+              />
             </div>
           </div>
         )}

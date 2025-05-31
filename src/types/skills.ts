@@ -23,7 +23,7 @@ export interface SkillItem {
   activation_type?: string | null;
   max_level?: number | null;
   cooldown?: number | null;
-  energy_cost?: number | null;
+  energy_cost?: Record<number, number> | null;  // Changed to Record<number, number>
   range?: number | null;
   reduced_energy_regen?: number | null;
   description?: string | null;

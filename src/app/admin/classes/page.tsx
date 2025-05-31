@@ -5,15 +5,22 @@ import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { supabase } from '@/lib/supabaseClient'; // Adjust path if your alias for src is different
 import Link from 'next/link';
 import MediaFileExplorer from '@/components/admin/media/MediaFileExplorer'; // Import the new explorer
+import SkillSelectorModal from '@/components/admin/skills/SkillSelectorModal';
 
-// Define an interface for the structure of your Class data
+// Update the ClassItem interface
 interface ClassItem {
-  id: number; // Assuming int8 for id
+  id: number;
   created_at: string;
   name: string;
   avatar_url?: string | null;
   description?: string | null;
-  skill_ids?: number[] | null; // Array of int8
+}
+
+// Add new interface for Skills
+interface Skill {
+  id: number;
+  name: string;
+  description?: string | null;
 }
 
 // Simple CloseIcon component for the modal (You already have this)
@@ -59,6 +66,14 @@ export default function AdminClassesPage() {
   // NEW: State to control the visibility of the media picker modal for avatar
   const [showAvatarPickerModal, setShowAvatarPickerModal] = useState(false);
 
+  // Add new state for skills
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
+  const [skillsLoading, setSkillsLoading] = useState(true);
+
+  // NEW: State to control the visibility of the skill selector modal
+  const [showSkillSelectorModal, setShowSkillSelectorModal] = useState(false);
+
   const fetchClasses = useCallback(async () => {
     setListLoading(true);
     setListError(null);
@@ -76,9 +91,45 @@ export default function AdminClassesPage() {
     setListLoading(false);
   }, []);
 
+  // Add fetchSkills function
+  const fetchSkills = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('skills')
+      .select('*')
+      .order('name');
+    
+    if (error) {
+      console.error('Error fetching skills:', error);
+      return;
+    }
+
+    setAvailableSkills(data || []);
+    setSkillsLoading(false);
+  }, []);
+
+  // Add fetchClassSkills function
+  const fetchClassSkills = useCallback(async (classId: number) => {
+    const { data, error } = await supabase
+      .from('class_skills')
+      .select('skill_id')
+      .eq('class_id', classId);
+    
+    if (error) {
+      console.error('Error fetching class skills:', error);
+      return;
+    }
+
+    setSelectedSkills(data.map(cs => cs.skill_id));
+  }, []);
+
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
+
+  // Add useEffect to load skills
+  useEffect(() => {
+    fetchSkills();
+  }, [fetchSkills]);
 
   // Effect to populate form when editingClass changes
   useEffect(() => {
@@ -86,17 +137,15 @@ export default function AdminClassesPage() {
       setFormName(editingClass.name || '');
       setFormDescription(editingClass.description || '');
       setFormAvatarUrl(editingClass.avatar_url || '');
-      // setFormSkillIdsString(editingClass.skill_ids?.join(', ') || '');
-      setFormError(null);
+      fetchClassSkills(editingClass.id);
     } else {
       // Reset for "create new" mode
       setFormName('');
       setFormDescription('');
       setFormAvatarUrl('');
-      // setFormSkillIdsString('');
-      setFormError(null);
+      setSelectedSkills([]);
     }
-  }, [editingClass]);
+  }, [editingClass, fetchClassSkills]);
 
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -110,45 +159,62 @@ export default function AdminClassesPage() {
       return;
     }
 
-    // const skillIdsArray = formSkillIdsString
-    //   .split(',')
-    //   .map(id => parseInt(id.trim(), 10))
-    //   .filter(id => !isNaN(id));
-
-    const classDataToSubmit: Omit<ClassItem, 'id' | 'created_at'> = {
+    const classDataToSubmit = {
       name: formName.trim(),
       description: formDescription.trim() || null,
       avatar_url: formAvatarUrl.trim() || null,
-      // skill_ids: skillIdsArray.length > 0 ? skillIdsArray : null,
     };
-    
-    let error = null;
 
-    if (editingClass && editingClass.id) {
-      // Update existing class
-      const { error: updateError } = await supabase
-        .from('classes')
-        .update(classDataToSubmit)
-        .eq('id', editingClass.id);
-      error = updateError;
-    } else {
-      // Create new class
-      const { error: insertError } = await supabase
-        .from('classes')
-        .insert([classDataToSubmit]);
-      error = insertError;
+    try {
+      let classId;
+      if (editingClass) {
+        // Update existing class
+        const { error: updateError } = await supabase
+          .from('classes')
+          .update(classDataToSubmit)
+          .eq('id', editingClass.id);
+        
+        if (updateError) throw updateError;
+        classId = editingClass.id;
+      } else {
+        // Create new class
+        const { data, error: insertError } = await supabase
+          .from('classes')
+          .insert([classDataToSubmit])
+          .select();
+        
+        if (insertError) throw insertError;
+        classId = data[0].id;
+      }
+
+      // Delete existing skill associations
+      await supabase
+        .from('class_skills')
+        .delete()
+        .eq('class_id', classId);
+
+      // Insert new skill associations
+      if (selectedSkills.length > 0) {
+        const skillAssociations = selectedSkills.map(skillId => ({
+          class_id: classId,
+          skill_id: skillId
+        }));
+
+        const { error: skillsError } = await supabase
+          .from('class_skills')
+          .insert(skillAssociations);
+
+        if (skillsError) throw skillsError;
+      }
+
+      setEditingClass(null);
+      await fetchClasses();
+    } catch (error: any) {
+      setFormError(error.message);
+      console.error("Error saving class:", error);
     }
     
     setIsSubmitting(false);
-
-    if (error) {
-      setFormError(error.message);
-      console.error("Error saving class:", error.message);
-    } else {
-      // Success! Clear form (or hide it), reset editingClass, and refresh list
-      setEditingClass(null); // This will also clear the form due to useEffect
-      await fetchClasses(); 
-    }
   };
 
   const handleEditClick = (cls: ClassItem) => {
@@ -156,7 +222,7 @@ export default function AdminClassesPage() {
     document.getElementById('classFormContainer')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-const handleDeleteClass = async (classToDelete: ClassItem) => {
+  const handleDeleteClass = async (classToDelete: ClassItem) => {
     if (!window.confirm(`Are you sure you want to delete "${classToDelete.name || 'this class'}"? This cannot be undone.`)) {
       return;
     }
@@ -194,6 +260,33 @@ const handleDeleteClass = async (classToDelete: ClassItem) => {
   const handleAvatarSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
     setFormAvatarUrl(publicUrl);
     setShowAvatarPickerModal(false); // Close the modal
+  };
+
+  // Add function to fetch skills for class listing
+  const fetchClassWithSkills = useCallback(async (classId: number) => {
+    const { data, error } = await supabase
+      .from('class_skills')
+      .select(`
+        skill_id,
+        skills (
+          id,
+          name
+        )
+      `)
+      .eq('class_id', classId);
+    
+    if (error) {
+      console.error('Error fetching class skills:', error);
+      return [];
+    }
+
+    return data.map(item => item.skills);
+  }, []);
+
+  // Add handler for skill selection confirmation
+  const handleSkillSelectionConfirm = (selectedIds: number[]) => {
+    setSelectedSkills(selectedIds);
+    setShowSkillSelectorModal(false);
   };
 
   return (
@@ -256,22 +349,42 @@ const handleDeleteClass = async (classToDelete: ClassItem) => {
             </button>
           </div>
           
-          {/* TODO: Add input for skill_ids later - for now it's managed by Class picks Skills */}
-          {/* For example:
+          {/* Class Skills Selection */}
           <div>
-            <label htmlFor="formSkillIds" className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Skill IDs (comma-separated):
+            <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Class Skills:
             </label>
-            <input
-                type="text"
-                id="formSkillIds"
-                value={formSkillIdsString}
-                onChange={(e) => setFormSkillIdsString(e.target.value)}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                placeholder="e.g., 1, 2, 3"
-            />
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setShowSkillSelectorModal(true)}
+                className="w-full py-2 px-3 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+              >
+                Select Skills ({selectedSkills.length} selected)
+              </button>
+              {selectedSkills.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {availableSkills
+                    .filter(skill => selectedSkills.includes(skill.id))
+                    .map(skill => (
+                      <span 
+                        key={skill.id}
+                        className="inline-flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded"
+                      >
+                        {skill.name}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSkills(prev => prev.filter(id => id !== skill.id))}
+                          className="ml-1 hover:text-blue-600 dark:hover:text-blue-400"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                </div>
+              )}
+            </div>
           </div>
-          */}
 
           {formError && <p className="text-red-500 dark:text-red-400 mt-2">{formError}</p>}
           <div className="flex items-center gap-4 pt-3 border-t dark:border-gray-600">
@@ -322,6 +435,16 @@ const handleDeleteClass = async (classToDelete: ClassItem) => {
         </div>
       )}
 
+      {/* Modal for Skill Selector */}
+      {showSkillSelectorModal && (
+        <SkillSelectorModal
+          skills={availableSkills}
+          selectedSkillIds={selectedSkills}
+          onClose={() => setShowSkillSelectorModal(false)}
+          onConfirm={handleSkillSelectionConfirm}
+        />
+      )}
+
       {/* List of Existing Classes */}
       <h2 className="text-xl sm:text-2xl font-semibold mb-4 mt-10 text-gray-800 dark:text-gray-100">Existing Classes</h2>
       {listLoading && <p className="dark:text-gray-300">Loading classes...</p>}
@@ -344,7 +467,19 @@ const handleDeleteClass = async (classToDelete: ClassItem) => {
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">{cls.name}</h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">ID: {cls.id}</p>
                     {cls.description && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{cls.description}</p>}
-                     {/* We'll display skill_ids or linked skills later */}
+                    {/* Add Skills Display */}
+                    <div className="mt-2">
+                      {availableSkills
+                        .filter(skill => selectedSkills.includes(skill.id))
+                        .map(skill => (
+                          <span 
+                            key={skill.id}
+                            className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded mr-2 mb-1"
+                          >
+                            {skill.name}
+                          </span>
+                        ))}
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 flex-shrink-0 ml-2 items-center">
