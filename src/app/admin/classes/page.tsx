@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'; // Adjust path if your alias fo
 import Link from 'next/link';
 import MediaFileExplorer from '@/components/admin/media/MediaFileExplorer'; // Import the new explorer
 import SkillSelectorModal from '@/components/admin/skills/SkillSelectorModal';
+import { SkillItem } from '@/types/skills';
 
 // Update the ClassItem interface
 interface ClassItem {
@@ -13,13 +14,6 @@ interface ClassItem {
   created_at: string;
   name: string;
   avatar_url?: string | null;
-  description?: string | null;
-}
-
-// Add new interface for Skills
-interface Skill {
-  id: number;
-  name: string;
   description?: string | null;
 }
 
@@ -67,7 +61,7 @@ export default function AdminClassesPage() {
   const [showAvatarPickerModal, setShowAvatarPickerModal] = useState(false);
 
   // Add new state for skills
-  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+  const [availableSkills, setAvailableSkills] = useState<SkillItem[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<number[]>([]);
   const [skillsLoading, setSkillsLoading] = useState(true);
 
@@ -251,37 +245,11 @@ export default function AdminClassesPage() {
     }
   };
 
-  const handleCreateNewClick = () => {
-    setEditingClass(null); // Clears form for new entry
-     document.getElementById('classFormContainer')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   // Handler for when an avatar is selected from the MediaFileExplorer
   const handleAvatarSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
     setFormAvatarUrl(publicUrl);
     setShowAvatarPickerModal(false); // Close the modal
   };
-
-  // Add function to fetch skills for class listing
-  const fetchClassWithSkills = useCallback(async (classId: number) => {
-    const { data, error } = await supabase
-      .from('class_skills')
-      .select(`
-        skill_id,
-        skills (
-          id,
-          name
-        )
-      `)
-      .eq('class_id', classId);
-    
-    if (error) {
-      console.error('Error fetching class skills:', error);
-      return [];
-    }
-
-    return data.map(item => item.skills);
-  }, []);
 
   // Add handler for skill selection confirmation
   const handleSkillSelectionConfirm = (selectedIds: number[]) => {

@@ -36,7 +36,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
   return (
     <>
       <div 
-        className={`relative group aspect-square p-3 border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all ${
+        className={`relative p-2 w-64 group border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all ${
           isSelected 
             ? 'border-blue-500 ring-2 ring-blue-500 ring-opacity-50' 
             : 'border-gray-700 hover:border-gray-600'
@@ -44,33 +44,34 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="h-full flex flex-col">
+        <div className="flex items-start">
           {/* Icon */}
-          <div className="relative flex-grow flex items-center justify-center mb-2">
+          <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
             {skill.icon_url ? (
               <img 
                 src={skill.icon_url} 
                 alt={skill.name || 'Skill icon'} 
-                className="max-h-full max-w-full object-contain rounded"
+                className="w-full h-full object-cover rounded"
               />
             ) : (
-              <div className="w-full h-full bg-gray-700 rounded flex items-center justify-center">
+              <div className="w-full h-full flex items-center justify-center">
                 <span className="text-gray-500 text-xs">No icon</span>
               </div>
             )}
           </div>
-          {/* Basic Info */}
-          <div className="text-center">
-            <h3 className="text-sm font-medium text-gray-100 truncate">
-              {skill.name || 'Unnamed Skill'}
-            </h3>
-            <p className="text-xs text-gray-400 truncate">
-              {skill.skill_type}
-            </p>
+
+          {/* Info Section - with max width to prevent overflow into buttons */}
+          <div className="flex-1 min-w-0 mx-3">
+              <h3 className="text-sm font-medium text-gray-100 break-words leading-tight">
+                {skill.name || 'Unnamed Skill'}
+              </h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {skill.skill_type}
+              </p>
           </div>
 
-          {/* Action Buttons */}
-          <div className="absolute top-1 right-1 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Action Buttons - Now vertical */}
+          <div className="flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {onEdit && (
               <button
                 onClick={(e) => {
