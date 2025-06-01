@@ -1,8 +1,17 @@
+// components/admin/skills/SkillCard.tsx
+'use client';
+
 import { useState } from 'react';
-import { SkillItem } from '@/types/skills';
-import { formatFullSkillDescription } from '@/utils/skillUtils';
+import { SkillItem } from '@/types/skills'; // Assuming this path is correct for your SkillItem type
 import { useFloating, offset, shift, flip, useHover, useInteractions } from '@floating-ui/react';
 import { createPortal } from 'react-dom';
+
+// Import utility functions
+import { 
+  formatEnergyCost, 
+  formatRange, 
+  formatFullSkillDescription 
+} from '@/utils/skillUtils'; // Ensure this path is correct
 
 interface SkillCardProps {
   skill: SkillItem;
@@ -27,17 +36,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
   const hover = useHover(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-  // Format energy cost for display
-  const formatEnergyCost = (energyCost: Record<string, number> | undefined) => {
-    if (!energyCost) return 'None';
-    return Object.values(energyCost).join('/');
-  };
-
-  // Format range for display
-  const formatRange = (range: number | undefined) => {
-    if (!range) return undefined;
-    return range === 1 ? 'Melee' : range.toString();
-  };
+  // Inline format functions are now removed and imported from utils
 
   return (
     <>
@@ -58,6 +57,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
                 src={skill.icon_url} 
                 alt={skill.name || 'Skill icon'} 
                 className="w-full h-full object-cover rounded"
+                onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -66,22 +66,22 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
             )}
           </div>
 
-          {/* Info Section - with max width to prevent overflow into buttons */}
+          {/* Info Section */}
           <div className="flex-1 min-w-0 mx-3">
               <h3 className="text-sm font-medium text-gray-100 break-words leading-tight">
                 {skill.name || 'Unnamed Skill'}
               </h3>
               <p className="text-xs text-gray-400 mt-0.5">
-                {skill.skill_type}
+                {skill.skill_type || 'N/A Type'}
               </p>
           </div>
 
-          {/* Action Buttons - Now vertical */}
+          {/* Action Buttons */}
           <div className="flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {onEdit && (
               <button
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.stopPropagation(); // Prevent card click or tooltip trigger
                   onEdit(skill);
                 }}
                 className="p-1 text-blue-400 hover:text-blue-300"
@@ -95,7 +95,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
             {onDelete && (
               <button
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.stopPropagation(); // Prevent card click or tooltip trigger
                   onDelete(skill);
                 }}
                 className="p-1 text-red-400 hover:text-red-300"
@@ -111,7 +111,7 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
       </div>
 
       {/* Floating UI Tooltip */}
-      {isTooltipOpen && createPortal(
+      {isTooltipOpen && document.body && createPortal(
         <div
           ref={refs.setFloating}
           {...getFloatingProps()}
@@ -119,20 +119,23 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
           className="z-50 w-80 p-4 bg-gray-900 rounded-lg shadow-xl border border-gray-700"
         >
           <div className="space-y-3">
-            {/* Header with Icon and Basic Info */}
+            {/* Header */}
             <div className="flex items-start space-x-3">
               {skill.icon_url && (
                 <img 
                   src={skill.icon_url} 
                   alt={skill.name || 'Skill details'} 
-                  className="w-12 h-12 object-contain rounded"
+                  className="w-12 h-12 object-contain rounded bg-gray-800 p-1"
+                  onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
                 />
               )}
               <div className="flex-grow">
-                <h3 className="text-base font-medium text-gray-100">{skill.name}</h3>
+                <h3 className="text-base font-medium text-gray-100">{skill.name || "Unnamed Skill"}</h3>
                 <p className="text-xs text-gray-400">ID: {skill.id}</p>
                 <p className="text-sm text-gray-300">
-                  {skill.skill_type} • Level {skill.max_level} • {skill.activation_type}
+                  {skill.skill_type || "N/A Type"}
+                  {skill.max_level && ` • Level ${skill.max_level}`}
+                  {skill.activation_type && ` • ${skill.activation_type}`}
                 </p>
               </div>
             </div>
@@ -142,24 +145,26 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
               {skill.energy_cost && (
                 <p>
                   <span className="text-gray-400">Energy Cost: </span>
+                  {/* Now using the imported utility function */}
                   <span className="text-gray-200">{formatEnergyCost(skill.energy_cost)}</span>
                 </p>
               )}
-              {skill.cooldown && (
+              {skill.cooldown != null && ( // Check for null or undefined
                 <p>
                   <span className="text-gray-400">Cooldown: </span>
-                  <span className="text-gray-200">{skill.cooldown}</span>
+                  <span className="text-gray-200">{skill.cooldown}s</span>
                 </p>
               )}
-              {skill.reduced_energy_regen && (
+              {skill.reduced_energy_regen != null && ( // Check for null or undefined
                 <p>
                   <span className="text-gray-400">Reduced Energy Regen: </span>
-                  <span className="text-gray-200">{skill.reduced_energy_regen}</span>
+                  <span className="text-gray-200">{skill.reduced_energy_regen}%</span>
                 </p>
               )}
-              {skill.range && (
+              {skill.range != null && ( // Check for null or undefined
                 <p>
                   <span className="text-gray-400">Range: </span>
+                  {/* Now using the imported utility function */}
                   <span className="text-gray-200">{formatRange(skill.range)}</span>
                 </p>
               )}
@@ -167,11 +172,12 @@ export default function SkillCard({ skill, onEdit, onDelete, isSelected }: Skill
 
             {/* Description */}
             <div className="text-sm">
+              {/* Now using the imported utility function */}
               <p className="text-gray-200">{formatFullSkillDescription(skill)}</p>
             </div>
           </div>
         </div>,
-        document.body
+        document.body // Ensure document.body is available for portal
       )}
     </>
   );

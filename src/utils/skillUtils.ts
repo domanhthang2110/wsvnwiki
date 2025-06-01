@@ -29,3 +29,21 @@ export function formatFullSkillDescription(skill: SkillItem): string {
   
   return formattedDesc;
 }
+
+export const formatEnergyCost = (energyCost: Record<number, number> | undefined | null): string => {
+  if (!energyCost || Object.keys(energyCost).length === 0) return 'None';
+  
+  // This provides a generic display. You could enhance this if you have a way
+  // to map the numeric keys to resource names (e.g., using parameters_definition).
+  return Object.entries(energyCost)
+    .map(([key, value]) => `Type ${key}: ${value}`)
+    .join(' / ');
+};
+
+/**
+ * Formats the skill's range for display.
+ */
+export const formatRange = (range: number | undefined | null): string => {
+  if (range === undefined || range === null) return 'N/A';
+  return range === 1 ? 'Melee' : `${range}m`;
+};

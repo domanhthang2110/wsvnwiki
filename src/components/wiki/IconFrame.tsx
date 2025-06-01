@@ -1,18 +1,14 @@
-// components/IconFrame.tsx
+// components/wiki/IconFrame.tsx
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ForwardedRef } from 'react';
 
-// Original dimensions of a single frame in the sprite sheet
+// Constants
 const ORIGINAL_FRAME_SIZE = 44;
-const SPRITE_SHEET_URL = '/icon_frame.png';
+const SPRITE_SHEET_URL = '/icon_frame.png'; // Ensure this path is correct in your public folder
 const SPRITE_COLUMNS = 3;
-const SPRITE_ROWS = 2; // The sprite has 2 rows of frames
-
-// Original border thickness
+const SPRITE_ROWS = 2;
 const ORIGINAL_BORDER_THICKNESS = 7;
-const ORIGINAL_CONTENT_OFFSET = ORIGINAL_BORDER_THICKNESS + 1;
-
 
 export type FrameStyleType = 'yellow' | 'red' | 'green';
 
@@ -22,55 +18,53 @@ const frameStyleIndices: Record<FrameStyleType, { default: number; hover: number
   green:  { default: 5, hover: 2 },
 };
 
-// STEP 1: Add a "size" prop to the interface
 interface IconFrameProps {
   contentImageUrl: string;
   styleType: FrameStyleType;
   altText?: string;
   disableHover?: boolean;
-  size?: number; // New prop to control the component's size
+  size?: number;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  isActive?: boolean;
+  // These props allow the parent to be notified of hover events
+  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const IconFrame: React.FC<IconFrameProps> = ({
+const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
   contentImageUrl,
   styleType,
   altText = "User content",
   disableHover = false,
-  size = ORIGINAL_FRAME_SIZE, // Use original size as the default
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
+  size = ORIGINAL_FRAME_SIZE,
+  onClick,
+  isActive = false,
+  onMouseEnter: parentOnMouseEnter, // Destructure parent's onMouseEnter
+  onMouseLeave: parentOnMouseLeave, // Destructure parent's onMouseLeave
+}, ref: ForwardedRef<HTMLDivElement>) => {
+  const [isHovered, setIsHovered] = useState(false); // For IconFrame's own visual hover effect
 
-  // STEP 2: Calculate all dimensions dynamically based on the size prop
-  // We use useMemo to avoid recalculating on every render unless 'size' changes
   const dimensions = useMemo(() => {
     const scale = size / ORIGINAL_FRAME_SIZE;
     const frameBorderThickness = ORIGINAL_BORDER_THICKNESS * scale;
-    const contentAreaSize = size - 2 * frameBorderThickness;
-    const contentAreaOffset = frameBorderThickness + (1 * scale); // Scale the 1px gap too
-
-    return {
-      scale,
-      contentAreaSize,
-      contentAreaOffset,
-    };
+    const contentAreaSize = Math.max(0, size - 2 * frameBorderThickness);
+    const contentAreaOffset = frameBorderThickness + (1 * scale);
+    return { scale, contentAreaSize, contentAreaOffset };
   }, [size]);
 
   const currentFrameIndices = frameStyleIndices[styleType];
-  const currentFrameIndex = (isHovered && !disableHover) ? currentFrameIndices.hover : currentFrameIndices.default;
+  const showActiveState = isActive || (isHovered && !disableHover);
+  const currentFrameIndex = showActiveState 
+    ? currentFrameIndices.hover 
+    : currentFrameIndices.default;
 
-  // STEP 3: Update background calculations to use the new size
   const { backgroundPosition, backgroundSize } = useMemo(() => {
     const col = currentFrameIndex % SPRITE_COLUMNS;
     const row = Math.floor(currentFrameIndex / SPRITE_COLUMNS);
-
-    // Position must be scaled by the new size
     const xPos = -(col * size);
     const yPos = -(row * size);
-    
-    // The entire sprite sheet must be scaled up
     const scaledSheetWidth = SPRITE_COLUMNS * size;
     const scaledSheetHeight = SPRITE_ROWS * size;
-
     return {
       backgroundPosition: `${xPos}px ${yPos}px`,
       backgroundSize: `${scaledSheetWidth}px ${scaledSheetHeight}px`,
@@ -82,6 +76,7 @@ const IconFrame: React.FC<IconFrameProps> = ({
     height: `${size}px`,
     position: 'relative',
     display: 'inline-block',
+    cursor: onClick ? 'pointer' : 'default',
   };
 
   const contentImageStyle: React.CSSProperties = {
@@ -107,26 +102,52 @@ const IconFrame: React.FC<IconFrameProps> = ({
     imageRendering: 'pixelated',
     zIndex: 2,
     pointerEvents: 'none',
-    // STEP 4: Add the backgroundSize property
     backgroundSize: backgroundSize,
+  };
+
+  // These handlers now manage the internal hover state AND call the parent's handlers
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!disableHover) {
+      setIsHovered(true);
+    }
+    if (parentOnMouseEnter) { // If the parent passed an onMouseEnter, call it
+      parentOnMouseEnter(event);
+    }
+  };
+
+  const handleMouseLeave = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!disableHover) {
+      setIsHovered(false);
+    }
+    if (parentOnMouseLeave) { // If the parent passed an onMouseLeave, call it
+      parentOnMouseLeave(event);
+    }
   };
 
   return (
     <div
+      ref={ref}
       style={containerStyle}
-      onMouseEnter={() => !disableHover && setIsHovered(true)}
-      onMouseLeave={() => !disableHover && setIsHovered(false)}
-      role="img"
+      onMouseEnter={handleMouseEnter} // Use the new combined handler
+      onMouseLeave={handleMouseLeave} // Use the new combined handler
+      onClick={onClick}
+      role={onClick ? "button" : "img"}
+      tabIndex={onClick ? 0 : -1}
       aria-label={altText || `Framed content with ${styleType} style`}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(e as any); } : undefined}
     >
       <img
         src={contentImageUrl}
-        alt={altText}
+        alt={altText || ""}
         style={contentImageStyle}
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = `https://placehold.co/${dimensions.contentAreaSize || 30}x${dimensions.contentAreaSize || 30}/374151/9CA3AF?text=?`;
+        }}
       />
       <div style={frameOverlayStyle} />
     </div>
   );
-};
+});
 
+IconFrame.displayName = 'IconFrame';
 export default IconFrame;
