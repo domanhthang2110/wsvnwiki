@@ -1,5 +1,12 @@
+import { Database } from './database.types';
+
+// Base type from Supabase auto-generation
+export type SkillRow = Database['public']['Tables']['skills']['Row'];
+export type Json = Database['public']['Tables']['skills']['Row']['energy_cost']; // Re-export Json type for convenience
+
+// Specific types for JSONB columns
 export interface SkillParameterDefinitionInForm {
-  id: string;
+  id: string; // Used for client-side form management (e.g., unique key for React lists)
   key: string;
   label: string;
 }
@@ -11,25 +18,27 @@ export interface SkillParameterDefinitionStored {
 
 export interface SkillLevelValue {
   level: number;
-  [key: string]: any;
+  [key: string]: any; // Dynamic keys for parameter values
 }
 
-export interface SkillItem {
-  id: number;
-  created_at: string;
-  name?: string | null;
-  icon_url?: string | null;
-  skill_type?: string | null;
-  activation_type?: string | null;
-  max_level?: number | null;
-  cooldown?: number | null;
-  energy_cost?: Record<number, number> | null;  // Changed to Record<number, number>
-  range?: number | null;
-  reduced_energy_regen?: number | null;
-  description?: string | null;
-  parameters_definition?: SkillParameterDefinitionStored[] | null;
-  level_values?: SkillLevelValue[] | null;
+// Define the specific types for the JSONB columns
+type SkillEnergyCost = Record<number, number>;
+type SkillParametersDefinition = SkillParameterDefinitionStored[];
+type SkillLevelValues = SkillLevelValue[];
+
+// Extended interface for Skill item, picking fields from SkillRow and overriding JSONB
+export interface SkillItem extends Omit<SkillRow, 'energy_cost' | 'parameters_definition' | 'level_values'> {
+  energy_cost: SkillEnergyCost | null;
+  parameters_definition: SkillParametersDefinition | null;
+  level_values: SkillLevelValues | null;
 }
+
+// For the form data submission
+export type SkillFormData = Omit<SkillItem, 'id' | 'created_at'> & {
+  energy_cost?: SkillEnergyCost | null;
+  parameters_definition?: SkillParameterDefinitionInForm[] | null;
+  level_values?: SkillLevelValue[] | null;
+};
 
 export const MAX_SKILL_LEVEL_OPTIONS = [1, 2, 3, 4, 5];
 export const SKILL_TIER_OPTIONS: Array<NonNullable<SkillItem['skill_type']>> = ["Basic", "Expert", "Equipment", "Race"];

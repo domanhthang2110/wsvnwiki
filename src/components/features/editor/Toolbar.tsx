@@ -9,9 +9,9 @@ import {
   AlignCenter, AlignLeft, AlignRight, Minus, AlignJustify
 } from 'lucide-react';
 
-import { Toggle } from '@/components/ui/toggle';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/Toggle/toggle';
+import { Separator } from '@/components/ui/Separator/separator';
+import { Button } from '@/components/ui/Button/button';
 
 type Props = {
   editor: Editor | null;

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import Image from '@tiptap/extension-image';
+import Image from '@tiptap/extension-image'; // Re-import Image
 import Link from '@tiptap/extension-link';
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
@@ -28,10 +28,10 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
         dropcursor: { 
           color: '#68cef8', 
           width: 2 
-        }, 
+        },
       }),
       Underline,
-      Image.configure({ 
+      Image.configure({ // Configure Image separately
         inline: true,
         allowBase64: false,
         HTMLAttributes: {
@@ -64,6 +64,7 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    immediatelyRender: false, // Add this to prevent hydration mismatches
   });
 
   // Add effect to update content when it changes

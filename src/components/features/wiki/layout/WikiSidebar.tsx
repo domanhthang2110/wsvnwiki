@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Home, Swords, Book, ScrollText, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AuthStatusButtons from '@/components/features/auth/AuthStatusButtons';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -78,6 +79,8 @@ export function WikiSidebar() {
           ))}
         </ul>
       </nav>
+      {/* Auth Status Buttons at the bottom */}
+      <AuthStatusButtons />
     </aside>
   );
 }

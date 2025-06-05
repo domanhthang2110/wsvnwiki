@@ -1,61 +1,39 @@
 // src/app/guides/[slug]/page.tsx
-import { supabase } from '@/lib/supabaseClient'; 
-import type { PostItem } from '@/types/posts';    
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-
-// No TipTap specific imports needed here for rendering HTML
+import { getPostBySlug, getAllPostSlugs } from '@/lib/data/posts'; // Import data fetching functions
+import type { PostItem } from '@/types/posts'; // Only need PostItem here
 
 export async function generateStaticParams() {
-  try {
-    const { data: posts } = await supabase.from('posts').select('slug').eq('post_type', 'guide').eq('status', 'published');
-    return posts?.map((post) => ({ slug: post.slug })) || [];
-  } catch (e) { return []; }
-}
-
-async function getGuide(slug: string): Promise<PostItem | null> {
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*, tags(id, name, slug)')
-    .eq('post_type', 'guide')
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .single();
-
-  if (error && error.code !== 'PGRST116') { console.error(`Error fetching guide "${slug}":`, error); return null; }
-  if (!data) return null;
-  return { ...data, tags: Array.isArray(data.tags) ? data.tags : [] } as PostItem;
+  return getAllPostSlugs();
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const guide = await getGuide(params.slug);
+  const guide = await getPostBySlug(params.slug); // Use new data function
   if (!guide) return { title: 'Guide Not Found' };
   let excerpt = 'A guide from the wiki.';
   if (typeof guide.content === 'string') {
-      const textOnly = guide.content.replace(/<[^>]+>/g, ' '); 
+      const textOnly = guide.content.replace(/<[^>]+>/g, ' ');
       excerpt = textOnly.replace(/\s\s+/g, ' ').substring(0, 155) + (textOnly.length > 155 ? '...' : '');
   }
   return { title: guide.title, description: excerpt };
 }
 
 export default async function GuideDisplayPage({ params }: { params: { slug: string } }) {
-  const guide = await getGuide(params.slug);
+  const guide = await getPostBySlug(params.slug); // Use new data function
   if (!guide) notFound();
 
-  // Content is now assumed to be an HTML string from CKEditor
-  const contentHtml = typeof guide.content === 'string' 
-                      ? guide.content 
-                      : "<p>Content not available or in unexpected format.</p>";
+  const contentHtml = guide.content || "<p>Content not available or in unexpected format.</p>";
 
   return (
     <main className="container mx-auto px-4 py-8">
       {/* Apply Tailwind Typography for styling the HTML content from CKEditor */}
       <article className="prose dark:prose-invert lg:prose-xl max-w-3xl mx-auto">
         {guide.featured_image_url && (
-          <img 
-            src={guide.featured_image_url} 
-            alt={guide.title || ''} 
-            className="w-full h-auto max-h-[450px] object-cover rounded-lg mb-8 shadow-lg" 
+          <img
+            src={guide.featured_image_url || ''} // Handle null for src
+            alt={guide.title || ''}
+            className="w-full h-auto max-h-[450px] object-cover rounded-lg mb-8 shadow-lg"
           />
         )}
         <div className="mb-6 pb-4 border-b dark:border-gray-700">
@@ -66,15 +44,15 @@ export default async function GuideDisplayPage({ params }: { params: { slug: str
                 </p>
             )}
         </div>
-        
+
         {guide.tags && guide.tags.length > 0 && (
           <div className="mb-6 flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tags:</span>
-            {guide.tags.map(tag => ( 
-                <Link key={tag.id} href={`/tags/${tag.slug}`} 
+            {guide.tags.map(tag => (
+                <Link key={tag.id} href={`/tags/${tag.slug}`}
                       className="px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800">
                     {tag.name}
-                </Link> 
+                </Link>
             ))}
           </div>
         )}

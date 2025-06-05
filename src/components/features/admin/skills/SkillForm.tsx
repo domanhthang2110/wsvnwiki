@@ -3,13 +3,13 @@
 
 import { FormEvent, useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react'; // For completeness, though not used directly if direct upload removed
-import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue } from '@/types/skills'; // Assuming types are here
-import { supabase } from '@/lib/supabaseClient'; // Assuming this path is correct
+import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue, SkillRow } from '@/types/skills'; // Assuming types are here
+import { supabase } from '@/lib/supabase/client'; // Update Supabase client path
 import { MAX_SKILL_LEVEL_OPTIONS, SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
 
 import ParameterDefinitions from './ParameterDefinitions'; // Assuming this component exists
 import LevelValuesTable from './LevelValuesTable';     // Assuming this component exists
-import MediaFileExplorer from '../media/MediaFileExplorer'; // Import the new explorer
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer'; // Update path
 import EnergyCostRow from './EnergyCostRow'; // Import the new energy cost row component
 
 // Icon for the close button in the modal
@@ -233,11 +233,16 @@ useEffect(() => {
         description: formDescriptionTemplate.trim() || null,
         parameters_definition: finalParamDefs.length > 0 ? finalParamDefs : null,
         level_values: finalLevelValues.length > 0 ? finalLevelValues : null,
-        // Conditional properties are set below
+        // Ensure all properties are explicitly included, even if null
+        cooldown: formCooldown.trim() ? parseInt(formCooldown, 10) : null,
+        range: formRange.trim() ? parseInt(formRange, 10) : null,
+        reduced_energy_regen: formReducedEnergyRegen.trim() ? parseInt(formReducedEnergyRegen, 10) : null,
+        energy_cost: null, // Default to null, will be set below if active
       };
 
       if (formActivationType === 'Active') {
-        skillDataToSubmit.cooldown = formCooldown.trim() ? parseInt(formCooldown, 10) : null;
+        // These are already assigned above, but we can re-assign to be explicit
+        // skillDataToSubmit.cooldown = formCooldown.trim() ? parseInt(formCooldown, 10) : null;
         
         // Convert energy costs to the new format
         const parsedEnergyCosts: Record<number, number> = {};
@@ -248,13 +253,14 @@ useEffect(() => {
         });
         skillDataToSubmit.energy_cost = Object.keys(parsedEnergyCosts).length > 0 ? parsedEnergyCosts : null;
         
-        skillDataToSubmit.range = formRange.trim() ? parseInt(formRange, 10) : null;
-        skillDataToSubmit.reduced_energy_regen = formReducedEnergyRegen.trim() ? parseInt(formReducedEnergyRegen, 10) : null;
+        // skillDataToSubmit.range = formRange.trim() ? parseInt(formRange, 10) : null;
+        // skillDataToSubmit.reduced_energy_regen = formReducedEnergyRegen.trim() ? parseInt(formReducedEnergyRegen, 10) : null;
       } else {
-        skillDataToSubmit.cooldown = null;
-        skillDataToSubmit.energy_cost = null;
-        skillDataToSubmit.range = null;
-        skillDataToSubmit.reduced_energy_regen = null;
+        // These are already assigned above, but we can re-assign to be explicit
+        // skillDataToSubmit.cooldown = null;
+        // skillDataToSubmit.energy_cost = null;
+        // skillDataToSubmit.range = null;
+        // skillDataToSubmit.reduced_energy_regen = null;
       }
 
       await onSubmit(skillDataToSubmit); // Call the prop passed by AdminSkillsPage

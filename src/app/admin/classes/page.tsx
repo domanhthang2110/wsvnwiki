@@ -2,11 +2,15 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import { SkillItem } from '@/types/skills';
-import { ClassItem, NewClassItem } from '@/types/classes';
-import SkillSelectorModal from '@/components/admin/skills/SkillSelectorModal';
-import ClassForm from '@/components/admin/classes/ClassForm';
+import { ClassItem, ClassFormData } from '@/types/classes';
+// REMOVED: import { getClassesWithSkills } from '@/lib/data/classes';
+// REMOVED: import { getSkills } from '@/lib/data/skills';
+import { supabase } from '@/lib/supabase/client'; // Use new client path
+import SkillSelectorModal from '@/components/features/admin/skills/SkillSelectorModal'; // Update path
+import ClassForm from '@/components/features/admin/classes/ClassForm'; // Update path
+import SkillCard from '@/components/features/admin/skills/SkillCard'; // Update path
+import { SkillItem } from '@/types/skills'; // Import SkillItem
+import { AlertTriangle } from 'lucide-react'; // Import icon for error message
 
 export default function AdminClassesPage() {
   const [classes, setClasses] = useState<ClassItem[]>([]);
@@ -14,8 +18,10 @@ export default function AdminClassesPage() {
   const [availableSkills, setAvailableSkills] = useState<SkillItem[]>([]);
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
+  const [pageError, setPageError] = useState<string | null>(null); // New state for page-level errors
   
   const fetchClasses = useCallback(async () => {
+    // Use client-side supabase for fetching
     const { data, error } = await supabase
       .from('classes')
       .select(`
@@ -27,20 +33,20 @@ export default function AdminClassesPage() {
       .order('name', { ascending: true });
 
     if (error) {
-      console.error('Error fetching classes:', error);
+      console.error('Error fetching classes:', error.message);
+      setClasses([]); // Clear classes on error
       return;
     }
 
-    // Transform the data to match our ClassItem type
     const transformedData = data.map(cls => ({
       ...cls,
-      skills: cls.skills?.map((s: any) => s.skill) || []
+      skills: cls.skills?.map((s: { skill: SkillItem }) => s.skill as SkillItem) || []
     }));
-
     setClasses(transformedData);
-  }, []);
+  }, []); // No dependency on supabase here, as it's a constant client instance
 
   const fetchSkills = useCallback(async () => {
+    // Use client-side supabase for fetching
     const { data, error } = await supabase
       .from('skills')
       .select('*')
@@ -48,68 +54,102 @@ export default function AdminClassesPage() {
     
     if (error) {
       console.error('Error fetching skills:', error);
+      setAvailableSkills([]); // Clear skills on error
       return;
     }
-    setAvailableSkills(data);
-  }, []);
+    setAvailableSkills(data as SkillItem[]);
+  }, []); // No dependency on supabase here
 
   useEffect(() => {
     fetchClasses();
     fetchSkills();
   }, [fetchClasses, fetchSkills]);
 
-  const handleSubmit = async (formData: NewClassItem) => {
+  const handleSubmit = async (formData: ClassFormData): Promise<{ success: boolean; error?: string }> => {
+    setPageError(null); // Clear previous page errors
     try {
       let classId: number;
       
+      // Create an object with only the properties that belong to the 'classes' table
+      const classTablePayload = {
+        name: formData.name,
+        description: formData.description,
+        avatar_url: formData.avatar_url,
+      };
+
+      // --- Handle Class Insert/Update ---
       if (editingClass) {
-        // Update existing class
-        await supabase
+        const { error: updateError } = await supabase
           .from('classes')
-          .update(formData)
+          .update(classTablePayload)
           .eq('id', editingClass.id);
+        if (updateError) {
+          // Instead of throwing, return the error
+          return { success: false, error: updateError.message };
+        }
         classId = editingClass.id;
       } else {
-        // Insert new class and get the new ID
-        const { data, error } = await supabase
+        const { data, error: insertError } = await supabase
           .from('classes')
-          .insert([formData])
+          .insert([classTablePayload])
           .select();
         
-        if (error || !data || data.length === 0) {
-          throw new Error('Failed to create class');
+        if (insertError || !data || data.length === 0) {
+          // Instead of throwing, return the error
+          return { success: false, error: insertError?.message || 'Failed to create class: Unknown error' };
         }
         classId = data[0].id;
       }
       
-      // Delete all existing skill associations for this class
+      // --- Handle Skill Associations ---
       if (classId) {
-        await supabase
+        const { error: deleteSkillsError } = await supabase
           .from('class_skills')
           .delete()
           .eq('class_id', classId);
+        if (deleteSkillsError) {
+          return { success: false, error: deleteSkillsError.message };
+        }
       }
 
-      // Add new skill associations
       const skillAssociations = selectedSkills.map(skill => ({
         class_id: classId,
         skill_id: skill.id
       }));
 
       if (skillAssociations.length > 0) {
-        // Using upsert to handle the composite key
-        await supabase
+        const { error: upsertSkillsError } = await supabase
           .from('class_skills')
           .upsert(skillAssociations, {
             onConflict: 'class_id,skill_id'
           });
+        if (upsertSkillsError) {
+          return { success: false, error: upsertSkillsError.message };
+        }
       }
 
+      // --- Success Path ---
       await fetchClasses();
       setEditingClass(null);
       setSelectedSkills([]);
-    } catch (error) {
-      console.error('Error saving class:', error);
+      return { success: true };
+    } catch (error: any) {
+      // This outer catch should only be hit by unexpected errors, not Supabase errors
+      console.error('Unexpected error saving class:', error);
+      console.error('Full error object from AdminClassesPage catch:', JSON.stringify(error, null, 2)); // Log the full error object
+      let userMessage = 'An unexpected error occurred. Please try again.';
+      // If it's a Supabase error that somehow bypassed the internal checks
+      if (error.code === '23505') { 
+        if (error.message.includes('classes_name_key')) {
+          userMessage = 'A class with this name already exists. Please choose a different name.';
+        } else {
+          userMessage = 'This entry would create a duplicate value. Please check your input.';
+        }
+      } else if (error.message) {
+        userMessage = error.message;
+      }
+      setPageError(userMessage); // Set page-level error
+      return { success: false, error: userMessage };
     }
   };
 
@@ -127,13 +167,11 @@ export default function AdminClassesPage() {
     if (!confirm('Are you sure you want to delete this class?')) return;
 
     try {
-      // First delete the skill associations
       await supabase
         .from('class_skills')
         .delete()
         .eq('class_id', classItem.id);
 
-      // Then delete the class
       await supabase
         .from('classes')
         .delete()
@@ -148,6 +186,13 @@ export default function AdminClassesPage() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold text-gray-100 mb-8">Manage Classes</h1>
+
+      {pageError && (
+        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 rounded-md flex items-center gap-2">
+          <AlertTriangle size={20} />
+          <span>Error: {pageError}</span>
+        </div>
+      )}
 
       <ClassForm
         initialData={editingClass}
@@ -181,12 +226,12 @@ export default function AdminClassesPage() {
                   <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
                     {cls.avatar_url ? (
                       <img 
-                        src={cls.avatar_url} 
+                        src={cls.avatar_url || ''} 
                         alt={cls.name} 
                         className="w-full h-full object-cover rounded"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-12 flex items-center justify-center">
                         <span className="text-gray-500 text-xs">No icon</span>
                       </div>
                     )}
@@ -270,7 +315,7 @@ export default function AdminClassesPage() {
                           >
                             {skill.icon_url ? (
                               <img 
-                                src={skill.icon_url} 
+                                src={skill.icon_url || ''} 
                                 alt={skill.name || 'Skill icon'} 
                                 className="w-4 h-4 object-cover rounded"
                               />

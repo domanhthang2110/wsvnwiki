@@ -1,15 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SkillItem } from '@/types/skills';
-import { ClassItem, NewClassItem } from '@/types/classes';
-import MediaFileExplorer from '@/components/admin/media/MediaFileExplorer';
-import SkillCard from '@/components/admin/skills/SkillCard';
+import { ClassItem, ClassFormData } from '@/types/classes';
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
+import SkillCard from '@/components/features/admin/skills/SkillCard';
+import { AlertTriangle } from 'lucide-react';
+import TiptapEditor from '@/components/features/editor/TiptapEditor'; // Import TiptapEditor
+import { Editor } from '@tiptap/react'; // Import Editor type
+import DOMPurify from 'dompurify'; // Import DOMPurify for sanitization
 
 interface ClassFormProps {
   initialData: ClassItem | null;
   selectedSkills: SkillItem[];
-  onSubmit: (data: NewClassItem) => Promise<void>;
+  onSubmit: (data: ClassFormData) => Promise<{ success: boolean; error?: string }>;
   onSkillSelect: () => void;
   isEditing?: boolean;
 }
@@ -21,37 +25,79 @@ export default function ClassForm({
   onSkillSelect,
   isEditing
 }: ClassFormProps) {
-  const [formData, setFormData] = useState<NewClassItem>({
+  const [formData, setFormData] = useState<ClassFormData>({
     name: '',
-    description: '',
+    description: '', // description will now hold HTML
     avatar_url: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMediaExplorerOpen, setMediaExplorerOpen] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  // We need to store the Tiptap editor instance to insert images
+  const [currentTiptapEditor, setCurrentTiptapEditor] = useState<Editor | null>(null); 
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      // When editing, set form data from initialData, sanitizing description on read
+      setFormData({
+        name: initialData.name || '',
+        description: initialData.description || '',
+        avatar_url: initialData.avatar_url || '',
+      });
+    } else {
+      // Clear form for new creation
+      setFormData({ name: '', description: '', avatar_url: '' });
     }
-  }, [initialData]);
+  }, [initialData]); // Removed currentTiptapEditor from dependencies
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormError(null);
+
+    // Get HTML content from Tiptap editor
+    const tiptapContentHtml = currentTiptapEditor?.getHTML() || ''; // Get HTML from stored instance
+    // Sanitize HTML content before sending to parent (and then to DB)
+    const sanitizedDescription = DOMPurify.sanitize(tiptapContentHtml);
+
+    const dataToSubmit: ClassFormData = {
+      ...formData,
+      description: sanitizedDescription, // Use sanitized HTML from Tiptap
+    };
+
     try {
-      await onSubmit(formData);
-      if (!isEditing) {
-        setFormData({ name: '', description: '', avatar_url: '' });
+      const result = await onSubmit(dataToSubmit);
+      if (result.success) {
+        // Parent (AdminClassesPage) will handle resetting editingClass and selectedSkills
+        // This useEffect will then clear the form via initialData becoming null
+      } else if (result.error) {
+        setFormError(result.error);
       }
+    } catch (error: any) {
+      setFormError(error.message || 'An unexpected error occurred during submission.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleAvatarSelect = (publicUrl: string) => {
-    setFormData(prev => ({ ...prev, avatar_url: publicUrl }));
+    setFormData((prev: ClassFormData) => ({ ...prev, avatar_url: publicUrl || '' }));
     setMediaExplorerOpen(false);
   };
+
+  // This handler is passed to TiptapEditor's onImagePickerOpen prop
+  const handleTiptapImagePickerOpen = useCallback((editorInstance: Editor) => {
+    setCurrentTiptapEditor(editorInstance); // Store the editor instance
+    setMediaExplorerOpen(true);
+  }, []);
+
+  // This handler is passed to MediaFileExplorer's onFileSelect prop
+  const handleMediaFileSelectForTiptap = useCallback((publicUrl: string) => {
+    if (currentTiptapEditor) {
+      currentTiptapEditor.chain().focus().setImage({ src: publicUrl }).run();
+    }
+    setMediaExplorerOpen(false);
+  }, [currentTiptapEditor]); // Dependency on currentTiptapEditor
 
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-lg p-6">
@@ -67,7 +113,7 @@ export default function ClassForm({
           <input
             type="text"
             value={formData.name}
-            onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+            onChange={e => setFormData((prev: ClassFormData) => ({ ...prev, name: e.target.value }))}
             className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
@@ -77,11 +123,12 @@ export default function ClassForm({
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Description
           </label>
-          <textarea
-            value={formData.description}
-            onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            rows={4}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          <TiptapEditor
+            content={formData.description || ''}
+            onChange={(newContent) => {
+              setFormData(prev => ({ ...prev, description: newContent }));
+            }}
+            onImagePickerOpen={handleTiptapImagePickerOpen}
           />
         </div>
 
@@ -93,13 +140,13 @@ export default function ClassForm({
             {formData.avatar_url && (
               <div className="relative group">
                 <img 
-                  src={formData.avatar_url} 
+                  src={formData.avatar_url || ''} 
                   alt="Class avatar" 
                   className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
                 />
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, avatar_url: '' }))}
+                  onClick={() => setFormData((prev: ClassFormData) => ({ ...prev, avatar_url: '' }))}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,6 +211,13 @@ export default function ClassForm({
         </div>
       </form>
 
+      {formError && (
+        <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 rounded-md flex items-center gap-2">
+          <AlertTriangle size={20} />
+          <span>Form Error: {formError}</span>
+        </div>
+      )}
+
       {isMediaExplorerOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
@@ -182,7 +236,7 @@ export default function ClassForm({
               <MediaFileExplorer
                 bucketName="media"
                 initialPath="classes"
-                onFileSelect={handleAvatarSelect}
+                onFileSelect={handleMediaFileSelectForTiptap} // Corrected: Use specific handler for Tiptap images
                 mode="select"
                 accept="image/*"
               />

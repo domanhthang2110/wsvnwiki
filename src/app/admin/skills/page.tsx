@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase/client';
 import { SkillItem } from '@/types/skills';
-import SkillForm from '@/components/admin/skills/SkillForm';
-import SkillCard from '@/components/admin/skills/SkillCard';
+import SkillForm from '@/components/features/admin/skills/SkillForm';
+import SkillCard from '@/components/features/admin/skills/SkillCard';
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<SkillItem[]>([]);

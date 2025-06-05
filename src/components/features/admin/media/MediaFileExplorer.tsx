@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, ChangeEvent, DragEvent, useRef } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Adjust path if needed
+import { supabase } from '@/lib/supabase/client';
 import type { FileObject } from '@supabase/storage-js';
 
 // --- Icons ---

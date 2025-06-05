@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Adjust path if your alias for src is different
+import { supabase } from '@/lib/supabase/client';
 import type { PostItem, PostFormData } from '@/types/posts'; 
-import PostForm from '@/components/admin/posts/PostForm'; 
+import PostForm from '@/components/features/admin/posts/PostForm'; 
 import Link from 'next/link';
 import { Edit, Trash2, PlusCircle, X } from 'lucide-react'; 
 
@@ -28,11 +28,11 @@ export default function AdminPostsPage() {
     if (fetchError) {
         setPageError(fetchError.message);
     } else if (data) {
-      const formattedData = data.map(post => ({
+      const formattedData = data.map((post: PostItem) => ({
         ...post,
         tags: Array.isArray(post.tags) ? post.tags : [],
-        type: post.types, 
-        type_id: post.type_id || (post.types as any)?.id || null,
+        type: post.type, 
+        type_id: post.type_id || (post.type as any)?.id || null,
       })) as PostItem[];
       setPosts(formattedData);
     }

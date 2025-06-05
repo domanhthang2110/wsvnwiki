@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // To highlight the active link
+import { usePathname, useRouter } from 'next/navigation'; // To highlight the active link
+import { supabase } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/Button/button';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard' },
@@ -14,15 +16,21 @@ const navItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/auth/login');
+  };
 
   return (
-    <aside className="w-60 flex-shrink-0 bg-gray-800 p-4 h-screen sticky top-0 shadow-lg">
+    <aside className="w-60 flex-shrink-0 bg-gray-800 p-4 h-screen sticky top-0 shadow-lg flex flex-col">
       <div className="mb-8 text-center">
         <Link href="/admin" className="text-2xl font-bold text-blue-400 hover:text-blue-500">
           Wiki Admin
         </Link>
       </div>
-      <nav>
+      <nav className="flex-grow">
         <ul>
           {navItems.map((item) => (
             <li key={item.href} className="mb-2">
@@ -41,6 +49,11 @@ export function AdminSidebar() {
           ))}
         </ul>
       </nav>
+      <div className="mt-auto pt-4 border-t border-gray-700">
+        <Button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 text-white">
+          Log Out
+        </Button>
+      </div>
     </aside>
   );
 }

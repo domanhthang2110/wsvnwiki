@@ -1,18 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, FormEvent, useCallback, useRef } from 'react';
-import { PostFormData, PostItem, PostTag } from '@/types/posts'; 
-import { supabase } from '@/lib/supabaseClient'; 
-import MediaFileExplorer from '../media/MediaFileExplorer'; 
-import { CloseIcon } from '@/components/icons'; 
-import TiptapEditor from '@/components/editor/TiptapEditor'; 
+import { PostFormData, PostItem, TagRow, TypeRow } from '@/types/posts'; // Use TagRow and TypeRow
+import { supabase } from '@/lib/supabase/client'; // Update Supabase client path
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer'; // Update path
+import { CloseIcon } from '@/components/shared/icons'; // Update icons path
+import TiptapEditor from '@/components/features/editor/TiptapEditor'; // Update TiptapEditor path
 import { type Editor } from '@tiptap/react';
 
-interface PostTypeItem {
-  id: number;
-  name: string;
-  slug: string;
-}
+// Removed local PostTypeItem interface, using TypeRow from '@/types/posts'
 
 interface PostFormProps {
   onSubmit: (data: PostFormData) => Promise<boolean | void>;
@@ -40,9 +36,9 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   const [contentHtml, setContentHtml] = useState('');
   const [featuredImageUrl, setFeaturedImageUrl] = useState('');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
-  const [availableTags, setAvailableTags] = useState<PostTag[]>([]);
+  const [availableTags, setAvailableTags] = useState<TagRow[]>([]); // Use TagRow
   const [selectedTagIds, setSelectedTagIds] = useState<Set<number>>(new Set());
-  const [availableTypes, setAvailableTypes] = useState<PostTypeItem[]>([]);
+  const [availableTypes, setAvailableTypes] = useState<TypeRow[]>([]); // Use TypeRow
   const [selectedTypeId, setSelectedTypeId] = useState<number | ''>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -71,7 +67,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       status,
       // published_at logic depends on whether you want to update it on every save when 'published'
       // For simplicity, let's set/update it if status is 'published'
-      published_at: status === 'published' ? new Date().toISOString() : (isEditing ? initialData?.published_at : null),
+      published_at: status === 'published' ? new Date().toISOString() : (isEditing && initialData?.published_at ? initialData.published_at : null),
       tag_ids: Array.from(selectedTagIds),
       type_id: Number(selectedTypeId), 
     };
@@ -105,12 +101,12 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       try {
         const { data: tagsData, error: tagsError } = await supabase.from('tags').select('id, name, slug');
         if (tagsError) throw tagsError;
-        if (tagsData) setAvailableTags(tagsData as PostTag[]);
+        if (tagsData) setAvailableTags(tagsData as TagRow[]); // Cast to TagRow[]
       } catch (error) { console.error("Error fetching tags:", error); }
       try {
         const { data: typesData, error: typesError } = await supabase.from('types').select('id, name, slug');
         if (typesError) throw typesError;
-        if (typesData) setAvailableTypes(typesData as PostTypeItem[]);
+        if (typesData) setAvailableTypes(typesData as TypeRow[]); // Cast to TypeRow[]
       } catch (error) { console.error("Error fetching types:", error); }
     };
     fetchInitialData();
@@ -124,13 +120,13 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       // setSlugToPreserve(initialData.slug || ''); // And use this for the slug input if title hasn't changed
       setContentHtml(typeof initialData.content === 'string' ? initialData.content : '');
       setFeaturedImageUrl(initialData.featured_image_url || '');
-      setStatus(initialData.status || 'draft');
+      setStatus((initialData.status as 'draft' | 'published') || 'draft'); // Cast initialData.status
       setSelectedTypeId(initialData.type_id || ''); 
 
       if (isEditing && initialData.id) {
         const fetchPostTags = async () => {
           const { data } = await supabase.from('post_tags').select('tag_id').eq('post_id', initialData.id);
-          if (data) setSelectedTagIds(new Set(data.map(pt => pt.tag_id)));
+          if (data) setSelectedTagIds(new Set(data.map((pt: { tag_id: number }) => pt.tag_id))); // Explicitly type pt
         };
         fetchPostTags();
       }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { supabase } from '@/lib/supabaseClient'; 
+import { supabase } from '@/lib/supabase/client'; 
 import { Edit3, Trash2, Tag, Type, AlertTriangle, PlusCircle } from 'lucide-react';
 
 // --- Helper Function ---

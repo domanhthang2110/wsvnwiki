@@ -1,7 +1,7 @@
 // src/app/admin/media/page.tsx
 'use client';
 
-import MediaFileExplorer from '@/components/admin/media/MediaFileExplorer'; 
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 
 export default function AdminMediaPage() {
   const handleFileSelectedOnPage = (publicUrl: string, pathInBucket: string) => {

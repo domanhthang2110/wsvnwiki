@@ -3,8 +3,8 @@
 
 import { useState } from 'react';
 import { ClassItem } from '@/types/classes';
-import ClassCard from '@/components/wiki/classes/ClassCard';
-import ClassDetailModal from '@/components/wiki/classes/ClassDetailModal';
+import ClassCard from '@/components/features/wiki/classes/ClassCard';
+import ClassDetailModal from '@/components/features/wiki/classes/ClassDetailModal';
 
 // This component receives the pre-fetched data as a prop.
 interface ClassListProps {

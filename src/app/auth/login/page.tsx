@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Adjust path if needed
-import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
+import { useRouter, useSearchParams } from 'next/navigation'; // Import useSearchParams
+import Link from 'next/link'; // Import Link
+import { Button } from '@/components/ui/Button/button'; // Import Button
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,25 +12,55 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams(); // Get search params
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    // Get form data directly from the event target
+    const formData = new FormData(event.currentTarget);
+    const currentEmail = formData.get('email') as string;
+    const currentPassword = formData.get('password') as string;
+
+    // Log the values just before the call
+    console.log('Email from FormData:', currentEmail);
+    console.log('Password from FormData:', currentPassword);
+    console.log('Email state at call time:', email); // Keep this for comparison
+    console.log('Password state at call time:', password); // Keep this for comparison
+
+    if (!currentEmail || !currentPassword) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email: currentEmail,
+      password: currentPassword,
     });
 
     setLoading(false);
 
+    console.log('Supabase signInWithPassword data:', data);
+    console.log('Supabase signInWithPassword error:', signInError);
+
     if (signInError) {
       setError(signInError.message);
       console.error('Login error:', signInError);
+    } else if (data.user) { // Check if user data is present, indicating success
+      // Successful login
+      const redirectedFrom = searchParams.get('redirectedFrom'); // Get the redirect path
+      if (redirectedFrom) {
+        router.push(redirectedFrom); // Redirect to original intended path
+      } else {
+        router.push('/admin'); // Default redirect to admin dashboard
+      }
     } else {
-      // Successful login, redirect to the admin dashboard
-      router.push('/admin'); 
+      // This else block might catch cases where there's no error but also no user (e.g., email not confirmed)
+      setError("Login failed: No user data returned. Check email confirmation?");
+      console.error("Login failed: No user data returned from signInWithPassword.");
     }
   };
 
@@ -92,6 +124,13 @@ export default function LoginPage() {
           </button>
         </div>
       </form>
+      <div className="mt-4 text-center">
+        <Link href="/" passHref>
+          <Button variant="outline" className="w-full text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+            Back to Wiki
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

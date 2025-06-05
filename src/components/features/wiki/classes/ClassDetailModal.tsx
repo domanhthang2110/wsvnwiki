@@ -4,8 +4,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ClassItem } from '@/types/classes'; // Ensure this path is correct
 import { SkillItem } from '@/types/skills';   // Ensure this path is correct
-import IconFrame from '@/components/wiki/IconFrame'; // Using your specified path
-import SkillDetailTooltip from '@/components/admin/skills/SkillDetailTooltip'; // Using your specified path
+import IconFrame from '@/components/shared/IconFrame';
+import SkillDetailTooltip from '@/components/features/admin/skills/SkillDetailTooltip';
+import DOMPurify from 'dompurify';
 
 interface ClassDetailModalProps {
   classItem: ClassItem;
@@ -101,9 +102,10 @@ export default function ClassDetailModal({ classItem, onClose }: ClassDetailModa
                 className="w-32 h-32 object-cover rounded-lg border-2 border-gray-600 flex-shrink-0"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatar; }}
               />
-              <p className="text-sm text-gray-300 flex-1 min-h-[8rem] sm:min-h-0">
-                {classItem.description || "No description available for this class."}
-              </p>
+              <div 
+                className="text-sm text-gray-300 flex-1 min-h-[8rem] sm:min-h-0 prose prose-invert max-w-none [&_p]:my-0 [&_img]:my-0 [&_img]:mx-0 [&_img]:inline-block [&_img]:align-bottom"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(classItem.description || "No description available for this class.") }}
+              />
             </div>
             
             {/* Tabs Navigation */}
