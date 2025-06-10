@@ -1,0 +1,54 @@
+.tableOfContentsContainer {
+  position: sticky;
+  top: 24px; /* Adjust as needed */
+  max-height: calc(100vh - 40px); /* Adjust as needed */
+  overflow-y: auto;
+  padding-left: 10px; /* Space for the tracker bar */
+  /* Hide on mobile */
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .tableOfContentsContainer {
+    display: block; /* Show on larger screens */
+  }
+}
+
+.tocList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative; /* For positioning the tracker bar */
+}
+
+.tocListItem {
+  margin-bottom: 5px;
+  transition: margin-left 0.2s ease-in-out; /* Smooth indentation change */
+}
+
+.tocListItem a {
+  text-decoration: none;
+  color: #888; /* Default link color */
+  display: block;
+  padding: 3px 0;
+  transition: color 0.2s ease-in-out;
+}
+
+.tocListItem a:hover {
+  color: #eee; /* Hover color */
+}
+
+.tocListItem.active a {
+  color: #fff; /* Active link color */
+  font-weight: bold;
+}
+
+.trackerBar {
+  position: absolute;
+  left: 0;
+  width: 3px; /* Width of the tracker bar */
+  background-color: #007bff; /* Color of the tracker bar */
+  border-radius: 2px;
+  transition: top 0.3s ease-in-out, height 0.3s ease-in-out; /* Smooth animation */
+  z-index: 1; /* Ensure it's above list items */
+}

@@ -8,7 +8,7 @@ export default function WikiLayout({
   return (
     <div className="flex min-h-screen">
       <WikiSidebar />
-      <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+      <main className="flex-1 p-6 md:p-8">
         {children}
       </main>
     </div>

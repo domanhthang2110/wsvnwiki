@@ -29,6 +29,10 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
           color: '#68cef8', 
           width: 2 
         },
+        // Ensure Heading extension is enabled and configured for all levels
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
       }),
       Underline,
       Image.configure({ // Configure Image separately
@@ -67,6 +71,22 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
     immediatelyRender: false, // Add this to prevent hydration mismatches
   });
 
+  // Set default font and font size on editor initialization
+  useEffect(() => {
+    if (editor && !editor.isDestroyed) {
+      // Only apply defaults if content is empty or doesn't have explicit styles
+      const currentFontFamily = editor.getAttributes('textStyle').fontFamily;
+      const currentFontSize = editor.getAttributes('textStyle').fontSize;
+
+      if (!currentFontFamily) {
+        editor.chain().focus().setFontFamily('Inter').run();
+      }
+      if (!currentFontSize) {
+        editor.chain().focus().setMark('textStyle', { fontSize: '16px' }).run();
+      }
+    }
+  }, [editor]);
+
   // Add effect to update content when it changes
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -75,7 +95,7 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
   }, [content, editor]);
 
   return (
-    <div className="border border-neutral-700 bg-neutral-900 text-white overflow-hidden rounded-md">
+    <div className="border border-neutral-700 bg-neutral-900 text-white rounded-md">
       {editor && (
         <Toolbar 
           editor={editor} 

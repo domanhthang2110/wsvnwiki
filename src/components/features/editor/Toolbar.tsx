@@ -48,7 +48,6 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
   };
 
   const fontSizes = [
-    { label: 'Default', value: ''}, // Option to unset the font size
     { label: '12px', value: '12px' }, { label: '14px', value: '14px' }, { label: '16px', value: '16px' },
     { label: '18px', value: '18px' }, { label: '20px', value: '20px' }, { label: '24px', value: '24px' },
     { label: '30px', value: '30px' }, { label: '36px', value: '36px' }, {label: '48px', value: '48px' },
@@ -56,16 +55,32 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
   ];
 
   const fontFamilies = [
-    { label: 'Default', value: '' }, // Option to unset the font family
     { label: 'Inter', value: 'Inter' }, { label: 'Serif', value: 'serif' },
     { label: 'Monospace', value: 'monospace' }, { label: 'Cursive', value: 'cursive' },
   ];
   
-  // Get the current font size from textStyle mark
-  const currentFontSize = editor.getAttributes('textStyle').fontSize || '';
+  // Get the current font size from textStyle mark, default to '16px' if not set
+  const currentFontSize = editor.getAttributes('textStyle').fontSize || '16px';
+
+  // Get the current font family from textStyle mark, default to 'Inter' if not set
+  const currentFontFamily = editor.getAttributes('textStyle').fontFamily || 'Inter';
+
+  const headingOptions = [
+    { label: 'Paragraph', value: 'paragraph' },
+    { label: 'Heading 1', value: 'h1' },
+    { label: 'Heading 2', value: 'h2' },
+    { label: 'Heading 3', value: 'h3' },
+    { label: 'Heading 4', value: 'h4' },
+    { label: 'Heading 5', value: 'h5' },
+    { label: 'Heading 6', value: 'h6' },
+  ];
+
+  const currentHeading = headingOptions.find(option => 
+    option.value === 'paragraph' ? editor.isActive('paragraph') : editor.isActive('heading', { level: parseInt(option.value.substring(1)) })
+  )?.value || 'paragraph';
 
   return (
-    <div className="editor-toolbar p-2 flex items-center flex-wrap gap-1 bg-neutral-800">
+    <div className="editor-toolbar p-2 flex items-center flex-wrap gap-1 bg-neutral-800 sticky top-0 z-10">
       {/* History Group */}
       <div className="flex items-center gap-1">
         <Button type="button" size="sm" variant="ghost" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} title="Undo"><CornerUpLeft className="h-4 w-4" /></Button>
@@ -74,11 +89,32 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
 
       <Separator orientation="vertical" className="h-8 mx-1 bg-neutral-700" />
 
+      {/* Heading Type Dropdown */}
+      <div className="flex items-center gap-1">
+        <select
+          value={currentHeading}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value === 'paragraph') {
+              editor.chain().focus().setParagraph().run();
+            } else {
+              // Cast to 'any' because Tiptap's 'Level' type is a literal union (1 | 2 | ... | 6)
+              // and parseInt returns a generic 'number'.
+              editor.chain().focus().toggleHeading({ level: parseInt(value.substring(1)) as any }).run();
+            }
+          }}
+          className="bg-neutral-800 text-sm p-1 border border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[120px]"
+          title="Heading Type"
+        >
+          {headingOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+      </div>
+
       {/* Text Style Group */}
       <div className="flex items-center gap-1">
-        {/* STEP 2.1: Corrected Font Family Dropdown */}
+        {/* Font Family Dropdown */}
         <select
-          value={editor.getAttributes('textStyle').fontFamily || ''}
+          value={currentFontFamily}
           onChange={(e) => {
             const value = e.target.value;
             editor.chain()
@@ -88,8 +124,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
                 return true;
               })
               .setFontFamily(value)
-              .removeEmptyTextStyle()
-              .run();
+              .run(); // No removeEmptyTextStyle, always set a font
           }}
           className="bg-neutral-800 text-sm p-1 border border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[100px]"
           title="Font Family"
@@ -108,7 +143,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
                 tr.setSelection(state.selection);
                 return true;
               })
-              .setMark('textStyle', { fontSize: value || null })
+              .setMark('textStyle', { fontSize: value }) // Always set a font size
               .run();
           }}
           className="bg-neutral-800 text-sm p-1 border border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[80px]"
@@ -132,9 +167,8 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
       </div>
 
       <Separator orientation="vertical" className="h-8 mx-1 bg-neutral-700" />
-      {/* ... The rest of your toolbar groups remain the same ... */}
-       {/* Text Format Group */}
-       <div className="flex items-center gap-1">
+      {/* Text Format Group */}
+      <div className="flex items-center gap-1">
         <Toggle 
           type="button" 
           size="sm" 

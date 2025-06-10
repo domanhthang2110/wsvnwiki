@@ -1,10 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient as createServerSupabaseClient } from '@/lib/supabase/server';
+import { supabase as browserSupabaseClient } from '@/lib/supabase/client'; // Import the client-side client
 import type { PostItem, PostRow, TagRow, TypeRow } from '@/types/posts';
 import DOMPurify from 'isomorphic-dompurify';
 
 // Function to fetch a single post by slug, including relations and sanitization
 export async function getPostBySlug(slug: string): Promise<PostItem | null> {
-  const supabase = await createClient();
+  const supabase = await createServerSupabaseClient(); // Use server client for request-scoped data
   const { data, error } = await supabase
     .from('posts')
     .select(`
@@ -39,17 +40,16 @@ export async function getPostBySlug(slug: string): Promise<PostItem | null> {
   } as PostItem;
 }
 
-// Function to get all post slugs for static generation
+// Function to get all post slugs for static generation (uses browser client for build-time safety)
 export async function getAllPostSlugs(): Promise<{ slug: string }[]> {
-  const supabase = await createClient();
+  const supabase = browserSupabaseClient; // Use browser client for build-time data fetching
   try {
     const { data: posts } = await supabase
       .from('posts')
-      .select(`slug, types!inner(slug)`)
-      .eq('types.slug', 'guide') // Filter by type slug
+      .select(`slug`) // Removed types!inner(slug) and eq('types.slug', 'guide') for broader testing
       .eq('status', 'published');
 
-    return posts?.map((post) => ({ slug: post.slug })) || [];
+    return posts?.map((post: { slug: string }) => ({ slug: post.slug })) || [];
   } catch (e) {
     console.error("Error getting all post slugs:", e);
     return [];
@@ -58,7 +58,7 @@ export async function getAllPostSlugs(): Promise<{ slug: string }[]> {
 
 // Function to get a list of posts (e.g., for an index page)
 export async function getPosts(options?: { typeSlug?: string; limit?: number }): Promise<PostItem[]> {
-  const supabase = await createClient();
+  const supabase = await createServerSupabaseClient(); // Use server client for request-scoped data
   let query = supabase
     .from('posts')
     .select(`
@@ -97,4 +97,20 @@ export async function getPosts(options?: { typeSlug?: string; limit?: number }):
       type: postData.types,
     } as PostItem;
   });
+}
+
+// Function to get all tags
+export async function getAllTags(): Promise<TagRow[]> {
+  const supabase = await createServerSupabaseClient(); // Use server client for request-scoped data
+  const { data, error } = await supabase
+    .from('tags')
+    .select('*')
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching tags:', error);
+    return [];
+  }
+
+  return data;
 }
