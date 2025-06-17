@@ -234,3 +234,98 @@
 .font-size-2xl { font-size: 1.5rem; }
 .font-size-3xl { font-size: 1.875rem; }
 .font-size-4xl { font-size: 2.25rem; }
+
+.box-component {
+  position: relative;
+  border: 1px solid #e6ce63;
+}
+
+.box-content {
+  position: relative; /* Keep relative for children positioning */
+  z-index: 0; /* Ensure content is below sprites */
+  height: 100%; /* Ensure it takes full height of parent */
+  width: 100%; /* Ensure it takes full width of parent */
+  /* Remove padding from here, it will be on box-children-wrapper */
+  background-image: url('/background.png');
+  background-repeat: repeat;
+  background-size: 56px 32px; /* Original sprite size */
+  image-rendering: pixelated; /* For pixelated effect */
+  image-rendering: crisp-edges; /* For pixelated effect */
+  overflow: hidden; /* Ensure background is clipped to its boundaries */
+  box-sizing: border-box; /* Include padding in width/height calculation */
+  display: flex; /* Use flexbox for header and children layout */
+  flex-direction: column;
+}
+
+.box-header {
+  background-color: rgba(207, 102, 25, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* Position absolutely to span full width */
+  top: 0;
+  left: 0;
+  right: 0;
+  flex-shrink: 0; /* Prevent shrinking */
+  padding: 0 20px; /* Add horizontal padding for content */
+  box-sizing: border-box;
+  /* margin-bottom will be handled by padding-top on box-children-wrapper */
+}
+
+.box-header-border-top {
+  position: absolute;
+  bottom: 1px; /* Position it just above the bottom of the header */
+  left: 0;
+  right: 0;
+  height: 1px; /* Make it 1px height */
+  background-color: #df7747; /* Use background-color for the line */
+}
+
+.box-header-border-bottom {
+  position: absolute;
+  bottom: 0; /* Position it at the very bottom of the header */
+  left: 0;
+  right: 0;
+  height: 1px; /* Make it 1px height */
+  background-color: #6f4737; /* Use background-color for the line */
+}
+
+.box-children-wrapper {
+  padding: 20px; /* Apply padding to the children content */
+  flex-grow: 1; /* Allow it to take up remaining space in flex column */
+  box-sizing: border-box; /* Include padding in width/height */
+  /* Add padding-top to account for header height dynamically */
+  padding-top: var(--header-height, 0px); /* Use CSS variable for dynamic padding */
+}
+
+.corner-sprite {
+  position: absolute;
+  width: 33px; /* 22 * 1.5 */
+  height: 31.5px; /* 21 * 1.5 */
+  z-index: 1; /* Ensure sprites are above content */
+  image-rendering: pixelated; /* For pixelated effect */
+  image-rendering: crisp-edges; /* For pixelated effect */
+}
+
+.corner-sprite.top-left {
+  top: -1px; /* Push out by 1px */
+  left: -1px; /* Push out by 1px */
+}
+
+.corner-sprite.top-right {
+  top: -1px; /* Push out by 1px */
+  right: -1px; /* Push out by 1px */
+  transform: scaleX(-1); /* Flip horizontally */
+}
+
+.corner-sprite.bottom-left {
+  bottom: -1px; /* Push out by 1px */
+  left: -1px; /* Push out by 1px */
+  transform: scaleY(-1); /* Flip vertically */
+}
+
+.corner-sprite.bottom-right {
+  bottom: -1px; /* Push out by 1px */
+  right: -1px; /* Push out by 1px */
+  transform: scale(-1, -1); /* Flip horizontally and vertically */
+}

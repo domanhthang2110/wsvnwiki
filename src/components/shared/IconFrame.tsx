@@ -19,7 +19,7 @@ const frameStyleIndices: Record<FrameStyleType, { default: number; hover: number
 };
 
 interface IconFrameProps {
-  contentImageUrl: string;
+  contentImageUrl: string | null;
   styleType: FrameStyleType;
   altText?: string;
   disableHover?: boolean;
@@ -137,7 +137,7 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(e as any); } : undefined}
     >
       <img
-        src={contentImageUrl}
+        src={contentImageUrl || undefined}
         alt={altText || ""}
         style={contentImageStyle}
         onError={(e) => {

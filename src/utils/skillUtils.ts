@@ -35,8 +35,8 @@ export const formatEnergyCost = (energyCost: Record<number, number> | undefined 
   
   // This provides a generic display. You could enhance this if you have a way
   // to map the numeric keys to resource names (e.g., using parameters_definition).
-  return Object.entries(energyCost)
-    .map(([key, value]) => `Type ${key}: ${value}`)
+  return Object.values(energyCost)
+    .map(value => String(value))
     .join(' / ');
 };
 
