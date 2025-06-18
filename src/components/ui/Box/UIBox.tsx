@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface BoxProps {
+interface UIBoxProps {
   children?: React.ReactNode;
   className?: string;
   headerEnabled?: boolean;
@@ -8,7 +8,7 @@ interface BoxProps {
   headerContent?: React.ReactNode;
 }
 
-const Box: React.FC<BoxProps> = ({
+const UIBox: React.FC<UIBoxProps> = ({
   children,
   className,
   headerEnabled = false,
@@ -37,4 +37,4 @@ const Box: React.FC<BoxProps> = ({
   );
 };
 
-export default Box;
+export default UIBox;

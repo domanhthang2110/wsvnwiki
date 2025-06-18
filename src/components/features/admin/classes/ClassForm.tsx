@@ -6,9 +6,9 @@ import { ClassItem, ClassFormData } from '@/types/classes';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 import SkillCard from '@/components/features/admin/skills/SkillCard';
 import { AlertTriangle } from 'lucide-react';
-import TiptapEditor from '@/components/features/editor/TiptapEditor'; // Import TiptapEditor
-import { Editor } from '@tiptap/react'; // Import Editor type
-import DOMPurify from 'dompurify'; // Import DOMPurify for sanitization
+import TiptapEditor from '@/components/features/editor/TiptapEditor';
+import { Editor } from '@tiptap/react';
+import DOMPurify from 'dompurify';
 
 interface ClassFormProps {
   initialData: ClassItem | null;
@@ -48,7 +48,7 @@ export default function ClassForm({
       // Clear form for new creation
       setFormData({ name: '', description: '', avatar_url: '' });
     }
-  }, [initialData]); // Removed currentTiptapEditor from dependencies
+  }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,7 +236,7 @@ export default function ClassForm({
               <MediaFileExplorer
                 bucketName="media"
                 initialPath="classes"
-                onFileSelect={handleMediaFileSelectForTiptap} // Corrected: Use specific handler for Tiptap images
+                onFileSelect={handleAvatarSelect} // Use the specific handler for avatar
                 mode="select"
                 accept="image/*"
               />

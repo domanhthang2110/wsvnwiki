@@ -6,9 +6,9 @@ export default function WikiLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen">
       <WikiSidebar />
-      <main className="flex-1 p-6 md:p-8">
+      <main className="flex-1 h-full">
         {children}
       </main>
     </div>

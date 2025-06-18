@@ -14,7 +14,7 @@ export interface ClassItem extends ClassRow {
 
 // For the form data submission
 // Omit auto-generated fields and fields populated by joins
-export type ClassFormData = Omit<ClassItem, 'id' | 'created_at' | 'skills'> & {
+export type ClassFormData = Omit<ClassItem, 'id' | 'created_at' | 'skills' | 'faction' | 'side'> & {
   // If you have a many-to-many relationship for skills, you might add:
   // skill_ids?: number[];
 };
