@@ -44,18 +44,33 @@ export default function ClassDetailView({ classItem }: ClassDetailViewProps) {
     }
   };
 
-  const defaultAvatar = 'https://placehold.co/128x128/374151/9CA3AF?text=No+Avatar';
+  const defaultAvatarPath = '/test_avatar.webp'; // Use local placeholder
+  const defaultBannerPath = '/public/background.png'; // Example, choose a suitable default banner
 
   return (
     <>
+      {/* Class Banner */}
+      {classItem.image_assets?.banner ? (
+        <img
+          src={classItem.image_assets.banner}
+          alt={`${classItem.name} banner`}
+          className="w-full h-48 object-cover mb-6 rounded-lg shadow-lg border border-gray-700"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultBannerPath; }}
+        />
+      ) : (
+        <div className="w-full h-48 bg-gray-800 flex items-center justify-center mb-6 rounded-lg shadow-lg border border-gray-700">
+          <span className="text-gray-500 text-lg">No Banner Image</span>
+        </div>
+      )}
+
       <div className="flex flex-col h-full">
         {/* Class Header */}
         <div className="flex flex-col sm:flex-row items-start gap-6 pb-4 border-b border-gray-700 mb-4">
           <img 
-            src={classItem.avatar_url || defaultAvatar} 
+            src={classItem.image_assets?.avatar || defaultAvatarPath} 
             alt={`${classItem.name} avatar`} 
             className="w-32 h-32 object-cover rounded-lg border-2 border-gray-600 flex-shrink-0"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatar; }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatarPath; }}
           />
           <div className="flex-1">
             <h2 className="text-3xl font-bold text-white mb-2">{classItem.name}</h2>

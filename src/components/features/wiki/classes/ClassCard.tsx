@@ -9,8 +9,8 @@ interface ClassCardProps {
 }
 
 export default function ClassCard({ classItem, onOpenDetail }: ClassCardProps) {
-  const defaultAvatar = '/test_avatar.webp';
-  const defaultLogo = '/icon_frame.png'; // Generic icon if classItem.logo_url is not available
+  const defaultAvatarPath = '/test_avatar.webp'; // Placeholder for avatar
+  const defaultLogoPath = '/icon_frame.png'; // Placeholder for logo
 
   return (
     <div
@@ -25,14 +25,14 @@ export default function ClassCard({ classItem, onOpenDetail }: ClassCardProps) {
     >
       {/* Header Part */}
       <div className="w-full flex items-stretch h-8">
-        {/* Class Icon (actual class logo - using avatar_url as per clarification) */}
+        {/* Class Logo */}
         <Image
-          src={classItem.avatar_url || defaultLogo} // Use avatar_url for the class icon
+          src={classItem.image_assets?.logo || defaultLogoPath} // Use image_assets.logo for the class icon
           alt={`${classItem.name} logo`}
           width={32}
           height={32}
           className="w-8 h-8 object-contain border border-[var(--box-border-color)]"
-          onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultLogo; }}
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultLogoPath; }}
         />
         {/* Class Name with double border effect */}
         <div
@@ -47,11 +47,12 @@ export default function ClassCard({ classItem, onOpenDetail }: ClassCardProps) {
       {/* Avatar Section (below header) */}
       <div className="w-full p-2 flex justify-center">
         <Image
-          src={defaultAvatar} // Always use the test_avatar placeholder
+          src={classItem.image_assets?.avatar || defaultAvatarPath} // Use image_assets.avatar for the class avatar
           alt={classItem.name}
           width={80} // w-20
           height={80} // h-20
           className="object-cover"
+          onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatarPath; }}
         />
       </div>
     </div>

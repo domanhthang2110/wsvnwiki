@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './UIBox.module.css'; // Import the CSS Module
 
 interface UIBoxProps {
   children?: React.ReactNode;
@@ -16,20 +17,20 @@ const UIBox: React.FC<UIBoxProps> = ({
   headerContent,
 }) => {
   return (
-    <div className={`box-component ${className || ''}`}>
-      <img src="/corner.png" alt="corner" className="corner-sprite top-left" />
-      <img src="/corner.png" alt="corner" className="corner-sprite top-right" />
-      <img src="/corner.png" alt="corner" className="corner-sprite bottom-left" />
-      <img src="/corner.png" alt="corner" className="corner-sprite bottom-right" />
-      <div className="box-content" style={{ '--header-height': headerEnabled ? `${headerHeight}px` : '0px' } as React.CSSProperties}>
+    <div className={`${styles['box-component']} ${className || ''}`}>
+      <img src="/corner_decor.png" alt="corner" className={`${styles['corner-sprite']} ${styles['top-left']}`} />
+      <img src="/corner_decor.png" alt="corner" className={`${styles['corner-sprite']} ${styles['top-right']}`} />
+      <img src="/corner_decor.png" alt="corner" className={`${styles['corner-sprite']} ${styles['bottom-left']}`} />
+      <img src="/corner_decor.png" alt="corner" className={`${styles['corner-sprite']} ${styles['bottom-right']}`} />
+      <div className={styles['box-content']} style={{ '--header-height': headerEnabled ? `${headerHeight}px` : '0px' } as React.CSSProperties}>
         {headerEnabled && (
-          <div className="box-header" style={{ height: `${headerHeight}px` }}>
+          <div className={styles['box-header']} style={{ height: `${headerHeight}px` }}>
             {headerContent}
-            <div className="box-header-border-top"></div>
-            <div className="box-header-border-bottom"></div>
+            <div className={styles['box-header-border-top']}></div>
+            <div className={styles['box-header-border-bottom']}></div>
           </div>
         )}
-        <div className="box-children-wrapper">
+        <div className={styles['box-children-wrapper']}>
           {children}
         </div>
       </div>

@@ -1,0 +1,100 @@
+.box-component {
+  position: relative;
+  border: 1px solid var(--box-border-color);
+  overflow: hidden;
+}
+
+.box-content {
+  position: relative;
+  z-index: 0;
+  height: 100%;
+  min-width: 0;
+  background-image: url('/background.png');
+  background-repeat: repeat;
+  background-size: 70px 40px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.box-header {
+  background-color: rgba(207, 102, 25, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  flex-shrink: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.box-header-border-top {
+  position: absolute;
+  bottom: 1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--box-border-color);
+}
+
+.box-header-border-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--box-border-color);
+}
+
+.box-children-wrapper {
+  padding: 10px; /* Default smaller padding for mobile */
+  flex-grow: 1;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding-top: calc(var(--header-height, 0px) + 8px); /* Adjusted top padding for mobile */
+}
+
+@media (min-width: 768px) { /* Or your preferred breakpoint, e.g., md */
+  .box-children-wrapper {
+    padding: 20px; /* Larger padding for desktop */
+    padding-top: calc(var(--header-height, 0px) + 16px); /* Adjusted top padding for desktop */
+  }
+}
+
+.corner-sprite {
+  position: absolute;
+  width: 44px;
+  height: 38px;
+  z-index: 1;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.corner-sprite.top-left {
+  top: -1px;
+  left: -1px;
+}
+
+.corner-sprite.top-right {
+  top: -1px;
+  right: -1px;
+  transform: scaleX(-1);
+}
+
+.corner-sprite.bottom-left {
+  bottom: -1px;
+  left: -1px;
+  transform: scaleY(-1);
+}
+
+.corner-sprite.bottom-right {
+  bottom: -1px;
+  right: -1px;
+  transform: scale(-1, -1);
+}

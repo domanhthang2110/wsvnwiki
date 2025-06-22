@@ -74,7 +74,7 @@ export default function AdminClassesPage() {
       const classTablePayload = {
         name: formData.name,
         description: formData.description,
-        avatar_url: formData.avatar_url,
+        image_assets: formData.image_assets, // Use the new image_assets object
       };
 
       // --- Handle Class Insert/Update ---
@@ -222,17 +222,17 @@ export default function AdminClassesPage() {
             <div key={cls.id} className="relative group">
               <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 transition-all">
                 <div className="flex items-start space-x-3">
-                  {/* Class Avatar */}
+                  {/* Class Logo (formerly Avatar) */}
                   <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
-                    {cls.avatar_url ? (
+                    {cls.image_assets?.logo ? (
                       <img 
-                        src={cls.avatar_url || ''} 
+                        src={cls.image_assets.logo || ''} 
                         alt={cls.name} 
                         className="w-full h-full object-cover rounded"
                       />
                     ) : (
                       <div className="w-full h-12 flex items-center justify-center">
-                        <span className="text-gray-500 text-xs">No icon</span>
+                        <span className="text-gray-500 text-xs">No logo</span>
                       </div>
                     )}
                   </div>

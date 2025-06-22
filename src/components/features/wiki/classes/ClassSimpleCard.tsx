@@ -1,7 +1,11 @@
 'use client';
 
-import Image from 'next/image';
+import { useState } from 'react';
 import { ClassItem } from '@/types/classes';
+import FancyFrame from '@/components/ui/FancyFrame/FancyFrame';
+import styles from './ClassSimpleCard.module.css';
+import { useMediaQuery } from 'react-responsive';
+import { useMounted } from '@/hooks/use-mounted';
 
 interface ClassSimpleCardProps {
   classItem: ClassItem;
@@ -9,31 +13,79 @@ interface ClassSimpleCardProps {
 }
 
 export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimpleCardProps) {
-  const defaultAvatar = '/test_avatar.webp';
+  const defaultAvatarPath = '/test_avatar.webp';
+  const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
+  const mounted = useMounted();
+
+  const isGif = classItem.image_assets?.avatar?.endsWith('.gif');
+  
+  let avatarSrc = defaultAvatarPath;
+  if (isGif) {
+    if (isHovered) {
+      avatarSrc = `${classItem.image_assets?.avatar || defaultAvatarPath}?t=${Date.now()}`;
+    } else {
+      avatarSrc = classItem.image_assets?.avatar?.replace('.gif', '.png') || defaultAvatarPath;
+    }
+  } else {
+    avatarSrc = classItem.image_assets?.avatar || defaultAvatarPath;
+  }
+
+  const cardWidth = isMobile ? 66 : 77;
+  const cardHeight = isMobile ? 99 : 116;
+
+  if (!mounted) {
+    return (
+      <div
+        style={{ width: `${cardWidth}px`, height: `${cardHeight}px` }}
+        className="bg-gray-800 flex flex-col items-center cursor-pointer"
+      />
+    );
+  }
 
   return (
     <div
       onClick={onOpenDetail}
-      className="w-28 border border-[var(--box-border-color)] bg-gray-800 p-2
-                 flex flex-col items-center gap-2 cursor-pointer
-                 hover:shadow-blue-500/30 hover:border-blue-600 transition-all group"
+      style={{ width: `${cardWidth}px` }}
+      className="bg-gray-800 flex flex-col items-center cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onOpenDetail(); }}
       aria-label={`View details for ${classItem.name}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Avatar Placeholder */}
-      <Image
-        src={defaultAvatar}
-        alt={classItem.name}
-        width={80} // w-20
-        height={80} // h-20
-        className="object-cover"
-      />
-      {/* Class Name */}
-      <h3 className="text-sm font-semibold text-gray-100 group-hover:text-blue-400 transition-colors text-center">
-        {classItem.name}
-      </h3>
+      {/* Avatar */}
+      <FancyFrame 
+        width={cardWidth} 
+        height={cardHeight} 
+        scale={1} 
+        overflowVisible={isGif && isHovered}
+      >
+        <img
+          src={avatarSrc}
+          alt={classItem.name}
+          width={cardWidth}
+          height={cardHeight}
+          className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${
+            isGif && isHovered ? 'z-10' : ''
+          }`}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = defaultAvatarPath;
+          }}
+        />
+      </FancyFrame>
+
+      {/* Class Name Footer */}
+      <div
+        className={`w-full bg-gray-700 text-center ${styles['embossed-plaque']} ${styles.namePlate}`}
+      >
+        <h3
+          className={`text-sm font-semibold text-gray-100 transition-colors text-center ${styles.nameText}`}
+        >
+          {classItem.name}
+        </h3>
+      </div>
     </div>
   );
 }

@@ -41,24 +41,24 @@ export type Database = {
       }
       classes: {
         Row: {
-          avatar_url: string | null
           created_at: string
           description: string | null
           id: number
+          image_assets: Json | null
           name: string
         }
         Insert: {
-          avatar_url?: string | null
           created_at?: string
           description?: string | null
           id?: number
+          image_assets?: Json | null
           name: string
         }
         Update: {
-          avatar_url?: string | null
           created_at?: string
           description?: string | null
           id?: number
+          image_assets?: Json | null
           name?: string
         }
         Relationships: []
@@ -235,7 +235,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_app_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
