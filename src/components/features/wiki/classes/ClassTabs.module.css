@@ -1,0 +1,25 @@
+.tabButton {
+  background-image: url('/image/classes/class_tab.png');
+  background-size: 100% 100%;
+  width: 80px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.2s;
+}
+
+.tabButton:hover {
+  filter: brightness(1.1);
+}
+
+.tabButton.active {
+  filter: brightness(1.2);
+}
+
+.tabIcon {
+  width: 32px;
+  height: 32px;
+}

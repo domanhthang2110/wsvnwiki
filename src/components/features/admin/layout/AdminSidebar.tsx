@@ -9,6 +9,8 @@ const navItems = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/classes', label: 'Classes' },
   { href: '/admin/skills', label: 'Skills' },
+  { href: '/admin/talents', label: 'Talents' },
+  { href: '/admin/talent-trees', label: 'Talent Trees' },
   { href: '/admin/posts', label: 'Posts' },
   { href: '/admin/media', label: 'Media' },
   { href: '/admin/tags', label: 'Tags' }
@@ -50,6 +52,14 @@ export function AdminSidebar() {
         </ul>
       </nav>
       <div className="mt-auto pt-4 border-t border-gray-700">
+        <Link
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block py-2.5 px-4 rounded-lg text-sm font-medium transition-colors text-gray-300 hover:bg-gray-700 mb-2"
+        >
+          Return to Wiki
+        </Link>
         <Button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 text-white">
           Log Out
         </Button>

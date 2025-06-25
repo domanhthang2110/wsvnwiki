@@ -7,10 +7,10 @@ import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue, SkillRow } 
 import { supabase } from '@/lib/supabase/client'; // Update Supabase client path
 import { MAX_SKILL_LEVEL_OPTIONS, SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
 
-import ParameterDefinitions from './ParameterDefinitions'; // Assuming this component exists
-import LevelValuesTable from './LevelValuesTable';     // Assuming this component exists
-import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer'; // Update path
-import EnergyCostRow from './EnergyCostRow'; // Import the new energy cost row component
+import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
+import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
+import EnergyCostRow from './EnergyCostRow';
 
 // Icon for the close button in the modal
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
@@ -34,7 +34,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
   const [formDescriptionTemplate, setFormDescriptionTemplate] = useState('');
   
   const [formParamDefs, setFormParamDefs] = useState<SkillParameterDefinitionInForm[]>(
-    () => [{ id: crypto.randomUUID(), key: 'damage', label: 'Damage Value' }]
+    () => [{ id: crypto.randomUUID(), key: 'damage' }]
   );
   const [formLevelValues, setFormLevelValues] = useState<SkillLevelValue[]>([]);
   
@@ -65,10 +65,9 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
         initialData.parameters_definition && initialData.parameters_definition.length > 0
           ? initialData.parameters_definition.map(pd => ({ 
               id: crypto.randomUUID(), 
-              key: pd.key, 
-              label: pd.label 
+              key: pd.key
             }))
-          : [{ id: crypto.randomUUID(), key: 'damage', label: 'Damage Value' }]
+          : [{ id: crypto.randomUUID(), key: 'damage' }]
       );
       // Level values will be set by the next useEffect based on initialData.level_values
       // and current paramDefs & maxLevel. This simplifies logic.
@@ -96,7 +95,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData }: SkillFor
       setFormRange('');
       setFormReducedEnergyRegen('');
       setFormDescriptionTemplate('');
-      setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage', label: 'Damage Value' }]);
+      setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage' }]);
       setFormLevelValues([]); // Will be populated by the effect below
       setEnergyCosts({});
     }
@@ -147,7 +146,7 @@ useEffect(() => {
 }, [formMaxLevel, formParamDefs, initialData, isEditing]); // Added isEditing and initialData
 
 
-  const handleParamDefChange = (index: number, field: 'key' | 'label', value: string) => {
+  const handleParamDefChange = (index: number, field: 'key', value: string) => {
     const newParamDefs = [...formParamDefs];
     if (field === 'key') {
       value = value.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
@@ -157,7 +156,7 @@ useEffect(() => {
   };
 
   const handleAddParamDef = () => {
-    setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '', label: '' }]);
+    setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '' }]);
   };
 
   const handleRemoveParamDef = (idToRemove: string) => {
@@ -201,8 +200,8 @@ useEffect(() => {
       if (currentMaxLevel < 1) throw new Error("Max level must be at least 1.");
 
       const finalParamDefs = formParamDefs
-        .filter(p => p.key.trim() && p.label.trim())
-        .map(({ id, key, label }) => ({ key: key.trim(), label })); // Strip temporary id
+        .filter(p => p.key.trim())
+        .map(({ id, key }) => ({ key: key.trim() })); // Strip temporary id
 
       const paramKeysFromDefs = finalParamDefs.map(p => p.key);
       if (finalParamDefs.some(p => !p.key)) {
@@ -277,7 +276,7 @@ useEffect(() => {
           setFormRange('');
           setFormReducedEnergyRegen('');
           setFormDescriptionTemplate('');
-          setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage', label: 'Damage Value' }]);
+          setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage' }]);
           // formLevelValues will be reset by its own useEffect when maxLevel and paramDefs reset
       }
       setFormError(null);

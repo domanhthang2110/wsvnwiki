@@ -20,17 +20,26 @@
 }
 
 .box-header {
-  background-color: rgba(207, 102, 25, 0.6);
+  background-color: rgb(187, 90, 21);
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
+  font-size: 24px;
+  color: yellow;
+  letter-spacing: -1px;
+  text-shadow:
+    -1px -1px 1px black,
+     1px -1px 1px black,
+    -1px  1px 1px black,
+     1px  1px 1px black;
   top: 0;
   left: 0;
   right: 0;
   flex-shrink: 0;
   padding: 0 20px;
   box-sizing: border-box;
+  z-index: 10; /* Ensure header is above scrolling content */
 }
 
 .box-header-border-top {
@@ -58,6 +67,7 @@
   min-width: 0;
   width: 100%;
   padding-top: calc(var(--header-height, 0px) + 8px); /* Adjusted top padding for mobile */
+  overflow-y: auto; /* Add this line to enable vertical scrolling */
 }
 
 @media (min-width: 768px) { /* Or your preferred breakpoint, e.g., md */

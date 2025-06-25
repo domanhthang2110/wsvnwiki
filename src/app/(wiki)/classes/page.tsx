@@ -7,7 +7,7 @@ export default async function ClassesPage() { // Make it an async Server Compone
 
   return (
     <div className="flex flex-col h-full w-full">
-      <UIBox className="w-full h-full flex-grow bg-gray-900" headerEnabled={true} headerHeight={50} headerContent="Classes Overview">
+      <UIBox className="w-full flex-grow bg-gray-900" headerEnabled={true} headerHeight={50} headerContent="Lớp nhân vật">
         <ClassContent classes={classes} /> {/* Pass classes as prop */}
       </UIBox>
     </div>

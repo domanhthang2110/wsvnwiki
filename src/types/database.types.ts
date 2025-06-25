@@ -209,6 +209,83 @@ export type Database = {
         }
         Relationships: []
       }
+      talent_trees: {
+        Row: {
+          class_id: number | null
+          created_at: string
+          id: number
+          is_template: boolean
+          name: string
+          talents_data: Json | null
+        }
+        Insert: {
+          class_id?: number | null
+          created_at?: string
+          id?: number
+          is_template?: boolean
+          name: string
+          talents_data?: Json | null
+        }
+        Update: {
+          class_id?: number | null
+          created_at?: string
+          id?: number
+          is_template?: boolean
+          name?: string
+          talents_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_trees_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talents: {
+        Row: {
+          cost_levels: number | null
+          created_at: string
+          description: string | null
+          icon_url: string | null
+          id: number
+          knowledge_levels: number | null
+          level_values: Json | null
+          max_level: number
+          name: string
+          parameters_definition: Json | null
+          type: string
+        }
+        Insert: {
+          cost_levels?: number | null
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: number
+          knowledge_levels?: number | null
+          level_values?: Json | null
+          max_level?: number
+          name: string
+          parameters_definition?: Json | null
+          type?: string
+        }
+        Update: {
+          cost_levels?: number | null
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: number
+          knowledge_levels?: number | null
+          level_values?: Json | null
+          max_level?: number
+          name?: string
+          parameters_definition?: Json | null
+          type?: string
+        }
+        Relationships: []
+      }
       types: {
         Row: {
           created_at: string

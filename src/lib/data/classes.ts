@@ -12,7 +12,8 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
       *,
       skills:class_skills(
         skill:skills(*)
-      )
+      ),
+      talent_tree:talent_trees(*)
     `)
     .order('name', { ascending: true });
 
@@ -22,10 +23,17 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
   }
 
   // Transform the data to match our ClassItem type
-  const transformedData = data.map(cls => ({
-    ...cls,
-    skills: cls.skills?.map((s: { skill: SkillRow }) => s.skill as SkillItem) || []
-  }));
+  const transformedData = data.map(cls => {
+    const talent_tree = Array.isArray(cls.talent_tree) ? cls.talent_tree[0] : cls.talent_tree;
+    if (talent_tree && talent_tree.talents_data) {
+      talent_tree.talents_data = talent_tree.talents_data.map((td: any) => ({ ...td, talent_id: td.talent_id || null }))
+    }
+    return {
+      ...cls,
+      skills: cls.skills?.map((s: { skill: SkillRow }) => s.skill as SkillItem) || [],
+      talent_tree: talent_tree || null
+    }
+  });
 
   return transformedData as ClassItem[];
 }
@@ -39,7 +47,8 @@ export async function getClassById(id: number): Promise<ClassItem | null> {
       *,
       skills:class_skills(
         skill:skills(*)
-      )
+      ),
+      talent_tree:talent_trees(*)
     `)
     .eq('id', id)
     .single();
@@ -50,9 +59,14 @@ export async function getClassById(id: number): Promise<ClassItem | null> {
   }
   if (!data) return null;
 
+  const talent_tree = Array.isArray(data.talent_tree) ? data.talent_tree[0] : data.talent_tree;
+  if (talent_tree && talent_tree.talents_data) {
+    talent_tree.talents_data = talent_tree.talents_data.map((td: any) => ({ ...td, talent_id: td.talent_id || null }))
+  }
   return {
     ...data,
-    skills: data.skills?.map((s: { skill: SkillRow }) => s.skill as SkillItem) || []
+    skills: data.skills?.map((s: { skill: SkillRow }) => s.skill as SkillItem) || [],
+    talent_tree: talent_tree || null
   } as ClassItem;
 }
 

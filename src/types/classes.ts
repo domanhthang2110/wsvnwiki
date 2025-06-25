@@ -1,5 +1,6 @@
 import { Database, Json } from './database.types';
 import { SkillItem } from './skills';
+import { TalentTreeItem } from './talents';
 import type { Faction, Side } from '@/lib/data/factionMap';
 
 // Define the structure for the image_assets JSON object
@@ -21,6 +22,7 @@ export type ClassRow = Database['public']['Tables']['classes']['Row'];
 export interface ClassItem extends Omit<ClassRow, 'image_assets'> {
   image_assets: ClassImageAssets | null;
   skills?: SkillItem[];
+  talent_tree?: TalentTreeItem | null;
   faction: Faction;
   side: Side;
 }

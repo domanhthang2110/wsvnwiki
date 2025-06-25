@@ -19,7 +19,7 @@ const frameStyleIndices: Record<FrameStyleType, { default: number; hover: number
 };
 
 interface IconFrameProps {
-  contentImageUrl: string | null;
+  contentImageUrl: string | null | undefined;
   styleType: FrameStyleType;
   altText?: string;
   disableHover?: boolean;
@@ -136,14 +136,19 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
       aria-label={altText || `Framed content with ${styleType} style`}
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(e as any); } : undefined}
     >
-      <img
-        src={contentImageUrl || undefined}
-        alt={altText || ""}
-        style={contentImageStyle}
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = `https://placehold.co/${dimensions.contentAreaSize || 30}x${dimensions.contentAreaSize || 30}/374151/9CA3AF?text=?`;
-        }}
-      />
+      {contentImageUrl && ( // Conditionally render img tag only if contentImageUrl exists
+        <img
+          src={contentImageUrl}
+          alt={altText || ""}
+          style={contentImageStyle}
+          onError={(e) => {
+            // Optionally, you can set a fallback image here if needed,
+            // but for "no empty image" requirement, we just won't render it if null.
+            // For actual error, maybe a generic "broken image" icon or just hide it.
+            (e.target as HTMLImageElement).style.display = 'none'; // Hide on error
+          }}
+        />
+      )}
       <div style={frameOverlayStyle} />
     </div>
   );

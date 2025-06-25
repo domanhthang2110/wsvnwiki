@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ClassItem } from '@/types/classes';
 import FancyFrame from '@/components/ui/FancyFrame/FancyFrame';
 import styles from './ClassSimpleCard.module.css';
@@ -18,18 +18,27 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const mounted = useMounted();
 
-  const isGif = classItem.image_assets?.avatar?.endsWith('.gif');
-  
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isWebm = classItem.image_assets?.avatar?.endsWith('.gif');
+
   let avatarSrc = defaultAvatarPath;
-  if (isGif) {
-    if (isHovered) {
-      avatarSrc = `${classItem.image_assets?.avatar || defaultAvatarPath}?t=${Date.now()}`;
-    } else {
-      avatarSrc = classItem.image_assets?.avatar?.replace('.gif', '.png') || defaultAvatarPath;
-    }
+  if (isWebm) {
+    avatarSrc = classItem.image_assets?.avatar?.replace('.gif', '.webm') || defaultAvatarPath;
   } else {
     avatarSrc = classItem.image_assets?.avatar || defaultAvatarPath;
   }
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      if (isHovered) {
+        video.play();
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+  }, [isHovered]);
 
   const cardWidth = isMobile ? 66 : 77;
   const cardHeight = isMobile ? 99 : 116;
@@ -60,20 +69,32 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
         width={cardWidth} 
         height={cardHeight} 
         scale={1} 
-        overflowVisible={isGif && isHovered}
+        overflowVisible={isWebm && isHovered}
       >
-        <img
-          src={avatarSrc}
-          alt={classItem.name}
-          width={cardWidth}
-          height={cardHeight}
-          className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${
-            isGif && isHovered ? 'z-10' : ''
-          }`}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = defaultAvatarPath;
-          }}
-        />
+        {isWebm ? (
+          <video
+            ref={videoRef}
+            src={avatarSrc}
+            width={cardWidth}
+            height={cardHeight}
+            className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${
+              isHovered ? 'z-10' : ''
+            }`}
+            muted
+            playsInline
+          />
+        ) : (
+          <img
+            src={classItem.image_assets?.avatar || defaultAvatarPath}
+            alt={classItem.name}
+            width={cardWidth}
+            height={cardHeight}
+            className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center`}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = defaultAvatarPath;
+            }}
+          />
+        )}
       </FancyFrame>
 
       {/* Class Name Footer */}

@@ -1,0 +1,63 @@
+.header {
+  display: flex;
+  height: 60px;
+  margin-top: 20px;
+}
+
+.tabButton {
+  border: 3px double var(--box-border-color);
+  background-color: color-mix(in oklab, var(--color-gray-900) 20%, transparent);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  transition: width 0.3s ease;
+  overflow: hidden !important;
+  white-space: nowrap;
+  width: 60px;
+  height: 60px;
+}
+
+.tabButton.active {
+  background-color: color-mix(in oklab, var(--color-gray-900) 20%, transparent);
+  border-bottom-color: transparent;
+}
+
+.tabButton.expanded {
+  width: 225px;
+  padding: 10px;
+}
+
+.tabButton.overview {
+  padding: 10px;
+}
+
+.tabButton.overview.expanded {
+    padding-left: 10px;
+}
+
+.tabIcon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.tabName {
+  font-weight: bold;
+  margin-left: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  transition-delay: 0.2s;
+}
+
+.tabButton.expanded .tabName {
+    opacity: 1;
+}
+
+.spacer {
+  flex-grow: 1;
+  border-bottom: 3px double var(--box-border-color);
+}
