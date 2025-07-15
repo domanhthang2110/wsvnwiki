@@ -1,4 +1,4 @@
-import supabase from '@/lib/supabase/static';
+import { createClient } from '@/lib/supabase/server';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ClassItem, ClassRow } from '@/types/classes';
 import type { SkillItem, SkillRow } from '@/types/skills';
@@ -23,6 +23,7 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
   // }
 
   
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('classes')
     .select(`
@@ -79,6 +80,7 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
 
 // Function to fetch a single class by ID (if needed for a detail page)
 export async function getClassById(id: number): Promise<ClassItem | null> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('classes')
     .select(`
@@ -111,6 +113,7 @@ export async function getClassById(id: number): Promise<ClassItem | null> {
 // Function to get all class IDs for static generation (if you have individual class pages)
 export async function getAllClassIds(): Promise<{ id: number }[]> {
   try {
+    const supabase = await createClient();
     const { data: classes } = await supabase
       .from('classes')
       .select('id');
