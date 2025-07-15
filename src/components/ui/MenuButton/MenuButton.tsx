@@ -29,6 +29,7 @@ export default function MenuButton({ href, text, icon, onClick }: MenuButtonProp
             height={48}
             className={styles.icon}
             draggable={false}
+            priority={true}
           />
         </div>
         

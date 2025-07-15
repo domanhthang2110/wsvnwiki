@@ -32,7 +32,7 @@ const PreloadImages: React.FC<{ classes: ClassItem[] }> = ({ classes }) => {
             <Image src={cls.image_assets.logo} alt="" width={1} height={1} priority={false} loading="eager" />
           )}
           {cls.image_assets?.banner && (
-            <Image src={cls.image_assets.banner} alt="" width={1} height={1} priority={false} loading="eager" />
+            <video src={cls.image_assets.banner} preload="auto" style={{ display: 'none' }} />
           )}
         </React.Fragment>
       ))}

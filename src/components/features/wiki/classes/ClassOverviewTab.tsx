@@ -49,15 +49,20 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
   return (
     <div className={styles.container}>
       <div className={styles.banner}>
-        <Image
-          draggable={false}
-          src={classItem?.image_assets?.banner || '/public/image/classes/class_overview.webp'}
-          alt={`${classItem?.name} banner`}
-          objectFit="cover"
-          layout='fill'
-          className={styles.bannerImage}
-          priority={true}
-        />
+        {classItem?.image_assets?.banner && (
+          <video
+            src={classItem.image_assets.banner}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className={styles.bannerImage}
+            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+          >
+            Your browser does not support the video tag.
+          </video>
+        )}
       </div>
       <div className={styles.content}>
         <div className={styles.leftColumn}>
