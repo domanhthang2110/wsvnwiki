@@ -46,7 +46,7 @@ export class SkillsService {
    * Create a new skill with validation
    */
   static async createSkill(skillData: Omit<SkillItem, 'id' | 'created_at'>): Promise<SkillItem> {
-    const validation = validateSkill(skillData); // Assuming validateSkill is compatible with Omit<SkillItem, 'id' | 'created_at'>
+    const validation = validateSkill(skillData as SkillItem); // Assuming validateSkill is compatible with Omit<SkillItem, 'id' | 'created_at'>
     if (!validation.isValid) {
       throw new Error('Invalid skill data: ' + validation.errors.join(', '));
     }

@@ -1,34 +1,32 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, Suspense } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { useRouter, useSearchParams } from 'next/navigation'; // Import useSearchParams
-import Link from 'next/link'; // Import Link
-import { Button } from '@/components/ui/Button/button'; // Import Button
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button/button';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams(); // Get search params
+  const searchParams = useSearchParams();
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Get form data directly from the event target
     const formData = new FormData(event.currentTarget);
     const currentEmail = formData.get('email') as string;
     const currentPassword = formData.get('password') as string;
 
-    // Log the values just before the call
     console.log('Email from FormData:', currentEmail);
     console.log('Password from FormData:', currentPassword);
-    console.log('Email state at call time:', email); // Keep this for comparison
-    console.log('Password state at call time:', password); // Keep this for comparison
+    console.log('Email state at call time:', email);
+    console.log('Password state at call time:', password);
 
     if (!currentEmail || !currentPassword) {
       setError("Email and password are required.");
@@ -49,16 +47,14 @@ export default function LoginPage() {
     if (signInError) {
       setError(signInError.message);
       console.error('Login error:', signInError);
-    } else if (data.user) { // Check if user data is present, indicating success
-      // Successful login
-      const redirectedFrom = searchParams.get('redirectedFrom'); // Get the redirect path
+    } else if (data.user) {
+      const redirectedFrom = searchParams.get('redirectedFrom');
       if (redirectedFrom) {
-        router.push(redirectedFrom); // Redirect to original intended path
+        router.push(redirectedFrom);
       } else {
-        router.push('/admin'); // Default redirect to admin dashboard
+        router.push('/admin');
       }
     } else {
-      // This else block might catch cases where there's no error but also no user (e.g., email not confirmed)
       setError("Login failed: No user data returned. Check email confirmation?");
       console.error("Login failed: No user data returned from signInWithPassword.");
     }
@@ -71,8 +67,8 @@ export default function LoginPage() {
       </h1>
       <form onSubmit={handleLogin} className="space-y-6">
         <div>
-          <label 
-            htmlFor="email" 
+          <label
+            htmlFor="email"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Email address
@@ -90,8 +86,8 @@ export default function LoginPage() {
         </div>
 
         <div>
-          <label 
-            htmlFor="password" 
+          <label
+            htmlFor="password"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Password
@@ -132,5 +128,13 @@ export default function LoginPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

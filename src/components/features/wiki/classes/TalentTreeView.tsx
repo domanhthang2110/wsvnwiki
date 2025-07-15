@@ -424,10 +424,9 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
                   if (levelValue) {
                     return selectedTalent.description.replace(
                       placeholder,
-                      levelValue[key]
+                      String(levelValue[key] ?? '')
                     );
                   }
-
                   return selectedTalent.description;
                 })()}
               </p>

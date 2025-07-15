@@ -50,7 +50,7 @@ export default function LevelValuesTable({
                     <td key={param.id} className="px-4 py-3">
                       <input
                         type="text"
-                        value={levelData[param.key] || ''}
+                        value={String(levelData[param.key] ?? '')}
                         onChange={(e) => onChange(level, param.key, e.target.value)}
                         className="w-full p-2 text-sm border border-gray-600 rounded-md bg-gray-700 text-gray-100"
                       />

@@ -1,27 +1,26 @@
-import { GetStaticPropsContext } from 'next'; // only for pages directory
-import { notFound } from 'next/navigation';
 import { getPostBySlug, getAllPostSlugs } from '@/lib/data/posts';
+import { notFound } from 'next/navigation';
 import { GuideContentRenderer } from '@/components/features/wiki/guides/GuideContentRenderer';
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
-  return slugs.map((slug) => ({ slug: slug.slug }));
+  return slugs.map(({ slug }) => ({ slug }));
 }
 
-// ✅ Fix typing here
-export default async function GuidePostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const post = await getPostBySlug(params.slug);
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
+export default async function Page({ params }: PageProps) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+  
   if (!post) {
     notFound();
   }
-
+  
   return (
     <GuideContentRenderer
       content={post.content || ''}

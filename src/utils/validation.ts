@@ -29,7 +29,7 @@ export function validateClass(data: ClassFormData): ValidationResult {
   };
 }
 
-export function validateSkill(data: SkillItem): ValidationResult {
+export function validateSkill(data: Partial<SkillItem>): ValidationResult {
   const errors: string[] = [];
   
   if (!data.name?.trim()) {

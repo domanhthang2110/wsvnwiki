@@ -13,14 +13,14 @@ interface SkillWithItemsQuery extends SkillRow {
 
 // Function to fetch all classes with their associated skills
 export async function getClassesWithSkills(): Promise<ClassItem[]> {
-  const cacheKey = 'classes-with-skills';
-  const cachedData = CacheManager.get<ClassItem[]>(
-    'classes',
-    cacheKey,
-  );
-  if (cachedData) {
-    return cachedData;
-  }
+  // const cacheKey = 'classes-with-skills';
+  // const cachedData = CacheManager.get<ClassItem[]>(
+  //   'classes',
+  //   cacheKey,
+  // );
+  // if (cachedData) {
+  //   return cachedData;
+  // }
 
   
   const { data, error } = await supabase
@@ -35,18 +35,21 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
           )
         )
       ),
-      talent_tree:talent_trees(id, name)
+      talent_tree:talent_trees(*)
     `)
     .order('name', { ascending: true });
 
   if (error) {
     console.error('Error fetching classes:', error.message);
+    console.error('Supabase fetch error details:', error); // More detailed error logging
     return [];
   }
 
+  console.log('Supabase data fetched:', JSON.stringify(data, null, 2)); // Log the raw data
   // Transform the data to match our ClassItem type
   const transformedData = data.map(cls => {
     const talent_tree = Array.isArray(cls.talent_tree) ? cls.talent_tree[0] : cls.talent_tree;
+    console.log(`Processing class: ${cls.name}, Talent Tree Data:`, JSON.stringify(talent_tree?.talents_data, null, 2)); // Log talent tree data
     if (talent_tree && talent_tree.talents_data && talent_tree.talents_data.nodes) {
       talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: TalentNode) => ({ ...td, talent_id: td.talent_id || null }))
     }
@@ -70,7 +73,7 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
     }
   });
 
-  CacheManager.set('classes', cacheKey, transformedData);
+  // CacheManager.set('classes', cacheKey, transformedData);
   return transformedData as ClassItem[];
 }
 
