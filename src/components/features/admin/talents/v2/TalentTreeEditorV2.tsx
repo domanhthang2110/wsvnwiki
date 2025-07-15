@@ -73,7 +73,7 @@ const TalentTreeEditorV2: React.FC = () => {
       let newNodes = [...nodes];
       if (item.group_id && item.is_group_main) {
         let dx = newX - item.x;
-        let dy = newY - item.y;
+        const dy = newY - item.y;
 
         // Apply boundary check for composite nodes when dragging
         const newMainX = newX;
@@ -174,7 +174,6 @@ const TalentTreeEditorV2: React.FC = () => {
   const handleSelectTalent = useCallback((talentId: number) => {
     const { updateNode } = useTalentTreeStore.getState();
     if (currentTalentNode) {
-      const selectedTalent = useTalentTreeStore.getState().availableTalents.find(t => t.id === talentId);
       updateNode(currentTalentNode.id, {
         talent_id: talentId,
       });

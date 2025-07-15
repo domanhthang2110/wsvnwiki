@@ -149,10 +149,15 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   const handleTagToggle = (tagId: number) => {
     setSelectedTagIds(prev => {
       const newSet = new Set(prev);
-      newSet.has(tagId) ? newSet.delete(tagId) : newSet.add(tagId);
+      if (newSet.has(tagId)) {
+        newSet.delete(tagId);
+      } else {
+        newSet.add(tagId);
+      }
       return newSet;
     });
   };
+
   
   const handleFeaturedImageChange = (newUrl: string) => {
     setFeaturedImageUrl(newUrl);

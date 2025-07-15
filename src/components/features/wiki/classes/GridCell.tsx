@@ -5,7 +5,7 @@ import { TalentNode } from "@/types/talents";
 import IconFrame from "@/components/shared/IconFrame";
 import FreeCompositeFrame from "@/components/ui/FreeCompositeFrame";
 import { useTalentTreeInteractiveStore } from "./talent-tree-store";
-
+import Image from "next/image";
 interface GridCellProps {
   node: TalentNode | undefined;
   arrow: { direction: string; targetNodeId: string } | undefined;
@@ -94,9 +94,10 @@ const GridCell: React.FC<GridCellProps> = ({
             overflow: "visible",
           }}
         >
-          <img
+          <Image
             src="/image/talents/composite_talent.png"
             alt="Composite Talent Frame"
+            fill
             style={{
               width: "100%",
               height: "100%",
@@ -132,13 +133,13 @@ const GridCell: React.FC<GridCellProps> = ({
         </div>
       )}
       {arrow && (
-        <img
+        <Image
           src="/image/talent_arrow.svg"
           alt={`Arrow pointing ${arrow.direction}`}
           className="object-contain"
+          width={parseInt(arrowCellSize) * 0.7}
+          height={parseInt(arrowCellSize) * 0.7}
           style={{
-            width: `calc(${arrowCellSize} * 0.7)`,
-            height: `calc(${arrowCellSize} * 0.7)`,
             transform:
               arrow.direction === "down"
                 ? "rotate(90deg)"

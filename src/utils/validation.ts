@@ -1,9 +1,12 @@
+import { ClassFormData } from '@/types/classes';
+import { SkillItem } from '@/types/skills';
+
 type ValidationResult = {
   isValid: boolean;
   errors: string[];
 };
 
-export function validateClass(data: any): ValidationResult {
+export function validateClass(data: ClassFormData): ValidationResult {
   const errors: string[] = [];
   
   if (!data.name?.trim()) {
@@ -26,7 +29,7 @@ export function validateClass(data: any): ValidationResult {
   };
 }
 
-export function validateSkill(data: any): ValidationResult {
+export function validateSkill(data: SkillItem): ValidationResult {
   const errors: string[] = [];
   
   if (!data.name?.trim()) {

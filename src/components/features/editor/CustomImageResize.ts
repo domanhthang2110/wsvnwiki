@@ -123,7 +123,9 @@ export const CustomImageResize = ImageResize.extend({
 
         // Touch events
         $dot.addEventListener('touchstart', (e) => {
-          e.cancelable && e.preventDefault();
+          if (e.cancelable) {
+            e.preventDefault();
+          }
           isResizing = true;
           startX = e.touches[0].clientX;
           startWidth = $container.offsetWidth;
@@ -141,11 +143,6 @@ export const CustomImageResize = ImageResize.extend({
         }, { passive: false });
       });
 
-      // Update input value on resize
-      const updateWidthInput = (width: number) => {
-        $widthInput.value = Math.round(width).toString();
-      };
-
       // Handle manual width input
       $widthInput.addEventListener('change', () => {
         const newWidth = parseInt($widthInput.value, 10);
@@ -157,7 +154,7 @@ export const CustomImageResize = ImageResize.extend({
       });
 
       // Show handles and input box when image is clicked
-      $container.addEventListener('click', (e) => {
+      $container.addEventListener('click', () => {
         $container.style.position = 'relative';
         $container.style.border = '1px dashed #6C6C6C';
         $widthInputBox.style.display = 'flex';

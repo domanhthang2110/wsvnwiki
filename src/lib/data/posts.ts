@@ -83,11 +83,6 @@ export async function getPosts(options?: { typeSlug?: string; limit?: number }):
     return [];
   }
 
-  type PostWithRelations = PostRow & {
-    tags: TagRow[];
-    types: TypeRow;
-  };
-
   return data.map(postData => {
     const sanitizedContent = postData.content ? DOMPurify.sanitize(postData.content) : null;
     return {

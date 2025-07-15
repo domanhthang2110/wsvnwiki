@@ -6,6 +6,7 @@ import FancyFrame from '@/components/ui/FancyFrame/FancyFrame';
 import styles from './ClassSimpleCard.module.css';
 import { useMediaQuery } from 'react-responsive';
 import { useMounted } from '@/hooks/use-mounted';
+import Image from 'next/image';
 
 interface ClassSimpleCardProps {
   classItem: ClassItem;
@@ -103,8 +104,9 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
             preload="metadata"
           />
         ) : (
-          <img
+          <Image
             draggable={false}
+            fill
             src={avatarUrl}
             alt={classItem.name}
             width={cardWidth}

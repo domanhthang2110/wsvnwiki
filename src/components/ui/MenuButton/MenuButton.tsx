@@ -11,7 +11,7 @@ interface MenuButtonProps {
   onClick?: () => void;
 }
 
-export default function MenuButton({ href, text, icon, isActive = false, onClick }: MenuButtonProps) {
+export default function MenuButton({ href, text, icon, onClick }: MenuButtonProps) {
   return (
     <Link
       href={href}

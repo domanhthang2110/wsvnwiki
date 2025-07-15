@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { SkillItem, SkillRow } from '@/types/skills';
+import type { SkillItem } from '@/types/skills';
 
 // Function to fetch all skills
 export async function getSkills(): Promise<SkillItem[]> {

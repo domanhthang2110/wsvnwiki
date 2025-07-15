@@ -1,4 +1,4 @@
-import { Database, Json } from './database.types';
+import { Database } from './database.types';
 import { SkillItem } from './skills';
 import { TalentTreeItem } from './talents';
 import type { Faction, Side } from '@/lib/data/classesData';

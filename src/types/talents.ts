@@ -17,7 +17,7 @@ export interface TalentParameterDefinitionStored {
 
 export interface TalentLevelValue {
   level: number;
-  [key: string]: any; // Dynamic keys for parameter values
+  [key: string]: unknown; // Dynamic keys for parameter values
 }
 
 // Define the specific types for the JSONB columns

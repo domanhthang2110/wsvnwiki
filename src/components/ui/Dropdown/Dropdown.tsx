@@ -43,9 +43,9 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
   }, []);
 
-  const handleOptionClick = (child: React.ReactElement<any>) => {
+  const handleOptionClick = (child: React.ReactElement<React.HTMLAttributes<HTMLElement>>) => {
     if (child.props.onClick) {
-      child.props.onClick();
+      child.props.onClick({} as React.MouseEvent<HTMLElement>); // Pass a dummy event or adjust onClick signature if needed
     }
     setIsOpen(false);
   };
@@ -80,8 +80,8 @@ const Dropdown: React.FC<DropdownProps> = ({
        {isOpen && !dropdownDisabled && (
          <div className={styles.dropdownContent}>
            {React.Children.map(children, (child) =>
-             React.cloneElement(child as React.ReactElement<any>, {
-                onClick: () => handleOptionClick(child as React.ReactElement<any>),
+             React.cloneElement(child as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
+                onClick: () => handleOptionClick(child as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
               })
             )}
           </div>

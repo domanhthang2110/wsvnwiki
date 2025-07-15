@@ -32,8 +32,6 @@ export function GuideTableOfContents({ headers }: GuideTableOfContentsProps) {
 
       let newActiveId: string | null = null;
       let minTop = Infinity;
-      let maxBottom = -Infinity; // To detect elements near the bottom of the viewport
-
       const intersectingHeaders = entries.filter(entry => entry.isIntersecting);
 
       if (intersectingHeaders.length > 0) {
@@ -100,7 +98,7 @@ export function GuideTableOfContents({ headers }: GuideTableOfContentsProps) {
     return () => {
       observer.current?.disconnect();
     };
-  }, [headers]); // Removed activeId from dependencies to prevent infinite loops from setActiveId within callback
+  }, [headers, activeId]); // Removed activeId from dependencies to prevent infinite loops from setActiveId within callback
 
   // Handle click on TOC item to scroll smoothly and update activeId
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {

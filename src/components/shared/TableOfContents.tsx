@@ -62,7 +62,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ contentRef, onDebugIn
     });
 
     setHeadings(detectedHeadings);
-  }, [contentRef.current]);
+  }, [contentRef]);
 
   // Set initial activeId to the first heading once headings are loaded
   useEffect(() => {

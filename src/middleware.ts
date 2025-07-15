@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
         setAll(cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) {
           // Clone the request and response to ensure immutability and correct header propagation
           const newReqHeaders = new Headers(req.headers);
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) => {
             // Set on the cloned request cookies for potential use in the same middleware chain
             // (though Next.js request cookies are read-only, this is more about updating our 'view')
             // More importantly, set on the response cookies.

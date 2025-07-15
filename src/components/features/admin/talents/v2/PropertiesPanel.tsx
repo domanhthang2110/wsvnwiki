@@ -5,11 +5,12 @@ import { useTalentTreeStore } from './store';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch/switch';
 import LongButton from '@/components/ui/LongButton';
+import { TalentTreeItem } from '@/types/talents';
 
 interface PropertiesPanelProps {
   onSave: (isNew: boolean) => void;
   onDelete: (treeId: number) => void;
-  onEdit: (tree: any) => void;
+  onEdit: (tree: TalentTreeItem) => void;
   onClear: () => void;
 }
 

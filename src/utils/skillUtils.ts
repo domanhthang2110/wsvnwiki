@@ -69,7 +69,7 @@ export const formatEnergyCostForLevel = (skill: SkillItem, level: number): strin
     return 'N/A';
   }
 
-  const energyCost = (skill.energy_cost as any)[level];
+  const energyCost = (skill.energy_cost as Record<number, number>)[level];
   return energyCost ? String(energyCost) : 'N/A';
 };
 
@@ -96,6 +96,6 @@ export const formatReducedEnergyRegenForLevel = (skill: SkillItem, level: number
     return 'N/A';
   }
 
-  const reducedEnergyRegen = (skill.reduced_energy_regen as any)[level];
+  const reducedEnergyRegen = (skill.reduced_energy_regen as Record<number, number>)[level];
   return reducedEnergyRegen ? String(reducedEnergyRegen) : 'N/A';
 };

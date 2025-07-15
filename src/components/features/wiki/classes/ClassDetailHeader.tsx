@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ClassDetailHeader.module.css';
 import MedievalBurgerMenu from '@/components/features/wiki/layout/MedievalBurgerMenu';
-
+import Image from 'next/image';
 interface ClassDetailHeaderProps {
   className: string;
   classIconUrl: string | null;
@@ -21,10 +21,11 @@ export default function ClassDetailHeader({
       </div>
       
       {/* Existing header content */}
-      <div className="flex items-center space-x-4 w-full">
+      <div className="flex relative items-center space-x-4 w-full">
         {classIconUrl && (
-          <img 
+          <Image 
             src={classIconUrl} 
+            fill
             alt={className}
             className="w-12 h-12 object-contain"
             style={{ imageRendering: 'pixelated' }}

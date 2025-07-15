@@ -4,9 +4,9 @@
 import React from 'react';
 import { type Editor } from '@tiptap/react';
 import {
-  Bold, Strikethrough, Italic, List, ListOrdered, Heading2, Underline, Quote,
-  Image as ImageIcon, Link as LinkIcon, Code, CornerUpLeft, CornerUpRight,
-  AlignCenter, AlignLeft, AlignRight, Minus, AlignJustify
+  Bold, Strikethrough, Italic, List, ListOrdered, Underline, Quote,
+  Image as ImageIcon, Link as LinkIcon, CornerUpLeft, CornerUpRight,
+  AlignCenter, AlignLeft, AlignRight, AlignJustify
 } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/Toggle/toggle';
@@ -100,7 +100,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
             } else {
               // Cast to 'any' because Tiptap's 'Level' type is a literal union (1 | 2 | ... | 6)
               // and parseInt returns a generic 'number'.
-              editor.chain().focus().toggleHeading({ level: parseInt(value.substring(1)) as any }).run();
+              editor.chain().focus().toggleHeading({ level: parseInt(value.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6 }).run();
             }
           }}
           className="bg-neutral-800 text-sm p-1 border border-neutral-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-[120px]"

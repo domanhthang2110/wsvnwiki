@@ -41,7 +41,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const displayTen = useMediaQuery({ query: '(min-width: 1024px)' });
   const mounted = useMounted();
   const [direction, setDirection] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [, setIsAnimating] = useState(false); // ✅
   const [isClassListCollapsed, setIsClassListCollapsed] = useState(false);
   const [fetchedTalents, setFetchedTalents] = useState<Record<number, TalentItem[]>>({});
   const classListContainerRef = useRef<HTMLDivElement>(null);
@@ -143,7 +143,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
 
     if (treeData.talents_data && !hasFetchedDetails) {
       const talentIds = treeData.talents_data.nodes
-        .map((n: any) => n.talent_id)
+        .map(n => n.talent_id)
         .filter(Boolean);
 
       if (talentIds.length > 0) {

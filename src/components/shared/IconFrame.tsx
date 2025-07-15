@@ -58,7 +58,7 @@ interface IconFrameProps {
   altText?: string;
   disableHover?: boolean;
   size?: number;
-  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => void;
   isActive?: boolean;
   style?: React.CSSProperties; // Add style prop
   // These props allow the parent to be notified of hover events
@@ -189,7 +189,7 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
       role={onClick ? "button" : "img"}
       tabIndex={onClick ? 0 : -1}
       aria-label={altText || `Framed content with ${styleType} style`}
-      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(e as any); } : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(e); } : undefined}
     >
       {contentImageUrl && ( // Conditionally render img tag only if contentImageUrl exists
         <div style={contentImageWrapperStyle}>

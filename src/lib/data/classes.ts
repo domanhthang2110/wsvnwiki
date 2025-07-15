@@ -1,8 +1,14 @@
 import supabase from '@/lib/supabase/static';
 import type { ClassItem, ClassRow } from '@/types/classes';
 import type { SkillItem, SkillRow } from '@/types/skills';
+import type { TalentNode } from '@/types/talents';
+import type { Item } from '@/types/items';
 import { CacheManager } from '@/utils/cache';
 import { CLASSES_DATA } from './classesData';
+
+interface SkillWithItemsQuery extends SkillRow {
+  items?: { item: Item }[];
+}
 
 // Function to fetch all classes with their associated skills
 export async function getClassesWithSkills(): Promise<ClassItem[]> {
@@ -42,7 +48,7 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
     const classInfo = CLASSES_DATA.find(c => c.name === cls.name);
     const talent_tree = Array.isArray(cls.talent_tree) ? cls.talent_tree[0] : cls.talent_tree;
     if (talent_tree && talent_tree.talents_data && talent_tree.talents_data.nodes) {
-      talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: any) => ({ ...td, talent_id: td.talent_id || null }))
+      talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: TalentNode) => ({ ...td, talent_id: td.talent_id || null }))
     }
     
     const image_assets = {
@@ -53,10 +59,10 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
     return {
       ...cls,
       image_assets,
-      skills: cls.skills?.map((s: { skill: any }) => {
+      skills: cls.skills?.map((s: { skill: SkillWithItemsQuery }) => {
         const skillWithItems = {
           ...s.skill,
-          items: s.skill.items?.map((i: { item: any }) => i.item) || [],
+          items: s.skill.items?.map((i: { item: Item }) => i.item) || [],
         };
         return skillWithItems as SkillItem;
       }) || [],
@@ -90,7 +96,7 @@ export async function getClassById(id: number): Promise<ClassItem | null> {
 
   const talent_tree = Array.isArray(data.talent_tree) ? data.talent_tree[0] : data.talent_tree;
   if (talent_tree && talent_tree.talents_data && talent_tree.talents_data.nodes) {
-    talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: any) => ({ ...td, talent_id: td.talent_id || null }))
+    talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: TalentNode) => ({ ...td, talent_id: td.talent_id || null }))
   }
   return {
     ...data,

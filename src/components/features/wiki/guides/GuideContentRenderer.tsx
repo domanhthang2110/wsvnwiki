@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Image from 'next/image';
 import parse from 'html-react-parser';
 import { TagRow } from '@/types/posts';
@@ -28,7 +28,7 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
       (headingEl as HTMLElement).style.border = ''; 
       (headingEl as HTMLElement).style.boxSizing = '';
     });
-  }, [contentRef.current]); // Only re-run when contentRef updates
+  },); // Only re-run when contentRef updates
 
   return (
     <>

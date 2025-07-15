@@ -10,12 +10,12 @@ interface CacheOptions {
 const DEFAULT_TTL = 1000 * 60 * 5; // 5 minutes
 
 export class CacheManager {
-  private static caches: Map<string, Map<string, CacheEntry<any>>> = new Map();
+  private static caches: Map<string, Map<string, CacheEntry<unknown>>> = new Map();
 
   /**
    * Get or create a cache instance for a specific namespace
    */
-  static getCache(namespace: string): Map<string, CacheEntry<any>> {
+  static getCache(namespace: string): Map<string, CacheEntry<unknown>> {
     let cache = this.caches.get(namespace);
     if (!cache) {
       cache = new Map();
@@ -39,7 +39,7 @@ export class CacheManager {
       return undefined;
     }
 
-    return entry.data;
+    return entry.data as T;
   }
 
   /**

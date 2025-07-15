@@ -4,7 +4,6 @@ import React from 'react';
 import { useTalentTreeStore } from './store';
 import IconFrame from '@/components/shared/IconFrame';
 import LongButton from '@/components/ui/LongButton';
-import { TalentItem } from '@/types/talents';
 
 interface TalentSelectModalProps {
   onSelect: (talentId: number) => void;

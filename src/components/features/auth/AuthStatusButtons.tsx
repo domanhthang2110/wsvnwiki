@@ -5,9 +5,10 @@ import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LogIn, LogOut, LayoutDashboard } from 'lucide-react';
+import type { Session } from '@supabase/supabase-js';
 
 export default function AuthStatusButtons() {
-  const [session, setSession] = useState<any | null>(null); // Supabase Session type
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

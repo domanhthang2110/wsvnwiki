@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import screenfull from "screenfull";
-import { TalentTreeItem, TalentItem } from "@/types/talents";
+import { TalentTreeItem, TalentItem, TalentLevelValue } from "@/types/talents";
 import InfoModal from "@/components/ui/InfoModal";
 import Dropdown from "@/components/ui/Dropdown/Dropdown";
 import GridCell from "./GridCell";
@@ -14,7 +14,7 @@ import {
 import TotalTalentCostDisplay from "./TotalTalentCostDisplay";
 import LongButton from "@/components/ui/LongButton";
 import { useTalentTreeInteractiveStore } from "./talent-tree-store";
-
+import Image from "next/image";
 interface TalentTreeViewProps {
   talentTree: TalentTreeItem;
   talents: TalentItem[];
@@ -217,8 +217,9 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
               width={40}
               onClick={() => setIsCalculatorVisible(!isCalculatorVisible)}
             >
-              <img
+              <Image
                 src="/image/talents/calculator.svg"
+                fill
                 alt="Toggle Calculator"
                 className="w-full h-full p-1.5"
               />
@@ -229,19 +230,21 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
                 transformWrapperRef.current?.centerView();
               }}
             >
-              <img
+              <Image
                 src="/image/reset_view_icon.svg"
+                fill
                 alt="Reset View"
                 className="w-full h-full p-1.5"
               />
             </LongButton>
             <LongButton width={40} onClick={handleFullscreen}>
-              <img
+              <Image
                 src={
                   isFullscreen
                     ? "/image/talents/fullscreen_exit.svg"
                     : "/image/talents/fullscreen.svg"
                 }
+                fill
                 alt="Fullscreen"
                 className="w-full h-full p-1.5"
               />
@@ -407,7 +410,7 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
 
                   if (modalLevel === 0) {
                     const allValues = selectedTalent.level_values
-                      .map((lv: any) => lv[key])
+                      .map((lv: TalentLevelValue) => lv[key])
                       .join(" / ");
                     return selectedTalent.description.replace(
                       placeholder,
@@ -416,7 +419,7 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
                   }
 
                   const levelValue = selectedTalent.level_values.find(
-                    (lv: any) => lv.level === modalLevel
+                    (lv: TalentLevelValue) => lv.level === modalLevel
                   );
                   if (levelValue) {
                     return selectedTalent.description.replace(

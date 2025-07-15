@@ -1,15 +1,10 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { useMediaQuery } from 'react-responsive';
 import { Item } from '@/types/items';
-import { formatFullSkillDescription, formatRange, formatSkillDescriptionForLevel, formatEnergyCost, formatEnergyCostForLevel } from '@/utils/skillUtils';
-import translations from '@/lib/locales/vi.json';
 import IconFrame from '@/components/shared/IconFrame';
 import Image from 'next/image';
-import Dropdown from '../Dropdown/Dropdown';
 import styles from './InfoModal.module.css';
-import LongButton from '../LongButton';
 
 interface InfoModalProps<T> {
   data: T;
@@ -31,8 +26,6 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
   onClose,
   size = 'lg',
  width,
- onPrevious,
- onNext,
   children,
   footer,
   title,

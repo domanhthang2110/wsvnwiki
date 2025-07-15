@@ -6,6 +6,7 @@ import { useTalentTreeStore } from './store';
 import IconFrame from '@/components/shared/IconFrame';
 import FreeCompositeFrame from '@/components/ui/FreeCompositeFrame';
 import { TalentNode, TalentEdge } from '@/types/talents';
+import Image from 'next/image';
 
 const ItemTypes = {
   TALENT: 'talent',
@@ -25,7 +26,7 @@ const GridCell: React.FC<GridCellProps> = ({ x, y, isTalentCell, onDropItem, onC
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: [ItemTypes.TALENT],
     drop: (item: TalentNode & { isToolbarItem?: boolean }) => onDropItem(item, x, y),
-    canDrop: (item) => isTalentCell && !useTalentTreeStore.getState().treeData.nodes.some(n => n.x === x && n.y === y),
+    canDrop: () => isTalentCell && !useTalentTreeStore.getState().treeData.nodes.some(n => n.x === x && n.y === y),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
@@ -148,7 +149,7 @@ interface TalentGridProps {
 }
 
 const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onItemClick, onLink, onDeleteEdge }) => {
-  const { treeData, selectedNodeId, availableTalents } = useTalentTreeStore();
+  const { treeData, selectedNodeId} = useTalentTreeStore();
 
   const rows = 30;
   const cols = 10;
@@ -282,8 +283,9 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                       </div>
                     )}
                     {arrowDirection && edge ? (
-                      <img
+                      <Image
                         src="/image/talent_arrow.svg"
+                        fill
                         alt={`Arrow pointing ${arrowDirection}`}
                         className="object-contain cursor-pointer"
                         onContextMenu={(e) => {

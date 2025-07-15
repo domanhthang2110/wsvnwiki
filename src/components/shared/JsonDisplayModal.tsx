@@ -3,7 +3,7 @@
 import React from 'react';
 
 interface JsonDisplayModalProps {
-  data: any;
+  data: unknown;
   onClose: () => void;
 }
 

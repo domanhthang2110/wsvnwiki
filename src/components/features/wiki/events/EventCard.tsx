@@ -1,4 +1,5 @@
 import { EventItem } from '@/types/events';
+import Image from 'next/image';
 
 interface EventCardProps {
   event: EventItem;
@@ -6,11 +7,6 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onOpenModal }: EventCardProps) {
-  const formattedDate = new Date(event.pubDate).toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 
   return (
     <div 
@@ -19,8 +15,9 @@ export default function EventCard({ event, onOpenModal }: EventCardProps) {
       style={{ borderStyle: 'double', borderWidth: '4px', borderColor: '#4a5568' }} // Simulating double border
     >
       {event.imageUrl && (
-        <img 
+        <Image 
           src={event.imageUrl} 
+          fill
           alt={event.title} 
           className="w-full h-48 object-cover flex-shrink-0" /* Added flex-shrink-0 */
         />

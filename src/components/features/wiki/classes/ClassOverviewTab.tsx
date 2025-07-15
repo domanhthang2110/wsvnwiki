@@ -4,9 +4,7 @@ import { ClassItem } from '@/types/classes';
 import styles from './ClassOverviewTab.module.css';
 import IconFrame from '@/components/shared/IconFrame';
 import { CLASSES_DATA } from '@/lib/data/classesData';
-import InfoModal from '@/components/ui/InfoModal';
 import LongButton from '@/components/ui/LongButton';
-import { formatFullSkillDescription, formatRange, formatSkillDescriptionForLevel, formatEnergyCost, formatEnergyCostForLevel } from '@/utils/skillUtils';
 import { SkillItem } from '@/types/skills';
 import { SkillInfoModal } from './SkillDisplay';
 
@@ -120,7 +118,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
               onClose={handleCloseModal}
               onNext={handleNextSkill}
               onPrevious={handlePreviousSkill}
-              footer={(modalWidth) => (
+              footer={() => (
                 <div className="flex items-center justify-center gap-2">
                   <LongButton
                     width={40}

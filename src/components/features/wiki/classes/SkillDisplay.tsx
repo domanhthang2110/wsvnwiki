@@ -62,7 +62,7 @@ export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLe
             {skill.activation_type === 'Permanent' && skill.reduced_energy_regen && (
               <p><strong>{translations.reduced_energy_regen}:</strong> <span style={{ color: '#9dee05' }}>
                 {displayLevel === 0
-                  ? Object.values(skill.reduced_energy_regen as any).join(' / ')
+                  ? Object.values(skill.reduced_energy_regen as Record<number, number>).join(' / ')
                   : formatReducedEnergyRegenForLevel(skill, displayLevel)}
               </span></p>
             )}
@@ -182,7 +182,7 @@ const SkillDisplay: React.FC<SkillDisplayProps> = ({ skills }) => {
           onClose={handleCloseModal}
           onNext={handleNextSkill}
           onPrevious={handlePreviousSkill}
-          footer={(modalWidth) => (
+          footer={() => (
             <div className="flex items-center justify-center gap-2">
               <LongButton
                 width={40}

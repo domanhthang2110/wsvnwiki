@@ -4,7 +4,7 @@ import IconFrame from '@/components/shared/IconFrame';
 import { formatFullSkillDescription, formatEnergyCost } from '@/utils/skillUtils';
 import JsonDisplayModal from '@/components/shared/JsonDisplayModal';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
-
+import Image from 'next/image';
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
 interface SkillCardProps {
@@ -16,7 +16,7 @@ interface SkillCardProps {
   className?: string; // Add className prop
 }
 
-const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconChange, isSelected, className }) => {
+const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconChange, isSelected }) => {
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const [isLinkedItemsExpanded, setIsLinkedItemsExpanded] = useState(false);
   const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
@@ -87,9 +87,9 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
               {isLinkedItemsExpanded && (
                 <div className="flex flex-wrap gap-2 mt-1">
                   {skill.items.map(item => (
-                    <div key={item.id} className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
+                    <div key={item.id} className="flex relative items-center gap-1 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
                       {item.icon_url && (
-                        <img src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
+                        <Image src={item.icon_url} fill alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
                       )}
                       {item.name}
                     </div>

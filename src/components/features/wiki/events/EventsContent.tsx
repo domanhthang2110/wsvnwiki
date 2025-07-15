@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import EventCard from './EventCard';
 import EventModal from './EventModal';
-import { EventItem } from '@/types/events';
-import Image from 'next/image';
-export default function EventsContent() {
+import { EventItem } from '@/types/events';export default function EventsContent() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

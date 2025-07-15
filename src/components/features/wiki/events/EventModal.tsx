@@ -8,9 +8,9 @@ interface EventModalProps {
 }
 
 export default function EventModal({ event, isOpen, onClose }: EventModalProps) {
-  if (!isOpen) return null;
-
   const [showOriginal, setShowOriginal] = useState(false); // State for language toggle
+
+  if (!isOpen) return null;
 
   const formattedDate = new Date(event.pubDate).toLocaleDateString('vi-VN', {
     year: 'numeric',
