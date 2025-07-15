@@ -56,6 +56,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
           objectFit="cover"
           layout='fill'
           className={styles.bannerImage}
+          priority={true}
         />
       </div>
       <div className={styles.content}>
@@ -74,6 +75,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
                       width={20}
                       height={20}
                       style={{ border: '1px solid #e6ce63', background: '#222', marginRight: 6 }}
+                      priority={true}
                     />
                     <span style={{ marginLeft: 2 }}>{classData.faction}</span>
                   </div>

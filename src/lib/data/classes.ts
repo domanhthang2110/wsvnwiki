@@ -53,7 +53,7 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
     
     const image_assets = {
       ...(cls.image_assets as object),
-      banner: `/image/classes/${cls.name.toLowerCase().replace(' ', '-')}/banner.gif`,
+      banner: `/image/classes/${cls.name.toLowerCase().replace(' ', '-')}/banner.webm`,
     };
 
     return {

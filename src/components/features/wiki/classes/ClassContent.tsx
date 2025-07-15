@@ -22,6 +22,24 @@ interface ClassContentProps {
   classes: ClassItem[];
 }
 
+// Helper component to preload images
+const PreloadImages: React.FC<{ classes: ClassItem[] }> = ({ classes }) => {
+  return (
+    <div style={{ display: 'none' }}>
+      {classes.map(cls => (
+        <React.Fragment key={cls.id}>
+          {cls.image_assets?.logo && (
+            <Image src={cls.image_assets.logo} alt="" width={1} height={1} priority={false} loading="eager" />
+          )}
+          {cls.image_assets?.banner && (
+            <Image src={cls.image_assets.banner} alt="" width={1} height={1} priority={false} loading="eager" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 const DIAMOND_DOT_SIZE = 32;
 const DIAMOND_DOT_COLOR = '#e6ce63';
 
@@ -357,6 +375,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
 
   return (
     <div id="class-content-wrapper" className={`${classContentStyles.pixelBackground} flex flex-col flex-grow w-full`}>
+      <PreloadImages classes={classes} /> {/* Add the preloader here */}
       <div id="upper-box-container" className={`relative pt-2 border border-[#e6ce63] shadow-lg text-white w-full transition-all duration-300 ${isClassListCollapsed ? 'h-16' : 'h-auto'}`}>
         <div className="flex items-center mb-4">
           <div className="text-xl font-bold text-center flex-grow">
