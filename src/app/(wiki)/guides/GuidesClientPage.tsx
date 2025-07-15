@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect} from 'react';
 import { PostItem, TagRow } from '@/types/posts';
 import { GuideCard } from '@/components/features/wiki/guides/GuideCard';
 import { InputField } from '@/components/ui/InputField';

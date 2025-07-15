@@ -1,6 +1,5 @@
 import { getPostBySlug, getAllPostSlugs } from '@/lib/data/posts';
 import { notFound } from 'next/navigation';
-import { PostItem, TagRow } from '@/types/posts';
 import { GuideContentRenderer } from '@/components/features/wiki/guides/GuideContentRenderer'; // New Client Component
 
 // Revalidate data every hour

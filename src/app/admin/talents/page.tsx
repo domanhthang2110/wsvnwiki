@@ -38,11 +38,10 @@ export default function AdminTalentsPage() {
     try {
       if (selectedTalent && selectedTalent.id) {
         // ---- EDITING EXISTING TALENT ----
-        const { data: updateData, error: updateError } = await supabase
+        const { error: updateError } = await supabase
           .from('talents')
           .update(dataFromForm)
-          .eq('id', selectedTalent.id)
-          .select();
+          .eq('id', selectedTalent.id);
 
         if (updateError) {
           console.error("Supabase UPDATE error:", updateError);
@@ -53,10 +52,9 @@ export default function AdminTalentsPage() {
       
       } else {
         // ---- CREATING NEW TALENT ----
-        const { data: insertData, error: insertError } = await supabase
+        const { error: insertError } = await supabase
           .from('talents')
-          .insert([dataFromForm])
-          .select();
+          .insert([dataFromForm]);
 
         if (insertError) {
           console.error("Supabase INSERT error:", insertError);
@@ -66,9 +64,13 @@ export default function AdminTalentsPage() {
       
       await fetchTalents();
 
-    } catch (error: any) {
-      console.error('Error saving talent (in AdminTalentsPage):', error.message);
-      throw error; 
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error saving talent (in AdminTalentsPage):', errorMessage);
+      throw new Error(errorMessage); 
     }
   };
 
@@ -94,9 +96,13 @@ export default function AdminTalentsPage() {
       if (selectedTalent?.id === talent.id) {
         setSelectedTalent(null);
       }
-    } catch (error: any) {
-      console.error('Error deleting talent:', error.message);
-      alert(`Failed to delete talent: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error deleting talent:', errorMessage);
+      alert(`Failed to delete talent: ${errorMessage}`);
     }
   };
 

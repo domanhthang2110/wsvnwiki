@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client'; 
-import { Edit3, Trash2, Tag, Type, AlertTriangle, PlusCircle } from 'lucide-react';
+import { Edit3, Trash2, Tag, Type, AlertTriangle } from 'lucide-react';
 import { slugify } from '@/lib/utils'; // Import slugify from utils
 
 // --- TypeScript Interfaces ---
@@ -73,8 +73,12 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
         // setCategory('tags'); // Keep category or reset as preferred
         setSlug('');
       }
-    } catch (error: any) {
-      setFormError(error.message || 'An unexpected error occurred.');
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setFormError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -236,7 +240,7 @@ export default function AdminTaxonomyPage() {
 
     if (tableName === 'tags') setTagsLoading(false);
     else setTypesLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     fetchTableData('tags');
@@ -265,10 +269,14 @@ export default function AdminTaxonomyPage() {
         if (insertError) throw insertError;
       }
       await fetchTableData(category); // Refresh only the relevant list
-    } catch (error: any) {
-      console.error(`Error saving ${category}:`, error.message);
+    } catch (error: unknown) {
+      let errorMessage = `Failed to save ${category}. Name/Slug may need to be unique.`;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(`Error saving ${category}:`, errorMessage);
       // This error will be re-thrown and caught by TaxonomyForm's handleSubmit
-      throw new Error(error.message || `Failed to save ${category}. Name/Slug may need to be unique.`);
+      throw new Error(errorMessage);
     }
   };
 
@@ -295,9 +303,13 @@ export default function AdminTaxonomyPage() {
       if (selectedItem?.id === item.id && selectedItem?.category === category) {
         setSelectedItem(null); // Clear form if deleted item was being edited
       }
-    } catch (error: any) {
-      console.error(`Error deleting ${category}:`, error.message);
-      alert(`Failed to delete: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = `Failed to delete ${category}.`;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(`Error deleting ${category}:`, errorMessage);
+      alert(`Failed to delete: ${errorMessage}`);
     }
   };
 

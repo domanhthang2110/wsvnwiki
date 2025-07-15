@@ -8,7 +8,6 @@ import { ClassItem, ClassFormData } from '@/types/classes';
 import { supabase } from '@/lib/supabase/client'; // Use new client path
 import SkillSelectorModal from '@/components/features/admin/skills/SkillSelectorModal'; // Update path
 import ClassForm from '@/components/features/admin/classes/ClassForm'; // Update path
-import SkillCard from '@/components/features/admin/skills/SkillCard'; // Update path
 import { SkillItem } from '@/types/skills'; // Import SkillItem
 import { AlertTriangle } from 'lucide-react'; // Import icon for error message
 
@@ -145,22 +144,26 @@ export default function AdminClassesPage() {
       setEditingClass(null);
       setSelectedSkills([]);
       return { success: true };
-    } catch (error: any) {
-      // This outer catch should only be hit by unexpected errors, not Supabase errors
+    } catch (error: unknown) {
       console.error('Unexpected error saving class:', error);
-      console.error('Full error object from AdminClassesPage catch:', JSON.stringify(error, null, 2)); // Log the full error object
+
       let userMessage = 'An unexpected error occurred. Please try again.';
-      // If it's a Supabase error that somehow bypassed the internal checks
-      if (error.code === '23505') { 
-        if (error.message.includes('classes_name_key')) {
-          userMessage = 'A class with this name already exists. Please choose a different name.';
+
+      if (error && typeof error === 'object' && 'message' in error) {
+        const err = error as { message: string; code?: string };
+        
+        if (err.code === '23505') {
+          if (err.message.includes('classes_name_key')) {
+            userMessage = 'A class with this name already exists. Please choose a different name.';
+          } else {
+            userMessage = 'This entry would create a duplicate value. Please check your input.';
+          }
         } else {
-          userMessage = 'This entry would create a duplicate value. Please check your input.';
+          userMessage = err.message;
         }
-      } else if (error.message) {
-        userMessage = error.message;
       }
-      setPageError(userMessage); // Set page-level error
+
+      setPageError(userMessage);
       return { success: false, error: userMessage };
     }
   };
