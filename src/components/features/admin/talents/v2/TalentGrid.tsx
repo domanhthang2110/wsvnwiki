@@ -6,8 +6,6 @@ import { useTalentTreeStore } from './store';
 import IconFrame from '@/components/shared/IconFrame';
 import FreeCompositeFrame from '@/components/ui/FreeCompositeFrame';
 import { TalentNode, TalentEdge } from '@/types/talents';
-import Image from 'next/image';
-
 const ItemTypes = {
   TALENT: 'talent',
 };
@@ -284,9 +282,9 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                       </div>
                     )}
                     {arrowDirection && edge ? (
-                      <Image
+                      <img
                         src="/image/talent_arrow.webp"
-                        fill
+                        
                         alt={`Arrow pointing ${arrowDirection}`}
                         className="object-contain cursor-pointer"
                         onContextMenu={(e) => {

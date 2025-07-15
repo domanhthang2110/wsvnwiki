@@ -7,6 +7,7 @@
   height: 3rem; /* h-12 */
   transition: all 0.2s;
   image-rendering: pixelated;
+  
 }
 
 .burgerImage {
@@ -14,6 +15,7 @@
   height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
+  
 }
 
 .menuOverlay {

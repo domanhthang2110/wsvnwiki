@@ -15,13 +15,14 @@ export default function EventCard({ event, onOpenModal }: EventCardProps) {
       style={{ borderStyle: 'double', borderWidth: '4px', borderColor: '#4a5568' }} // Simulating double border
     >
       {event.imageUrl && (
+        <div className="w-full h-48 relative">
         <Image 
           src={event.imageUrl} 
           fill
           alt={event.title} 
-          className="w-full h-48 object-cover flex-shrink-0" /* Added flex-shrink-0 */
+          className=" object-cover flex-shrink-0" /* Added flex-shrink-0 */
           draggable={false}
-        />
+        /></div>
       )}
       <div className="p-6 text-white flex flex-col flex-grow"> {/* Ensure all text inside is white, added flex-grow */}
         <h2 className="text-xl font-bold line-clamp-none">{event.title}</h2>

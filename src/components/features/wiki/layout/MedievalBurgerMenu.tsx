@@ -18,10 +18,10 @@ const menuItems: MenuItem[] = [
   { href: '/classes', label: 'Lớp nhân vật', icon: '/image/menu/classes.webp' },
   { href: '/guides', label: 'Hướng dẫn', icon: '/image/menu/guides.webp' },
   { href: '/events', label: 'Tin tức & Sự kiện', icon: '/image/menu/events.webp' },
-  { href: '/items', label: 'Vật phẩm', icon: '/image/item_icon.webp' },
+  { href: '/lore', label: 'Biên niên sử', icon: '/image/menu/lore.webp' },
   { href: '/quests', label: 'Nhiệm vụ', icon: '/image/quest_icon.webp' },
   { href: '/dungeons', label: 'Dungeon', icon: '/image/dungeon_icon.webp' },
-  { href: '/pvp', label: 'PvP', icon: '/image/pvp_icon.webp' }];
+  { href: '/auth/login', label: 'Admin', icon: '/image/menu/admin.webp' }];
 
 export default function MedievalBurgerMenu() {
   const pathname = usePathname();
