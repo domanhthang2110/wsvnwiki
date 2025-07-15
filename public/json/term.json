@@ -1,0 +1,162 @@
+[
+  {
+    "english_term": "Physical Power",
+    "vietnamese_term": "sức mạnh vật lý"
+  },
+  {
+    "english_term": "Magic Power",
+    "vietnamese_term": "sức mạnh phép thuật"
+  },
+  {
+    "english_term": "Physical Defense",
+    "vietnamese_term": "giáp vật lý"
+  },
+  {
+    "english_term": "Magic Defense",
+    "vietnamese_term": "giáp phép"
+  },
+  {
+    "english_term": "Fear",
+    "vietnamese_term": "Sợ hãi"
+  },
+    {
+    "english_term": "Stun",
+    "vietnamese_term": "Choáng"
+  },
+  {
+    "english_term": "Attack Speed",
+    "vietnamese_term": "tốc đánh"
+  },
+  {
+    "english_term": "Skill Cooldown rate",
+    "vietnamese_term": "hồi chiêu"
+  },
+  {
+    "english_term": "Bleeding",
+    "vietnamese_term": "Chảy máu"
+  },
+  {
+    "english_term": "Poisoning",
+    "vietnamese_term": "Độc"
+  },
+  {
+    "english_term": "Critical Hit chance",
+    "vietnamese_term": "tỷ lệ chí mạng"
+  },
+  {
+    "english_term": "Accuracy",
+    "vietnamese_term": "độ chính xác"
+  },
+  {
+    "english_term": "Decay",
+    "vietnamese_term": "Phân rã"
+  },
+  {
+    "english_term": "Penetration",
+    "vietnamese_term": "xuyên giáp"
+  },
+  {
+    "english_term": "auto-attack",
+    "vietnamese_term": "đánh thường"
+  },
+  {
+    "english_term": "Ice Prison",
+    "vietnamese_term": "Nhà tù Băng"
+  },
+  {
+    "english_term": "Rage",
+    "vietnamese_term": "Cuồng nộ"
+  },
+  {
+    "english_term": "Pestilence",
+    "vietnamese_term": "Dịch bệnh"
+  },
+  {
+    "english_term": "Apathy",
+    "vietnamese_term": "Vô Cảm"
+  },
+  {
+    "english_term": "Skill Cooldown",
+    "vietnamese_term": "hồi chiêu"
+  },
+  {
+    "english_term": "Stone Skin",
+    "vietnamese_term": "Da đá"
+  },
+  {
+    "english_term": "Block",
+    "vietnamese_term": "chặn đòn"
+  },
+  {
+    "english_term": "Dodge",
+    "vietnamese_term": "né tránh"
+  },
+  {
+    "english_term": "Parry",
+    "vietnamese_term": "đỡ đòn"
+  },
+  {
+    "english_term": "Immunity",
+    "vietnamese_term": "miễn nhiễm"
+  },
+  {
+    "english_term": "Ice Shield",
+    "vietnamese_term": "Khiên Băng"
+  },
+  {
+    "english_term": "Sleep Magic",
+    "vietnamese_term": "Thuật Ngủ"
+  },
+  {
+    "english_term": "Sleep",
+    "vietnamese_term": "Ngủ"
+  },
+  {
+    "english_term": "Health Steal",
+    "vietnamese_term": "hút máu"
+  },
+  {
+    "english_term": "Secret Theft",
+    "vietnamese_term": "Bí Thuật Hồi Máu"
+  },
+  {
+    "english_term": "Physical Block",
+    "vietnamese_term": "chặn vật lý"
+  },
+  {
+    "english_term": "Magic Block",
+    "vietnamese_term": "chặn phép"
+  },
+  {
+    "english_term": "Solidity",
+    "vietnamese_term": "vững chãi"
+  },
+  {
+    "english_term": "Damage Reflection",
+    "vietnamese_term": "phản sát thương"
+  },
+  {
+    "english_term": "Punching",
+    "vietnamese_term": "Xuyên phá"
+  },
+  {
+    "english_term": "Resistance",
+    "vietnamese_term": "kháng khống chế"
+  },
+  {
+    "english_term": "Piercing Attack",
+    "vietnamese_term": "Xuyên thấu"
+  },
+  {
+    "english_term": "Critical Hit Strength",
+    "vietnamese_term": "sát thương chí mạng"
+  },
+  {
+    "english_term": "yard",
+    "vietnamese_term": "ô"
+  },
+  {
+    "english_term": "Permanent",
+    "vietnamese_term": "Duy trì"
+  }
+]

@@ -1,7 +1,7 @@
 import { Database, Json } from './database.types';
 import { SkillItem } from './skills';
 import { TalentTreeItem } from './talents';
-import type { Faction, Side } from '@/lib/data/factionMap';
+import type { Faction, Side } from '@/lib/data/classesData';
 
 // Define the structure for the image_assets JSON object
 export interface ClassImageAssets {
@@ -35,6 +35,7 @@ export interface ClassItem extends Omit<ClassRow, 'image_assets'> {
 export type ClassFormData = Omit<ClassItem, 'id' | 'created_at' | 'skills' | 'faction' | 'side' | 'image_assets'> & {
   name: string;
   description?: string | null;
+  lore?: string | null;
   // Individual fields for the form to handle image URLs
   logo_url?: string | null;
   avatar_url?: string | null;

@@ -5,169 +5,201 @@ interface FancyFrameProps {
   width: number;
   height: number;
   className?: string;
-  scale?: number; // New scale prop
+  scale?: number;
   overflowVisible?: boolean;
 }
 
-const FancyFrame: React.FC<FancyFrameProps> = ({ children, width, height, className, scale = 1, overflowVisible = false }) => {
-  const cornerSize = 8; // 8x8 pixels for corner (original size)
-  const horizontalBorderHeight = 6; // Height of fancy_horizontal.png (original size)
-  const horizontalBorderWidth = 12; // Width of fancy_horizontal.png (original size)
-  const verticalBorderWidth = 6; // Width of fancy_vertical.png (original size)
-  const verticalBorderHeight = 12; // Height of fancy_vertical.png (original size)
+const FancyFrame: React.FC<FancyFrameProps> = ({
+  children,
+  width,
+  height,
+  className = '',
+  scale = 1,
+  overflowVisible = false
+}) => {
+  const cornerSize = 8 * scale;
+  const contentPadding = cornerSize;
 
-  const scaledCornerSize = cornerSize * scale;
-  const scaledHorizontalBorderHeight = horizontalBorderHeight * scale;
-  const scaledHorizontalBorderWidth = horizontalBorderWidth * scale;
-  const scaledVerticalBorderWidth = verticalBorderWidth * scale;
-  const scaledVerticalBorderHeight = verticalBorderHeight * scale;
-
-  const frameStyle: React.CSSProperties = {
+  const frameStyles: React.CSSProperties = {
     width: `${width}px`,
     height: `${height}px`,
     position: 'relative',
     imageRendering: 'pixelated',
     overflow: overflowVisible ? 'visible' : 'hidden',
-  };
+    
+    // CSS custom properties for the CSS to use
+    '--corner-size': `${cornerSize}px`,
+    '--h-border-height': `${6 * scale}px`,
+    '--h-border-width': `${12 * scale}px`,
+    '--v-border-width': `${6 * scale}px`,
+    '--v-border-height': `${12 * scale}px`,
+    '--frame-width': `${width}px`,
+    '--frame-height': `${height}px`,
+  } as React.CSSProperties;
 
-  const contentStyle: React.CSSProperties = {
+  const contentStyles: React.CSSProperties = {
     position: 'absolute',
-    top: scaledCornerSize,
-    left: scaledCornerSize,
-    width: width - scaledCornerSize * 2,
-    height: height - scaledCornerSize * 2,
+    top: contentPadding,
+    left: contentPadding,
+    right: contentPadding,
+    bottom: contentPadding,
     overflow: overflowVisible ? 'visible' : 'hidden',
   };
 
   return (
-    <div className={`fancy-frame-component ${className || ''}`} style={frameStyle}>
-      {/* Top-left corner */}
-      <div
-        className="fancy-frame-corner top-left"
-        style={{
-          width: scaledCornerSize,
-          height: scaledCornerSize,
-          backgroundImage: 'url(/fancy_corner.png)',
-          backgroundSize: '100% 100%', /* Stretch to fill div */
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-        }}
-      />
-      {/* Top-right corner */}
-      <div
-        className="fancy-frame-corner top-right"
-        style={{
-          width: scaledCornerSize,
-          height: scaledCornerSize,
-          backgroundImage: 'url(/fancy_corner.png)',
-          backgroundSize: '100% 100%', /* Stretch to fill div */
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          transform: 'scaleX(-1)',
-        }}
-      />
-      {/* Bottom-left corner */}
-      <div
-        className="fancy-frame-corner bottom-left"
-        style={{
-          width: scaledCornerSize,
-          height: scaledCornerSize,
-          backgroundImage: 'url(/fancy_corner.png)',
-          backgroundSize: '100% 100%', /* Stretch to fill div */
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          transform: 'scaleY(-1)',
-        }}
-      />
-      {/* Bottom-right corner */}
-      <div
-        className="fancy-frame-corner bottom-right"
-        style={{
-          width: scaledCornerSize,
-          height: scaledCornerSize,
-          backgroundImage: 'url(/fancy_corner.png)',
-          backgroundSize: '100% 100%', /* Stretch to fill div */
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          transform: 'scale(-1, -1)',
-        }}
-      />
-
-      {/* Top border */}
-      <div
-        className="fancy-frame-border top"
-        style={{
-          height: scaledHorizontalBorderHeight,
-          backgroundImage: 'url(/fancy_horizontal.png)',
-          backgroundSize: `${scaledHorizontalBorderWidth}px ${scaledHorizontalBorderHeight}px`, /* Scaled size of the horizontal border sprite */
-          backgroundRepeat: 'repeat-x',
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          top: 0,
-          left: scaledCornerSize,
-          width: `calc(100% - ${scaledCornerSize * 2}px)`,
-        }}
-      />
-      {/* Bottom border */}
-      <div
-        className="fancy-frame-border bottom"
-        style={{
-          height: scaledHorizontalBorderHeight,
-          backgroundImage: 'url(/fancy_horizontal.png)',
-          backgroundSize: `${scaledHorizontalBorderWidth}px ${scaledHorizontalBorderHeight}px`, /* Scaled size of the horizontal border sprite */
-          backgroundRepeat: 'repeat-x',
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          bottom: 0,
-          left: scaledCornerSize,
-          width: `calc(100% - ${scaledCornerSize * 2}px)`,
-          transform: 'scaleY(-1)',
-        }}
-      />
-      {/* Left border */}
-      <div
-        className="fancy-frame-border left"
-        style={{
-          width: scaledVerticalBorderWidth,
-          backgroundImage: 'url(/fancy_vertical.png)',
-          backgroundSize: `${scaledVerticalBorderWidth}px ${scaledVerticalBorderHeight}px`, /* Scaled size of the vertical border sprite */
-          backgroundRepeat: 'repeat-y',
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          top: scaledCornerSize,
-          left: 0,
-          height: `calc(100% - ${scaledCornerSize * 2}px)`,
-        }}
-      />
-      {/* Right border */}
-      <div
-        className="fancy-frame-border right"
-        style={{
-          width: scaledVerticalBorderWidth,
-          backgroundImage: 'url(/fancy_vertical.png)',
-          backgroundSize: `${scaledVerticalBorderWidth}px ${scaledVerticalBorderHeight}px`, /* Scaled size of the vertical border sprite */
-          backgroundRepeat: 'repeat-y',
-          imageRendering: 'pixelated',
-          position: 'absolute',
-          top: scaledCornerSize,
-          right: 0,
-          height: `calc(100% - ${scaledCornerSize * 2}px)`,
-          transform: 'scaleX(-1)',
-        }}
-      />
-
-      <div className="fancy-frame-content" style={contentStyle}>
-        {children}
+    <>
+      {/* Static CSS - only rendered once */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .fancy-frame-static {
+            position: relative;
+            image-rendering: pixelated;
+          }
+          
+          /* Top-left corner */
+          .fancy-frame-static::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--corner-size);
+            height: var(--corner-size);
+            background-image: url(/fancy_corner.png);
+            background-size: 100% 100%;
+            image-rendering: pixelated;
+            z-index: 4;
+          }
+          
+          /* Top-right corner */
+          .fancy-frame-static::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: var(--corner-size);
+            height: var(--corner-size);
+            background-image: url(/fancy_corner.png);
+            background-size: 100% 100%;
+            image-rendering: pixelated;
+            transform: scaleX(-1);
+            will-change: transform;
+            z-index: 4;
+          }
+          
+          /* Bottom corners container */
+          .fancy-frame-static .frame-bottom::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: var(--corner-size);
+            height: var(--corner-size);
+            background-image: url(/fancy_corner.png);
+            background-size: 100% 100%;
+            image-rendering: pixelated;
+            transform: scaleY(-1);
+            will-change: transform;
+            z-index: 4;
+          }
+          
+          .fancy-frame-static .frame-bottom::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: var(--corner-size);
+            height: var(--corner-size);
+            background-image: url(/fancy_corner.png);
+            background-size: 100% 100%;
+            image-rendering: pixelated;
+            transform: scale(-1, -1);
+            will-change: transform;
+            z-index: 4;
+          }
+          
+          /* Horizontal borders */
+          .fancy-frame-static .frame-borders::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: var(--corner-size);
+            width: calc(100% - calc(var(--corner-size) * 2));
+            height: var(--h-border-height);
+            background-image: url(/fancy_horizontal.png);
+            background-size: var(--h-border-width) var(--h-border-height);
+            background-repeat: repeat-x;
+            image-rendering: pixelated;
+            z-index: 3;
+          }
+          
+          .fancy-frame-static .frame-borders::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: var(--corner-size);
+            width: calc(100% - calc(var(--corner-size) * 2));
+            height: var(--h-border-height);
+            background-image: url(/fancy_horizontal.png);
+            background-size: var(--h-border-width) var(--h-border-height);
+            background-repeat: repeat-x;
+            image-rendering: pixelated;
+            transform: scaleY(-1);
+            will-change: transform;
+            z-index: 3;
+          }
+          
+          /* Vertical borders */
+          .fancy-frame-static .frame-sides::before {
+            content: '';
+            position: absolute;
+            top: var(--corner-size);
+            left: 0;
+            width: var(--v-border-width);
+            height: calc(100% - calc(var(--corner-size) * 2));
+            background-image: url(/fancy_vertical.png);
+            background-size: var(--v-border-width) var(--v-border-height);
+            background-repeat: repeat-y;
+            image-rendering: pixelated;
+            z-index: 3;
+          }
+          
+          .fancy-frame-static .frame-sides::after {
+            content: '';
+            position: absolute;
+            top: var(--corner-size);
+            right: 0;
+            width: var(--v-border-width);
+            height: calc(100% - calc(var(--corner-size) * 2));
+            background-image: url(/fancy_vertical.png);
+            background-size: var(--v-border-width) var(--v-border-height);
+            background-repeat: repeat-y;
+            image-rendering: pixelated;
+            transform: scaleX(-1);
+            will-change: transform;
+            z-index: 3;
+          }
+          
+          .fancy-frame-static .frame-content {
+            position: relative;
+            z-index: 10;
+          }
+        `
+      }} />
+      
+      <div 
+        className={`fancy-frame-static ${className}`}
+        style={frameStyles}
+      >
+        {/* Minimal helper containers */}
+        <div className="frame-bottom" style={{ position: 'absolute', inset: 0 }} />
+        <div className="frame-borders" style={{ position: 'absolute', inset: 0 }} />
+        <div className="frame-sides" style={{ position: 'absolute', inset: 0 }} />
+        
+        <div className="frame-content" style={contentStyles}>
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

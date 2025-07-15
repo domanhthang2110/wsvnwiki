@@ -3,18 +3,7 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client'; 
 import { Edit3, Trash2, Tag, Type, AlertTriangle, PlusCircle } from 'lucide-react';
-
-// --- Helper Function ---
-const slugify = (text: string): string => {
-  if (!text) return '';
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w-]+/g, '') // Remove all non-word chars
-    .replace(/--+/g, '-'); // Replace multiple - with single -
-};
+import { slugify } from '@/lib/utils'; // Import slugify from utils
 
 // --- TypeScript Interfaces ---
 interface TaxonomyItem {

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Relic of United Attack",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% đến 12% sát thương của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Control",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 25% đến 40% thời gian hiệu ứng của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Punishment",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Thêm 25% đến 40% vào hiệu ứng của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Extermination",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% đến 15% tỷ lệ chí mạng (critical strike) của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Defense",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Thêm 20% vào hiệu ứng của kỹ năng phòng thủ cơ bản của thành viên tổ đội trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Attack",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Thêm 10% vào sát thương của kỹ năng tấn công cơ bản của thành viên tổ đội trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Healing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Thêm 20% vào hiệu ứng của kỹ năng hồi máu cơ bản của thành viên tổ đội trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  },
+  {
+    "name": "Relic of United Bleeding",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Áp dụng Chảy máu (Bleeding) lên kẻ địch trong 4 đến 10 giây dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu, gây sát thương vật lý theo thời gian. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Poisoning",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Áp dụng Độc (Poisoning) lên kẻ địch trong 4 đến 10 giây dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu, gây sát thương phép theo thời gian. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Subordination",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Giảm 6% đến 18% kháng của kẻ địch đối với hiệu ứng của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of United Pressure",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% đến 15% độ chính xác (Accuracy) của kỹ năng dựa trên số lượng thành viên tổ đội trong vòng 3 ô của mục tiêu. Tăng 5% cơ hội kích hoạt relic tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Resistance",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 7.5% kháng khống chế (Resistance) của thành viên tổ đội đối với hiệu ứng kỹ năng của kẻ địch trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Threat",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% sát thương chí mạng của kỹ năng đồng minh trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  },
+  {
+    "name": "Relic of Exceptional Restoration",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% hồi máu chí mạng của kỹ năng đồng minh trong vòng 3 ô trong 10 giây. Tăng 5% cơ hội kích hoạt relic phòng thủ của kỹ năng."
+  }
+]

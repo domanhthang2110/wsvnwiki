@@ -1,32 +1,13 @@
-export default function HomePage() {
+import Clock from '@/components/ui/Clock/Clock';
+import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
+
+export default function Home() {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold mb-6">Welcome to Warspear Wiki</h1>
-      <p className="text-lg text-muted-foreground mb-8">
-        Your comprehensive guide to the world of Warspear. Explore classes, read guides, and dive into the rich lore of the game.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="p-6 rounded-lg border bg-card">
-          <h2 className="text-2xl font-semibold mb-3">Classes</h2>
-          <p className="text-muted-foreground">
-            Discover detailed information about all available classes, their skills, and playstyles.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-lg border bg-card">
-          <h2 className="text-2xl font-semibold mb-3">Guides</h2>
-          <p className="text-muted-foreground">
-            Learn from experienced players with our comprehensive guides and tutorials.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-lg border bg-card">
-          <h2 className="text-2xl font-semibold mb-3">Lore</h2>
-          <p className="text-muted-foreground">
-            Immerse yourself in the rich story and history of the Warspear universe.
-          </p>
-        </div>
+    <div id="home-content-wrapper" className={`${classContentStyles.pixelBackground} flex flex-col flex-grow w-full`}>
+      <div className="flex items-center justify-center flex-grow">
+        <Clock timeZone="Europe/Berlin" label="Ingame time" />
+        <div style={{ width: '2px', height: '200px', backgroundColor: '#e6ce63' }}></div>
+        <Clock timeZone="Asia/Ho_Chi_Minh" label="Real time" />
       </div>
     </div>
   );

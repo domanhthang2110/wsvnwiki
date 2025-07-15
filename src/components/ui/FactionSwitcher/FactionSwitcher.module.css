@@ -1,0 +1,31 @@
+.container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: clip-path 0.5s ease-in-out;
+}
+
+.mc {
+  clip-path: inset(0 100% 0 0);
+}
+
+.elf {
+  clip-path: inset(0 0 0 100%);
+}
+
+.mc.active {
+  clip-path: inset(0);
+}
+
+.elf.active {
+  clip-path: inset(0);
+}

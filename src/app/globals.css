@@ -81,6 +81,7 @@
 }
 
 .dark {
+  --modal-background: oklch(0.2 0.03 240);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.175 0 0);
@@ -128,15 +129,14 @@
   html, body {
     height: 100%;
   }
-  body {
-    @apply bg-background text-foreground;
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   /* Add this media query for mobile devices */
   @media (max-width: 767px) {
-    html {
-      font-size: 70%;
-    }
+
   }
 }
 

@@ -1,5 +1,7 @@
 import { SkillItem } from '@/types/skills';
-import SkillCard from './SkillCard';
+import SkillCard from '@/components/features/wiki/classes/SkillCard';
+import { SKILL_TIER_OPTIONS } from '@/types/skills';
+import { useState } from 'react';
 
 interface SkillSelectorModalProps {
   isOpen: boolean;
@@ -8,6 +10,7 @@ interface SkillSelectorModalProps {
   selectedSkills: number[];
   onSkillToggle: (skillId: number) => void;
   onConfirm: (selectedIds: number[]) => void;
+  assignedSkillIds: Set<number>; // New prop
 }
 
 export default function SkillSelectorModal({
@@ -16,9 +19,31 @@ export default function SkillSelectorModal({
   skills,
   selectedSkills,
   onSkillToggle,
-  onConfirm
+  onConfirm,
+  assignedSkillIds // Destructure new prop
 }: SkillSelectorModalProps) {
+  const [search, setSearch] = useState('');
+  const [skillType, setSkillType] = useState<string>('');
+  const [hideAssigned, setHideAssigned] = useState(false); // New state for toggle
+
   if (!isOpen) return null;
+
+  // Filter skills by type, search, and assigned status
+  const filteredSkills = skills.filter(skill => {
+    const matchesType = skillType ? skill.skill_type === skillType : true;
+    const name = skill.name?.toLowerCase() || '';
+    const desc = skill.description?.toLowerCase() || '';
+    const matchesSearch =
+      name.includes(search.toLowerCase()) ||
+      desc.includes(search.toLowerCase());
+    
+    const isAssigned = assignedSkillIds.has(skill.id);
+    if (hideAssigned && isAssigned) {
+      return false;
+    }
+
+    return matchesType && matchesSearch;
+  });
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -42,10 +67,46 @@ export default function SkillSelectorModal({
           </button>
         </div>
 
+        {/* Filters */}
+        <div className="flex gap-4 p-4 border-b border-gray-700 bg-gray-900">
+          <input
+            type="text"
+            placeholder="Search skills..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="px-3 py-2 rounded-md bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ minWidth: 200 }}
+          />
+          <select
+            value={skillType}
+            onChange={e => setSkillType(e.target.value)}
+            className="px-3 py-2 rounded-md bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Types</option>
+            {SKILL_TIER_OPTIONS.map(type => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+          <label className="flex items-center gap-2 text-gray-300">
+            <input
+              type="checkbox"
+              checked={hideAssigned}
+              onChange={e => setHideAssigned(e.target.checked)}
+              className="bg-gray-800 border-gray-600 rounded"
+            />
+            Hide skills already assigned to a class
+          </label>
+        </div>
+
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-2">
           <div className="flex flex-wrap gap-2">
-            {skills.map(skill => (
+            {filteredSkills.length === 0 && (
+              <p className="text-gray-400 text-center w-full py-4">
+                No skills found matching your criteria.
+              </p>
+            )}
+            {filteredSkills.map(skill => (
               <div 
                 key={skill.id} 
                 onClick={() => onSkillToggle(skill.id)}
@@ -58,8 +119,10 @@ export default function SkillSelectorModal({
                 <div className="relative z-10">
                   <SkillCard
                     skill={skill}
-                    isSelected={selectedSkills.includes(skill.id)}
                   />
+                  {selectedSkills.includes(skill.id) && (
+                    <div className="absolute inset-0 border-2 border-blue-500 rounded-lg pointer-events-none" />
+                  )}
                 </div>
               </div>
             ))}

@@ -9,6 +9,35 @@ import { AlertTriangle } from 'lucide-react';
 import TiptapEditor from '@/components/features/editor/TiptapEditor';
 import { Editor } from '@tiptap/react';
 import DOMPurify from 'dompurify';
+import JsonDisplayModal from '@/components/shared/JsonDisplayModal';
+
+// Helper component to render image or video based on URL
+const MediaPreview = ({ url, alt }: { url: string; alt: string }) => {
+  if (!url) return null;
+
+  const isVideo = url.endsWith('.webm') || url.endsWith('.mp4');
+
+  if (isVideo) {
+    return (
+      <video
+        src={url}
+        muted
+        loop
+        autoPlay
+        playsInline
+        className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
+      />
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt={alt}
+      className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
+    />
+  );
+};
 
 interface ClassFormProps {
   initialData: ClassItem | null;
@@ -28,6 +57,7 @@ export default function ClassForm({
   const [formData, setFormData] = useState<ClassFormData>({
     name: '',
     description: '', // description will now hold HTML
+    lore: '',
     logo_url: '', // Renamed from avatar_url
     avatar_url: '', // New field for class avatar
     banner_url: '', // New field for class banner
@@ -36,8 +66,9 @@ export default function ClassForm({
   const [isMediaExplorerOpen, setMediaExplorerOpen] = useState(false);
   const [currentImageField, setCurrentImageField] = useState<'logo_url' | 'avatar_url' | 'banner_url' | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isRawDataModalOpen, setRawDataModalOpen] = useState(false);
   // We need to store the Tiptap editor instance to insert images
-  const [currentTiptapEditor, setCurrentTiptapEditor] = useState<Editor | null>(null); 
+  const [currentTiptapEditor, setCurrentTiptapEditor] = useState<Editor | null>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -45,15 +76,16 @@ export default function ClassForm({
       setFormData({
         name: initialData.name || '',
         description: initialData.description || '',
+        lore: initialData.lore || '',
         logo_url: initialData.image_assets?.logo || '', // Populate from image_assets.logo
-        avatar_url: initialData.image_assets?.avatar || '', // Populate from image_assets.avatar
+        avatar_url: (typeof initialData.image_assets?.avatar === 'string' ? initialData.image_assets.avatar : '') || '', // Populate from image_assets.avatar
         banner_url: initialData.image_assets?.banner || '', // Populate from image_assets.banner
         // Ensure image_assets is also set for initial data if it's part of ClassFormData
         image_assets: initialData.image_assets,
       });
     } else {
       // Clear form for new creation
-      setFormData({ name: '', description: '', logo_url: '', avatar_url: '', banner_url: '', image_assets: null });
+      setFormData({ name: '', description: '', lore: '', logo_url: '', avatar_url: '', banner_url: '', image_assets: null });
     }
   }, [initialData]);
 
@@ -63,9 +95,8 @@ export default function ClassForm({
     setFormError(null);
 
     // Get HTML content from Tiptap editor
-    const tiptapContentHtml = currentTiptapEditor?.getHTML() || ''; // Get HTML from stored instance
-    // Sanitize HTML content before sending to parent (and then to DB)
-    const sanitizedDescription = DOMPurify.sanitize(tiptapContentHtml);
+    const sanitizedDescription = DOMPurify.sanitize(formData.description || '');
+    const sanitizedLore = DOMPurify.sanitize(formData.lore || '');
 
     // Construct the image_assets object from individual URL fields
     const image_assets_payload = {
@@ -77,6 +108,7 @@ export default function ClassForm({
     const dataToSubmit: ClassFormData = {
       ...formData,
       description: sanitizedDescription, // Use sanitized HTML from Tiptap
+      lore: sanitizedLore,
       // Pass the constructed image_assets object.
       image_assets: image_assets_payload,
     };
@@ -157,6 +189,19 @@ export default function ClassForm({
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Lore
+          </label>
+          <TiptapEditor
+            content={formData.lore || ''}
+            onChange={(newContent) => {
+              setFormData(prev => ({ ...prev, lore: newContent }));
+            }}
+            onImagePickerOpen={handleTiptapImagePickerOpen}
+          />
+        </div>
+
         {/* Class Logo Input */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-300">
@@ -165,11 +210,7 @@ export default function ClassForm({
           <div className="flex items-start gap-4">
             {formData.logo_url && (
               <div className="relative group">
-                <img 
-                  src={formData.logo_url || ''} 
-                  alt="Class logo" 
-                  className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
-                />
+                <MediaPreview url={formData.logo_url} alt="Class logo" />
                 <button
                   type="button"
                   onClick={() => setFormData((prev: ClassFormData) => ({ ...prev, logo_url: '' }))}
@@ -202,11 +243,7 @@ export default function ClassForm({
           <div className="flex items-start gap-4">
             {formData.avatar_url && (
               <div className="relative group">
-                <img 
-                  src={formData.avatar_url || ''} 
-                  alt="Class avatar" 
-                  className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
-                />
+                <MediaPreview url={formData.avatar_url} alt="Class avatar" />
                 <button
                   type="button"
                   onClick={() => setFormData((prev: ClassFormData) => ({ ...prev, avatar_url: '' }))}
@@ -239,11 +276,7 @@ export default function ClassForm({
           <div className="flex items-start gap-4">
             {formData.banner_url && (
               <div className="relative group">
-                <img 
-                  src={formData.banner_url || ''} 
-                  alt="Class banner" 
-                  className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
-                />
+                <MediaPreview url={formData.banner_url} alt="Class banner" />
                 <button
                   type="button"
                   onClick={() => setFormData((prev: ClassFormData) => ({ ...prev, banner_url: '' }))}
@@ -287,8 +320,11 @@ export default function ClassForm({
           <div className="flex flex-wrap gap-4 p-4 bg-gray-800 rounded-md min-h-[100px] border border-gray-700">
             {selectedSkills.map(skill => (
               <div key={skill.id} className="flex-none" style={{ width: 'min(100%, 300px)' }}>
-                <SkillCard 
+                <SkillCard
                   skill={skill}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                  isSelected={false}
                 />
               </div>
             ))}
@@ -301,6 +337,13 @@ export default function ClassForm({
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
+          <button
+            type="button"
+            onClick={() => setRawDataModalOpen(true)}
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition-colors"
+          >
+            View Raw
+          </button>
           <button
             type="submit"
             disabled={isSubmitting}
@@ -347,6 +390,13 @@ export default function ClassForm({
             </div>
           </div>
         </div>
+      )}
+
+      {isRawDataModalOpen && (
+        <JsonDisplayModal
+          data={formData}
+          onClose={() => setRawDataModalOpen(false)}
+        />
       )}
     </div>
   );

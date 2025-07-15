@@ -1,0 +1,232 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  height: 150px; /* Adjust as needed */
+  overflow: hidden;
+  border-top: 2px solid #e6ce63;
+  border-bottom: 2px solid #e6ce63;
+  box-shadow: 0 1px 0 #a18e48;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 92%;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  padding: 0 0rem;
+  position: relative;
+  flex-grow: 1;
+}
+
+.themedContent {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  flex-grow: 1;
+  background-color: rgba(17, 24, 39, 0.8);
+  padding: 1rem;
+
+}
+
+
+.sideIcon {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 70px;
+  height: 70px;
+}
+
+.leftColumn, .rightColumn {
+  flex-basis: 50%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.separator {
+  width: 2px;
+  border-left: 1px solid #e6ce63;
+  border-right: 1px solid #e6ce63;
+  position: relative;
+}
+
+.classHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.classInfo {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.className {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 1px rgba(0,0,0,0.7);
+}
+
+.factionInfo {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #e6ce63;
+  text-shadow: 1px 1px 1px rgba(0,0,0);
+}
+
+.introduction {
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.loreContent {
+  font-size: 1rem;
+  color: #ddd;
+  text-align: justify;
+  white-space: pre-wrap; /* To respect newlines in the lore text */
+}
+
+.relicInspiredHeader {
+  background-color: #3a2a2a; /* Brown background from relicHeader */
+  border-top: 1px solid #e6ce63;
+  border-bottom: 1px solid #e6ce63;
+  text-align: center;
+  width: 100%;
+}
+
+.relicInspiredHeader h3 {
+  font-size: 1.125rem; /* Regular font size */
+  font-weight: 600;
+  color: #e6ce63;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.passiveSkillsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: 10px 8px; /* vertical and horizontal gap */
+  justify-items: center;
+  align-items: start; /* align to top */
+  margin-bottom: 4px;
+  padding-top: 1rem;
+}
+
+.passiveSkillItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+}
+
+.passiveSkillName {
+  font-size: 0.92em;
+  margin-top: 2px;
+  text-align: center;
+  text-shadow: 1px 1px 2px #000;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  width: 100%;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    max-height: 100px;
+  }
+
+  .bannerImage {
+    object-position: center;
+  }
+
+  .content {
+    flex-direction: column;
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .classHeader {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sideIcon {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 70px;
+    height: 70px;
+  }
+
+  .leftColumn {
+    flex-basis: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .rightColumn {
+    flex-basis: auto;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .horizontalSeparator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .horizontalSeparator::before,
+  .horizontalSeparator::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: #e6ce63;
+  }
+
+  .diamondSeparator {
+    color: #e6ce63;
+    font-size: 1.5rem;
+    margin: 0 10px;
+  }
+
+  .className {
+    font-size: 1.5rem;
+  }
+
+  .factionInfo {
+    font-size: 1rem;
+  }
+
+}

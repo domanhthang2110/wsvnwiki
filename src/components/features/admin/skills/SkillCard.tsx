@@ -1,184 +1,177 @@
-// components/admin/skills/SkillCard.tsx
-'use client';
+import React, { useState } from 'react';
+import { SkillItem } from '@/types/skills';
+import IconFrame from '@/components/shared/IconFrame';
+import { formatFullSkillDescription, formatEnergyCost } from '@/utils/skillUtils';
+import JsonDisplayModal from '@/components/shared/JsonDisplayModal';
+import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 
-import { useState } from 'react';
-import { SkillItem } from '@/types/skills'; // Assuming this path is correct for your SkillItem type
-import { useFloating, offset, shift, flip, useHover, useInteractions } from '@floating-ui/react';
-import { createPortal } from 'react-dom';
-
-// Import utility functions
-import { 
-  formatEnergyCost, 
-  formatRange, 
-  formatFullSkillDescription 
-} from '@/utils/skillUtils'; // Ensure this path is correct
+const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
 interface SkillCardProps {
   skill: SkillItem;
-  onEdit?: (skill: SkillItem) => void;
-  onDelete?: (skill: SkillItem) => void;
-  isSelected?: boolean;
+  onEdit: (skill: SkillItem) => void;
+  onDelete: (skill: SkillItem) => void;
+  onIconChange: (skillId: number, newIconUrl: string) => void;
+  isSelected: boolean;
+  className?: string; // Add className prop
 }
 
-export default function SkillCard({ skill, onEdit, onDelete, isSelected }: SkillCardProps) {
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconChange, isSelected, className }) => {
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [isLinkedItemsExpanded, setIsLinkedItemsExpanded] = useState(false);
+  const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
+  const [showIconPickerModal, setShowIconPickerModal] = useState(false);
 
-  const { refs, floatingStyles, context } = useFloating({
-    open: isTooltipOpen,
-    onOpenChange: setIsTooltipOpen,
-    middleware: [
-      offset(10),
-      shift({ padding: 5 }),
-      flip({ padding: 5 }),
-    ],
-  });
+  const handleIconSelectedFromPicker = (publicUrl: string) => {
+    onIconChange(skill.id, publicUrl);
+    setShowIconPickerModal(false);
+  };
 
-  const hover = useHover(context);
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
-
-  // Inline format functions are now removed and imported from utils
+  const formattedDescription = formatFullSkillDescription(skill);
+  const formattedEnergyCost = formatEnergyCost(skill.energy_cost);
 
   return (
-    <>
-      <div 
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        className={`relative p-2 w-64 group border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer ${
-          isSelected 
-            ? 'border-blue-500 ring-2 ring-blue-500 ring-opacity-50' 
-            : 'border-gray-700 hover:border-gray-600'
-        }`}
-      >
-        <div className="flex items-start">
-          {/* Icon */}
-          <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
-            {skill.icon_url ? (
-              <img 
-                src={skill.icon_url} 
-                alt={skill.name || 'Skill icon'} 
-                className="w-full h-full object-cover rounded"
-                onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="text-gray-500 text-xs">No icon</span>
-              </div>
-            )}
-          </div>
-
-          {/* Info Section */}
-          <div className="flex-1 min-w-0 mx-3">
-              <h3 className="text-sm font-medium text-gray-100 break-words leading-tight">
-                {skill.name || 'Unnamed Skill'}
-              </h3>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {skill.skill_type || 'N/A Type'}
-              </p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            {onEdit && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click or tooltip trigger
-                  onEdit(skill);
-                }}
-                className="p-1 text-blue-400 hover:text-blue-300"
-                title="Edit skill"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click or tooltip trigger
-                  onDelete(skill);
-                }}
-                className="p-1 text-red-400 hover:text-red-300"
-                title="Delete skill"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            )}
-          </div>
+    <div
+      className={`bg-gray-800 rounded-lg shadow-md p-4 flex flex-col max-w-sm cursor-pointer ${
+        isSelected ? 'border-2 border-blue-500' : 'border border-gray-700'
+      }`}
+      onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+    >
+      <div className="flex items-center">
+        {skill.icon_url && (
+          <IconFrame
+            size={48}
+            contentImageUrl={skill.icon_url}
+            altText={`${skill.name} icon`}
+            frameType="regular"
+            styleType="yellow"
+          />
+        )}
+        <h3 className="text-lg font-semibold text-gray-100 ml-4">{skill.name}</h3>
+        <div className="ml-auto text-gray-400">
+          {isDetailsExpanded ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path></svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+          )}
         </div>
       </div>
 
-      {/* Floating UI Tooltip */}
-      {isTooltipOpen && document.body && createPortal(
-        <div
-          ref={refs.setFloating}
-          {...getFloatingProps()}
-          style={floatingStyles}
-          className="z-50 w-80 p-4 bg-gray-900 rounded-lg shadow-xl border border-gray-700"
-        >
-          <div className="space-y-3">
-            {/* Header */}
-            <div className="flex items-start space-x-3">
-              {skill.icon_url && (
-                <img 
-                  src={skill.icon_url} 
-                  alt={skill.name || 'Skill details'} 
-                  className="w-12 h-12 object-contain rounded bg-gray-800 p-1"
-                  onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
-                />
-              )}
-              <div className="flex-grow">
-                <h3 className="text-base font-medium text-gray-100">{skill.name || "Unnamed Skill"}</h3>
-                <p className="text-xs text-gray-400">ID: {skill.id}</p>
-                <p className="text-sm text-gray-300">
-                  {skill.skill_type || "N/A Type"}
-                  {skill.max_level && ` • Level ${skill.max_level}`}
-                  {skill.activation_type && ` • ${skill.activation_type}`}
-                </p>
+      {isDetailsExpanded && (
+        <div className="mt-4">
+          <p className="text-gray-300 text-sm mb-2 break-words">Description: {formattedDescription}</p>
+          <p className="text-gray-300 text-sm mb-2">Max Level: {skill.max_level || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-2">Skill Type: {skill.skill_type || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-2">Activation Type: {skill.activation_type || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-2">Cooldown: {skill.cooldown || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-2">Energy Cost: {formattedEnergyCost}</p>
+
+          {skill.items && skill.items.length > 0 && (
+            <div className="mt-2">
+              <div 
+                className="flex items-center cursor-pointer text-gray-200 hover:text-gray-100"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent skill card from collapsing
+                  setIsLinkedItemsExpanded(!isLinkedItemsExpanded);
+                }}
+              >
+                <h4 className="text-sm font-semibold">Linked Items:</h4>
+                <div className="ml-2 text-gray-400">
+                  {isLinkedItemsExpanded ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path></svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  )}
+                </div>
               </div>
-            </div>
-
-            {/* Skill Properties */}
-            <div className="text-sm space-y-1">
-              {skill.energy_cost && (
-                <p>
-                  <span className="text-gray-400">Energy Cost: </span>
-                  {/* Now using the imported utility function */}
-                  <span className="text-gray-200">{formatEnergyCost(skill.energy_cost)}</span>
-                </p>
-              )}
-              {skill.cooldown != null && ( // Check for null or undefined
-                <p>
-                  <span className="text-gray-400">Cooldown: </span>
-                  <span className="text-gray-200">{skill.cooldown}s</span>
-                </p>
-              )}
-              {skill.reduced_energy_regen != null && ( // Check for null or undefined
-                <p>
-                  <span className="text-gray-400">Reduced Energy Regen: </span>
-                  <span className="text-gray-200">{skill.reduced_energy_regen}%</span>
-                </p>
-              )}
-              {skill.range != null && ( // Check for null or undefined
-                <p>
-                  <span className="text-gray-400">Range: </span>
-                  {/* Now using the imported utility function */}
-                  <span className="text-gray-200">{formatRange(skill.range)}</span>
-                </p>
+              {isLinkedItemsExpanded && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {skill.items.map(item => (
+                    <div key={item.id} className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
+                      {item.icon_url && (
+                        <img src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
+                      )}
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
+          )}
+        </div>
+      )}
 
-            {/* Description */}
-            <div className="text-sm">
-              {/* Now using the imported utility function */}
-              <p className="text-gray-200">{formatFullSkillDescription(skill)}</p>
+      <div className="flex justify-end space-x-2 mt-4">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowIconPickerModal(true);
+          }}
+          className="py-1 px-3 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm"
+        >
+          Change Icon
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsJsonModalOpen(true);
+          }}
+          className="py-1 px-3 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm"
+        >
+          View Raw
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent skill card from collapsing
+            onEdit(skill);
+          }}
+          className="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+        >
+          Edit
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent skill card from collapsing
+            onDelete(skill);
+          }}
+          className="py-1 px-3 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
+        >
+          Delete
+        </button>
+      </div>
+      {isJsonModalOpen && (
+        <JsonDisplayModal
+          data={skill}
+          onClose={() => setIsJsonModalOpen(false)}
+        />
+      )}
+      {showIconPickerModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-40 p-4 transition-opacity duration-300">
+          <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-100">Select Skill Icon</h3>
+              <button 
+                onClick={() => setShowIconPickerModal(false)} 
+                className="p-1 text-gray-400 hover:text-red-400"
+                title="Close"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="flex-grow overflow-y-auto min-h-[300px]">
+              <MediaFileExplorer
+                bucketName="media"
+                initialPath="classes"
+                onFileSelect={handleIconSelectedFromPicker}
+                mode="select" 
+                accept="image/*"
+              />
             </div>
           </div>
-        </div>,
-        document.body // Ensure document.body is available for portal
+        </div>
       )}
-    </>
+    </div>
   );
-}
+};
+
+export default SkillCard;

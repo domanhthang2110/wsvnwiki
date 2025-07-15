@@ -5,6 +5,7 @@ import { TalentItem, TalentParameterDefinitionInForm, TalentLevelValue, TALENT_T
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
+import KnowledgeCostRow from './KnowledgeCostRow'; // Import the new component
 
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
@@ -20,8 +21,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   const [formType, setFormType] = useState<TalentItem['type']>(TALENT_TYPE_OPTIONS[0]);
   const [formMaxLevel, setFormMaxLevel] = useState(1);
   const [formDescription, setFormDescription] = useState('');
-  const [formCostLevels, setFormCostLevels] = useState<number | null>(null);
-  const [formKnowledgeLevels, setFormKnowledgeLevels] = useState<number | null>(null);
+  // Removed formCostLevels
+  const [knowledgeCosts, setKnowledgeCosts] = useState<Record<number, string>>({}); // Changed to Record<number, string>
   
   const [formParamDefs, setFormParamDefs] = useState<TalentParameterDefinitionInForm[]>(
     () => [{ id: crypto.randomUUID(), key: 'value' }]
@@ -31,6 +32,64 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showIconPickerModal, setShowIconPickerModal] = useState(false);
+  const [liveFormData, setLiveFormData] = useState<Omit<TalentItem, 'id' | 'created_at'>>({
+    name: '',
+    icon_url: null,
+    type: 'normal',
+    max_level: 1,
+    description: null,
+    knowledge_levels: null,
+    parameters_definition: null,
+    level_values: null,
+  });
+
+  useEffect(() => {
+    const talentDataToSubmit: Omit<TalentItem, 'id' | 'created_at'> = {
+      name: formName.trim(),
+      icon_url: formIconUrl.trim() || null,
+      type: formType,
+      max_level: formMaxLevel,
+      description: formDescription.trim() || null,
+      knowledge_levels: null,
+      parameters_definition: null,
+      level_values: null,
+    };
+
+    const finalParamDefs = formParamDefs
+      .filter(p => p.key.trim())
+      .map(({ id, key }) => ({ key: key.trim() }));
+
+    if (finalParamDefs.length > 0) {
+      talentDataToSubmit.parameters_definition = finalParamDefs;
+    }
+
+    const finalLevelValues = formLevelValues
+      .filter(lv => lv.level <= formMaxLevel)
+      .map(lv => {
+        const filteredLevel: TalentLevelValue = { level: lv.level };
+        finalParamDefs.forEach(pd => {
+          filteredLevel[pd.key] = lv[pd.key] ?? '';
+        });
+        return filteredLevel;
+      });
+
+    if (finalLevelValues.length > 0) {
+      talentDataToSubmit.level_values = finalLevelValues;
+    }
+
+    const parsedKnowledgeCosts: Record<number, number> = {};
+    Object.entries(knowledgeCosts).forEach(([level, value]) => {
+      if (value && !isNaN(parseInt(value))) {
+        parsedKnowledgeCosts[parseInt(level)] = parseInt(value);
+      }
+    });
+
+    if (Object.keys(parsedKnowledgeCosts).length > 0) {
+      talentDataToSubmit.knowledge_levels = parsedKnowledgeCosts;
+    }
+
+    setLiveFormData(talentDataToSubmit);
+  }, [formName, formIconUrl, formType, formMaxLevel, formDescription, knowledgeCosts, formParamDefs, formLevelValues]);
 
   useEffect(() => {
     if (initialData) {
@@ -39,8 +98,17 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       setFormType(initialData.type || TALENT_TYPE_OPTIONS[0]);
       setFormMaxLevel(initialData.max_level || 1);
       setFormDescription(initialData.description || '');
-      setFormCostLevels(initialData.cost_levels || null);
-      setFormKnowledgeLevels(initialData.knowledge_levels || null);
+      // Removed setFormCostLevels
+      // Parse knowledge_levels from initialData
+      if (initialData.knowledge_levels) {
+        const costs: Record<number, string> = {};
+        Object.entries(initialData.knowledge_levels).forEach(([level, cost]) => {
+          costs[parseInt(level)] = cost.toString();
+        });
+        setKnowledgeCosts(costs);
+      } else {
+        setKnowledgeCosts({});
+      }
       setFormParamDefs(
         initialData.parameters_definition && initialData.parameters_definition.length > 0
           ? initialData.parameters_definition.map(pd => ({ 
@@ -56,8 +124,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       setFormType(TALENT_TYPE_OPTIONS[0]);
       setFormMaxLevel(1);
       setFormDescription('');
-      setFormCostLevels(null);
-      setFormKnowledgeLevels(null);
+      // Removed setFormCostLevels
+      setKnowledgeCosts({}); // Reset knowledge costs
       setFormParamDefs([{ id: crypto.randomUUID(), key: 'value' }]);
       setFormLevelValues([]);
     }
@@ -118,6 +186,13 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     setShowIconPickerModal(false);
   };
 
+  const handleKnowledgeCostChange = (level: number, value: string) => {
+    setKnowledgeCosts(prev => ({
+      ...prev,
+      [level]: value
+    }));
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -149,14 +224,22 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           return filteredLevel;
         });
 
+      // Convert knowledgeCosts to the new format
+      const parsedKnowledgeCosts: Record<number, number> = {};
+      Object.entries(knowledgeCosts).forEach(([level, value]) => {
+        if (value && !isNaN(parseInt(value))) {
+          parsedKnowledgeCosts[parseInt(level)] = parseInt(value);
+        }
+      });
+
       const talentDataToSubmit: Omit<TalentItem, 'id' | 'created_at'> = {
         name: formName.trim(),
         icon_url: formIconUrl.trim() || null,
         type: formType,
         max_level: formMaxLevel,
         description: formDescription.trim() || null,
-        cost_levels: formCostLevels,
-        knowledge_levels: formKnowledgeLevels,
+        // Removed cost_levels
+        knowledge_levels: Object.keys(parsedKnowledgeCosts).length > 0 ? parsedKnowledgeCosts : null, // Use parsedKnowledgeCosts
         parameters_definition: finalParamDefs.length > 0 ? finalParamDefs : null,
         level_values: finalLevelValues.length > 0 ? finalLevelValues : null,
       };
@@ -169,8 +252,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         setFormType(TALENT_TYPE_OPTIONS[0]);
         setFormMaxLevel(1);
         setFormDescription('');
-        setFormCostLevels(null);
-        setFormKnowledgeLevels(null);
+        // Removed setFormCostLevels
+        setKnowledgeCosts({}); // Reset knowledge costs
         setFormParamDefs([{ id: crypto.randomUUID(), key: 'value' }]);
       }
       setFormError(null);
@@ -245,28 +328,13 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="formCost" className="block mb-1 text-sm font-medium text-gray-300">Cost:</label>
-            <input
-              type="number"
-              id="formCost"
-              value={formCostLevels ?? ''}
-              onChange={(e) => setFormCostLevels(e.target.value ? parseInt(e.target.value, 10) : null)}
-              className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-            />
-          </div>
-          <div>
-            <label htmlFor="formKnowledge" className="block mb-1 text-sm font-medium text-gray-300">Knowledge:</label>
-            <input
-              type="number"
-              id="formKnowledge"
-              value={formKnowledgeLevels ?? ''}
-              onChange={(e) => setFormKnowledgeLevels(e.target.value ? parseInt(e.target.value, 10) : null)}
-              className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-            />
-          </div>
-        </div>
+        {/* Removed the old cost_levels input */}
+        {/* New KnowledgeCostRow component */}
+        <KnowledgeCostRow
+          maxLevel={formMaxLevel}
+          knowledgeCosts={knowledgeCosts}
+          onChange={handleKnowledgeCostChange}
+        />
 
         <div>
           <label htmlFor="formDescription" className="block mb-1 text-sm font-medium text-gray-300">Description (use {'{key}'} for params):</label>
@@ -320,6 +388,13 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           )}
         </div>
       </form>
+
+      <div className="mt-4 p-4 bg-gray-900 border border-gray-700 rounded">
+        <h3 className="text-lg font-semibold text-gray-200 mb-2">Raw Form Data</h3>
+        <pre className="text-xs text-gray-300 bg-gray-800 p-2 rounded overflow-auto max-h-60">
+          {JSON.stringify(liveFormData, null, 2)}
+        </pre>
+      </div>
 
       {showIconPickerModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-40 p-4 transition-opacity duration-300">

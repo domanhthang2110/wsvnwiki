@@ -1,0 +1,284 @@
+[
+  {
+    "name": "Relic of Silence",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội ngăn chặn kẻ địch sử dụng kỹ năng trong 4 giây."
+  },
+  {
+    "name": "Relic of Physical Exhaustion",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 15% sức mạnh vật lý (Physical Power) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Relic of Magic Exhaustion",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 15% sức mạnh phép thuật (Magic Power) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Relic of Physical Weakness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 15% giáp vật lý (Physical Defense) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Relic of Magic Weakness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 15% giáp phép (Magic Defense) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Relic of Wild Thrill",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây hiệu ứng Sợ hãi (Fear) lên kẻ địch trong 4 giây. Khi bị ảnh hưởng, mục tiêu sẽ đi lang thang trong trạng thái vô hiệu hóa cho đến khi nhận sát thương."
+  },
+  {
+    "name": "Relic of Stunning Ability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây hiệu ứng Choáng (Stun) lên kẻ địch trong 3 giây. Khi bị ảnh hưởng, mục tiêu không thể di chuyển, tấn công, hoặc sử dụng kỹ năng. Hiệu ứng này vẫn duy trì khi kẻ địch nhận sát thương."
+  },
+  {
+    "name": "Relic of Awkwardness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 20% tốc đánh (Attack Speed) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Relic of Slowing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 35% tốc độ di chuyển của kẻ địch trong 5 giây."
+  },
+  {
+    "name": "Relic of Bleeding Wounds",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây hiệu ứng Chảy máu (Bleeding) lên kẻ địch trong 6 giây, gây sát thương vật lý theo thời gian."
+  },
+  {
+    "name": "Relic of Magic Poison",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây hiệu ứng Độc (Poisoning) lên kẻ địch trong 6 giây, gây sát thương phép theo thời gian."
+  },
+  {
+    "name": "Relic of Inefficiency",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 20% hồi chiêu (Skill Cooldown rate) của kẻ địch."
+  },
+  {
+    "name": "Lesser Relic of Silence",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội ngăn chặn kẻ địch sử dụng kỹ năng trong 3 giây."
+  },
+  {
+    "name": "Lesser Relic of Physical Exhaustion",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 10% sức mạnh vật lý (Physical Power) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Magic Exhaustion",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 10% sức mạnh phép thuật (Magic Power) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Physical Weakness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 10% giáp vật lý (Physical Defense) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Magic Weakness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 10% giáp phép (Magic Defense) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Wild Thrill",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội gây hiệu ứng Sợ hãi (Fear) lên kẻ địch trong 3 giây. Khi bị ảnh hưởng, mục tiêu sẽ đi lang thang trong trạng thái vô hiệu hóa cho đến khi nhận sát thương."
+  },
+  {
+    "name": "Lesser Relic of Stunning Ability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội gây hiệu ứng Choáng (Stun) lên kẻ địch trong 2 giây. Khi bị ảnh hưởng, mục tiêu không thể di chuyển, tấn công, hoặc sử dụng kỹ năng. Hiệu ứng này vẫn duy trì khi kẻ địch nhận sát thương."
+  },
+  {
+    "name": "Lesser Relic of Awkwardness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 15% tốc đánh (Attack Speed) của kẻ địch trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Slowing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 20% tốc độ di chuyển của kẻ địch trong 4 giây."
+  },
+  {
+    "name": "Lesser Relic of Bleeding Wounds",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội gây hiệu ứng Chảy máu (Bleeding) lên kẻ địch trong 6 giây, gây sát thương vật lý theo thời gian."
+  },
+  {
+    "name": "Lesser Relic of Magic Poison",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội gây hiệu ứng Độc (Poisoning) lên kẻ địch trong 6 giây, gây sát thương phép theo thời gian."
+  },
+  {
+    "name": "Lesser Relic of Inefficiency",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội giảm 15% hồi chiêu (Skill Cooldown rate) của kẻ địch."
+  },
+  {
+    "name": "Magic Relic of Unstable Curse",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội áp dụng một hiệu ứng bất lợi ngẫu nhiên lên kẻ địch trong một khoảng thời gian ngẫu nhiên."
+  },
+  {
+    "name": "Terrible Relic of Life Weakness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội gây hiệu ứng Nguyền rủa (Curse) lên kẻ địch trong 7 giây. Khi bị ảnh hưởng, kẻ địch mất tới 10% máu tối đa mỗi khi sử dụng kỹ năng, tối đa 1500 mỗi lần."
+  },
+  {
+    "name": "Icy Relic of Frostbite",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội đặt Bẫy Băng (Ice Trap) lên tất cả kẻ địch trong vòng 2 ô tính từ mục tiêu trong 6 giây. Các mục tiêu bị ảnh hưởng không thể di chuyển và hồi chiêu (Skill Cooldown rate) của họ bị giảm 50% cho đến khi nhận sát thương."
+  },
+  {
+    "name": "Relic of Absolute Powerlessness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 15% sức mạnh vật lý (Physical Power) và sức mạnh phép thuật (Magic Power) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Physical Vulnerability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 15% giáp vật lý (Physical Defense) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Magic Vulnerability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 15% giáp phép (Magic Defense) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Sluggishness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 30% tốc đánh (Attack Speed) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Awkwardness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 25% hồi chiêu (Skill Cooldown rate) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Fatigue",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 12% tỷ lệ chí mạng (Critical Hit chance) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Relic of Inaccuracy",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 12% độ chính xác (Accuracy) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Absolute Powerlessness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 10% sức mạnh vật lý (Physical Power) và sức mạnh phép thuật (Magic Power) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Physical Vulnerability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 10% giáp vật lý (Physical Defense) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Magic Vulnerability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 10% giáp phép (Magic Defense) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Sluggishness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 20% tốc đánh (Attack Speed) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Awkwardness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 15% hồi chiêu (Skill Cooldown rate) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Fatigue",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 8% tỷ lệ chí mạng (Critical Hit chance) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Inaccuracy",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ làm giảm 8% độ chính xác (Accuracy) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Terrible Relic of Deadly Infection",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ gây hiệu ứng Phân rã (Decay) lên kẻ tấn công trong 20 giây, giảm 5% máu tối đa mỗi 5 giây."
+  },
+  {
+    "name": "Icy Relic of Exhaustion",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn đánh thường (auto-attack) tiếp theo phải nhận khi đang có hiệu ứng này sẽ vô hiệu hóa chỉ số xuyên giáp (Penetration) của kẻ tấn công trong 10 giây."
+  },
+  {
+    "name": "Magic Relic of Oppression",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn đánh thường (auto-attack) tiếp theo phải nhận khi đang có hiệu ứng này sẽ ngăn kẻ tấn công sử dụng kỹ năng trong 5 giây."
+  },
+  {
+    "name": "Icy Relic of Captivity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội nhận một hiệu ứng lợi cho nhân vật trong 15 giây. Đòn tấn công sát thương tức thời tiếp theo phải nhận khi đang có hiệu ứng này sẽ gây hiệu ứng Nhà tù Băng (Ice Prison) lên kẻ tấn công trong 6 giây, trói chân tại chỗ và ngăn sử dụng kỹ năng cho đến khi bị tấn công. Khi nhân vật có hiệu ứng Cuồng nộ (Rage), tối đa 5 kẻ địch trong vòng 2 ô sẽ bị đẩy lùi 5 ô và nhận hiệu ứng Nhà tù Băng trong 4 giây."
+  },
+  {
+    "name": "Terrible Relic of Sickness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội gây hiệu ứng Dịch bệnh (Pestilence) lên kẻ địch trong 20 giây, giảm 2% máu tối đa của chúng mỗi giây khi đứng yên."
+  },
+  {
+    "name": "Terrible Relic of Apathy",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội gây hiệu ứng Vô Cảm (Apathy) lên kẻ địch trong 6 giây, giảm tất cả các hiệu ứng hồi máu lên chúng và vô hiệu hóa hút máu (Health Steal)."
+  }
+]

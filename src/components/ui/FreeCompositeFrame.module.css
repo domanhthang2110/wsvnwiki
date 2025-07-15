@@ -1,0 +1,27 @@
+.frame {
+  width: 91px;
+  height: 45px;
+  background-image: url('/image/ui/free_composite/free_composite.webp');
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative; /* Establishes stacking context */
+}
+
+.locked {
+  background-position: 0 -45px;
+}
+
+.unlocked {
+  background-position: 0 0;
+}
+
+.icon {
+  width: 80px;
+  height: 40px; /* Added for consistency */
+  object-fit: contain;
+  position: absolute; /* Allows z-index to work */
+  z-index: -1; /* Places the icon BEHIND the frame's background */
+}

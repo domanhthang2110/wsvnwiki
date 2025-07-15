@@ -1,4 +1,5 @@
 import { Database } from './database.types';
+import { Item } from './items';
 
 // Base type from Supabase auto-generation
 export type SkillRow = Database['public']['Tables']['skills']['Row'];
@@ -29,6 +30,9 @@ export interface SkillItem extends Omit<SkillRow, 'energy_cost' | 'parameters_de
   energy_cost: SkillEnergyCost | null;
   parameters_definition: SkillParametersDefinition | null;
   level_values: SkillLevelValues | null;
+  items?: Item[];
+  className?: string | null;
+  classIconUrl?: string | null; // Add classIconUrl property
 }
 
 // For the form data submission
@@ -40,4 +44,4 @@ export type SkillFormData = Omit<SkillItem, 'id' | 'created_at'> & {
 
 export const MAX_SKILL_LEVEL_OPTIONS = [1, 2, 3, 4, 5];
 export const SKILL_TIER_OPTIONS: Array<NonNullable<SkillItem['skill_type']>> = ["Basic", "Expert", "Equipment", "Race"];
-export const ACTIVATION_TYPE_OPTIONS: Array<NonNullable<SkillItem['activation_type']>> = ["Active", "Passive"];
+export const ACTIVATION_TYPE_OPTIONS: Array<NonNullable<SkillItem['activation_type']>> = ["Active", "Passive", "Permanent"];

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import ClassSimpleCard from './ClassSimpleCard';
 import { ClassItem } from '@/types/classes';
 import { CLASSES_DATA, FACTION_ORDER, SIDE_ORDER } from '@/lib/data/classesData';
@@ -9,16 +9,28 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMediaQuery } from 'react-responsive';
 import { useMounted } from '@/hooks/use-mounted';
 import { motion, AnimatePresence } from 'framer-motion';
-import IconFrame from '@/components/shared/IconFrame';
-import SkillCard from './SkillCard';
+import SkillDisplay from './SkillDisplay';
 import headerStyles from './ClassDetailHeader.module.css';
 import TalentTreeView from './TalentTreeView';
 import Dropdown from '@/components/ui/Dropdown/Dropdown';
 import { supabase } from '@/lib/supabase/client';
-import { TalentItem } from '@/types/talents';
-
+import { TalentItem, TalentTreeItem } from '@/types/talents';
+import FactionSwitcher from '@/components/ui/FactionSwitcher/FactionSwitcher';
+import ClassOverviewTab from './ClassOverviewTab';
+import classContentStyles from './ClassContent.module.css';
 interface ClassContentProps {
   classes: ClassItem[];
+}
+
+const DIAMOND_DOT_SIZE = 32;
+const DIAMOND_DOT_COLOR = '#e6ce63';
+
+function DiamondDot({ size = DIAMOND_DOT_SIZE, color = DIAMOND_DOT_COLOR, left = 0 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={{ display: 'block', position: 'relative', left }}>
+      <rect x="8" y="0" width="16" height="16" fill={color} transform="rotate(45 16 16)" style={{ filter: 'drop-shadow(0 0 2px #000)' }} />
+    </svg>
+  );
 }
 
 const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
@@ -26,13 +38,68 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const [currentFactionIndex, setCurrentFactionIndex] = useState(0);
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
   const [activeTab, setActiveTab] = useState<'Overview' | 'Skills' | 'Talents'>('Overview');
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const displayTen = useMediaQuery({ query: '(min-width: 1024px)' });
   const mounted = useMounted();
   const [direction, setDirection] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isClassListCollapsed, setIsClassListCollapsed] = useState(false); // New state for collapsing
+  const [isClassListCollapsed, setIsClassListCollapsed] = useState(false);
   const [fetchedTalents, setFetchedTalents] = useState<Record<number, TalentItem[]>>({});
+  const classListContainerRef = useRef<HTMLDivElement>(null);
+  const [showDiamondDot, setShowDiamondDot] = useState(false);
+
+  // Smart gap detection for FactionSwitcher
+  useEffect(() => {
+    if (!displayTen) {
+      setShowDiamondDot(false);
+      return;
+    }
+    let animationFrame: number | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    let debounceTimeout: NodeJS.Timeout | null = null;
+    const checkGap = () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        const container = classListContainerRef.current;
+        if (!container) return;
+        const children = Array.from(container.children);
+        if (children.length < 2) {
+          setShowDiamondDot(false);
+          return;
+        }
+        const first = children[0] as HTMLElement;
+        const second = children[1] as HTMLElement;
+        if (!first || !second) {
+          setShowDiamondDot(false);
+          return;
+        }
+        const firstRect = first.getBoundingClientRect();
+        const secondRect = second.getBoundingClientRect();
+        const gap = secondRect.left - firstRect.right;
+        setShowDiamondDot(gap < 100);
+      });
+    };
+    // Debounced version for resize events
+    const debouncedCheckGap = () => {
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(checkGap, 50);
+    };
+    checkGap();
+    window.addEventListener('resize', debouncedCheckGap);
+    // Use ResizeObserver for container and children
+    if (classListContainerRef.current && 'ResizeObserver' in window) {
+      resizeObserver = new ResizeObserver(debouncedCheckGap);
+      resizeObserver.observe(classListContainerRef.current);
+      Array.from(classListContainerRef.current.children).forEach(child => {
+        resizeObserver!.observe(child);
+      });
+    }
+    return () => {
+      window.removeEventListener('resize', debouncedCheckGap);
+      if (resizeObserver) resizeObserver.disconnect();
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+    };
+  }, [displayTen, currentSideIndex, classes]);
 
   const groupedClasses = useMemo(() => {
     const groups: Record<string, ClassItem[]> = {};
@@ -48,32 +115,73 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
     return groups;
   }, [classes]);
 
-  const handleOpenDetail = async (classItem: ClassItem) => {
-    setSelectedClass(classItem);
-    setActiveTab('Overview');
-    if (classItem.talent_tree && !fetchedTalents[classItem.talent_tree.id]) {
-      const talentTree = classItem.talent_tree;
-      if (talentTree && talentTree.talents_data) {
-        const talentIds = talentTree.talents_data
-          .filter(t => t.type === 'talent' && t.talent_id)
-          .map(t => t.talent_id as number);
+  const fetchTalentData = useCallback(async (classItem: ClassItem) => {
+    if (!classItem.talent_tree) return;
 
-        if (talentIds.length > 0) {
-          const { data, error } = await supabase
-            .from('talents')
-            .select('*')
-            .in('id', talentIds);
+    const tree = classItem.talent_tree;
+    const hasFullData = !!tree.talents_data;
+    const hasFetchedDetails = !!fetchedTalents[tree.id];
 
-          if (error) {
-            console.error('Error fetching talents:', error);
-            return;
-          }
-          setFetchedTalents(prev => ({ ...prev, [talentTree.id]: data as TalentItem[] }));
-        }
+    if (hasFullData && hasFetchedDetails) {
+      return;
+    }
+
+    let treeData = tree;
+    if (!hasFullData) {
+      const { data, error } = await supabase
+        .from('talent_trees')
+        .select('id, name, talents_data')
+        .eq('id', tree.id)
+        .single();
+      
+      if (error || !data) {
+        console.error("Failed to fetch talent tree data", error);
+        return;
       }
+      treeData = { ...tree, ...data };
+    }
+
+    if (treeData.talents_data && !hasFetchedDetails) {
+      const talentIds = treeData.talents_data.nodes
+        .map((n: any) => n.talent_id)
+        .filter(Boolean);
+
+      if (talentIds.length > 0) {
+        const { data: talentDetails, error: talentError } = await supabase
+          .from('talents')
+          .select('*')
+          .in('id', talentIds);
+
+        if (talentError) {
+          console.error("Failed to fetch talent details", talentError);
+          return;
+        }
+        
+        setFetchedTalents(prev => ({ ...prev, [treeData.id]: talentDetails as TalentItem[] }));
+      }
+    }
+
+    if (!hasFullData) {
+      setSelectedClass(current => {
+        if (current?.id === classItem.id) {
+          return { ...current, talent_tree: treeData as TalentTreeItem };
+        }
+        return current;
+      });
+    }
+  }, [fetchedTalents]);
+
+  const handleOpenDetail = async (classItem: ClassItem) => {
+    if (selectedClass?.id !== classItem.id) {
+      setSelectedClass(classItem);
+      setActiveTab('Overview');
+      fetchTalentData(classItem);
     }
   };
 
+  const handleTabClick = (tab: 'Overview' | 'Skills' | 'Talents') => {
+    setActiveTab(tab);
+  };
 
   const handleScroll = (direction: 'left' | 'right') => {
     if (displayTen) {
@@ -89,17 +197,6 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
     }
   };
 
-  const onWheel = useCallback((event: React.WheelEvent) => {
-    if (isAnimating) return; // Prevent scrolling if animation is playing
-
-    if (event.deltaY > 0) {
-      handleScroll('right');
-      setDirection(1); // Set direction for right scroll
-    } else {
-      handleScroll('left');
-      setDirection(-1); // Set direction for left scroll
-    }
-  }, [isAnimating, currentSideIndex, currentFactionIndex, displayTen]);
 
   const renderClasses = () => {
     if (displayTen) {
@@ -112,32 +209,26 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
       });
 
       return (
-        <div className="flex w-full justify-around items-start">
-          {factionsInSide.map((faction, index) => (
-            <React.Fragment key={faction}>
-              <div className="flex flex-col items-center gap-y-2">
-                <h4 className="text-lg font-semibold">{faction}</h4>
-                <div className="flex flex-row items-center justify-center gap-2 md:gap-4">
-                  {groupedClasses[faction].map(classItem => (
-                    <ClassSimpleCard
-                      key={classItem.id}
-                      classItem={classItem}
-                      onOpenDetail={() => handleOpenDetail(classItem)}
-                    />
-                  ))}
-                </div>
+        <div ref={classListContainerRef} className="flex w-full justify-around items-start">
+          {factionsInSide.map((faction) => (
+            <div key={faction} className="flex flex-col items-center gap-y-2">
+              <div className="flex flex-row items-center justify-center gap-2 md:gap-4">
+                {groupedClasses[faction].map((classItem: ClassItem) => (
+                  <ClassSimpleCard
+                    key={classItem.id}
+                    classItem={classItem}
+                    onOpenDetail={() => handleOpenDetail(classItem)}
+                  />
+                ))}
               </div>
-              {index < factionsInSide.length - 1 && (
-                <div className="flex items-center justify-center h-[116px] text-2xl text-yellow-400 self-center">❖</div>
-              )}
-            </React.Fragment>
+            </div>
           ))}
         </div>
       );
     } else {
       const faction = FACTION_ORDER[currentFactionIndex];
       const classesToRender = groupedClasses[faction] || [];
-      return classesToRender.map((classItem) => (
+      return classesToRender.map((classItem: ClassItem) => (
         <ClassSimpleCard
           key={classItem.id}
           classItem={classItem}
@@ -155,35 +246,79 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
 
   const getHeaderContent = () => {
     if (displayTen) {
-      return SIDE_ORDER[currentSideIndex];
-    } else {
+      const dropdownOptions = [
+        { factions: ["Chosen", "Firstborn"] },
+        { factions: ["Mountain Clan", "Forsaken"] },
+      ];
+
+      const renderDropdownContent = (factions: string[]) => (
+        <div className="flex items-center justify-around w-full">
+          {factions.map((factionName) => {
+            const factionData = CLASSES_DATA.find(c => c.faction === factionName);
+            if (!factionData) return null;
+            return (
+              <div key={factionName} className="flex items-center justify-center gap-x-2 w-1/2 whitespace-nowrap">
+                <Image draggable={false} src={factionData.faction_icon} alt={`${factionName} icon`} width={22} height={22} />
+                <span>{factionName}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+
       return (
-        <div className="flex items-center justify-center">
-          <button onClick={() => paginate(-1)} className="" disabled={isAnimating}>
-            <Image src="/image/arrow_button.svg" alt="Previous" width={45} height={39} className="hover:brightness-125 transition-all duration-200" />
-          </button>
+        <Dropdown
+          title={renderDropdownContent(dropdownOptions[currentSideIndex].factions)}
+          width="320px"
+          showArrows={true}
+          onPrevious={() => setCurrentSideIndex(prev => (prev - 1 + dropdownOptions.length) % dropdownOptions.length)}
+          onNext={() => setCurrentSideIndex(prev => (prev + 1) % dropdownOptions.length)}
+        >
+          {dropdownOptions.map((option, index) => (
+            <a
+              key={index}
+              href="#"
+              className={`flex items-center gap-x-2 ${currentSideIndex === index ? 'selected' : ''}`}
+              onClick={() => setCurrentSideIndex(index)}
+            >
+              {renderDropdownContent(option.factions)}
+            </a>
+          ))}
+        </Dropdown>
+      );
+    } else {
+      const currentFactionName = FACTION_ORDER[currentFactionIndex];
+      const currentFactionData = CLASSES_DATA.find(c => c.faction === currentFactionName);
+
+      const titleContent = (
+        <div className="flex items-center justify-center gap-x-2">
+          {currentFactionData && <Image draggable={false} src={currentFactionData.faction_icon} alt={`${currentFactionName} icon`} width={22} height={22} />}
+          <span>{currentFactionName}</span>
+        </div>
+      );
+
+      return (
           <Dropdown
-            title={FACTION_ORDER[currentFactionIndex]}
+            title={titleContent}
             width="210px"
+            showArrows={true}
+            onPrevious={() => paginate(-1)}
+            onNext={() => paginate(1)}
           >
             {FACTION_ORDER.map((faction, index) => (
               <a
                 key={faction}
                 href="#"
-                className={currentFactionIndex === index ? 'selected' : ''}
+                className={`flex items-center justify-center gap-x-2 ${currentFactionIndex === index ? 'selected' : ''}`}
                 onClick={() => {
                   setCurrentFactionIndex(index);
                 }}
               >
-                <Image src={`/image/factions/${faction.toLowerCase().replace(' ', '-')}/icon.webp`} alt={`${faction} icon`} width={24} height={24} />
-                {faction}
+                <Image draggable={false} src={`/image/factions/${faction.toLowerCase().replace(' ', '-')}/icon.webp`} alt={`${faction} icon`} width={22} height={22} />
+                <span>{faction}</span>
               </a>
             ))}
           </Dropdown>
-          <button onClick={() => paginate(1)} className="" disabled={isAnimating}>
-            <Image src="/image/arrow_button.svg" alt="Next" width={45} height={39} className="scale-x-[-1] hover:brightness-125 transition-all duration-200" />
-          </button>
-        </div>
       );
     }
   };
@@ -201,19 +336,19 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
 
   const variants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
+      y: direction > 0 ? 150 : -150,
+      opacity: 0,
     }),
     center: {
       zIndex: 1,
-      x: 0,
-      opacity: 1
+      y: 0,
+      opacity: 1,
     },
     exit: (direction: number) => ({
       zIndex: 0,
-      x: direction > 0 ? -1000 : 1000, // Corrected exit direction
-      opacity: 0
-    })
+      y: direction < 0 ? 150 : -150,
+      opacity: 0,
+    }),
   };
 
   if (!mounted) {
@@ -221,12 +356,12 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   }
 
   return (
-    <div className="flex flex-col w-full">
-      <div className={`relative p-2 border border-[#e6ce63] shadow-lg bg-gray-900/20 text-white w-full transition-all duration-300 ${isClassListCollapsed ? 'h-16' : 'h-auto'}`}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-center flex-grow">
+    <div id="class-content-wrapper" className={`${classContentStyles.pixelBackground} flex flex-col flex-grow w-full`}>
+      <div id="upper-box-container" className={`relative pt-2 border border-[#e6ce63] shadow-lg text-white w-full transition-all duration-300 ${isClassListCollapsed ? 'h-16' : 'h-auto'}`}>
+        <div className="flex items-center mb-4">
+          <div className="text-xl font-bold text-center flex-grow">
             {getHeaderContent()}
-          </h3>
+          </div>
           <button
             onClick={() => setIsClassListCollapsed(!isClassListCollapsed)}
             className="absolute top-2 right-2 p-1"
@@ -245,71 +380,80 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: "tween", ease: "easeInOut", duration: 0.4 },
-                  opacity: { duration: 0.4 }
+                  y: { type: "tween", ease: "easeInOut", duration: 0.4 },
+                  opacity: { duration: 0.4 },
                 }}
                 onAnimationStart={() => setIsAnimating(true)}
                 onAnimationComplete={() => setIsAnimating(false)}
-                className={`absolute w-full top-1/2 -translate-y-1/2 flex flex-row items-center justify-center gap-2 md:gap-4 pb-2 flex-nowrap flex-shrink-0`}
-                onWheel={onWheel}
+                className={`absolute w-full top-1/2 -translate-y-1/2 flex flex-row items-center justify-center gap-1 md:gap-4 pb-2 flex-nowrap flex-shrink-0`}
+                // onWheel={onWheel} // Disabled to prevent scrolling to scroll the class list
               >
                 {classes.length > 0 ? classesToDisplay : <p>No classes found.</p>}
               </motion.div>
             </AnimatePresence>
+            {displayTen && (
+              <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                {showDiamondDot ? (
+                  // Adjust the 'left' value below to fine-tune centering
+                  <DiamondDot left={-4} />
+                ) : (
+                  <FactionSwitcher
+                    faction={currentSideIndex === 0 ? 'elf' : 'mc'}
+                    onToggle={() => {}}
+                    size={100}
+                  />
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
-      {selectedClass && (
-        <div className={headerStyles.header}>
+      <div id="lower-box-container" className="w-full border-t-0 border-[3px] border-double border-[#e6ce63] shadow-lg text-white flex flex-col flex-grow">
+        {selectedClass ? (
+          <>
+            <div id="tab-header-container" className={`${headerStyles.header} ${classContentStyles.pixelBackground}`}>
               <button
                 className={`${headerStyles.tabButton} ${headerStyles.overview} ${activeTab === 'Overview' ? headerStyles.active : ''} ${activeTab === 'Overview' ? headerStyles.expanded : ''}`}
-                onClick={() => setActiveTab('Overview')}
+                onClick={() => handleTabClick('Overview')}
               >
-                <Image src={selectedClass.image_assets?.logo || ''} alt="Overview" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src={selectedClass.image_assets?.logo || ''} alt="Overview" width={32} height={32} className={headerStyles.tabIcon} />
                 {activeTab === 'Overview' && <span className={headerStyles.tabName}>{selectedClass.name}</span>}
               </button>
               <button
                 className={`${headerStyles.tabButton} ${activeTab === 'Skills' ? headerStyles.active : ''} ${activeTab === 'Skills' ? headerStyles.expanded : ''}`}
-                onClick={() => setActiveTab('Skills')}
+                onClick={() => handleTabClick('Skills')}
               >
-                <Image src="/image/classes/class_skill.png" alt="Skills" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src="/image/classes/class_skill.png" alt="Skills" width={32} height={32} className={headerStyles.tabIcon} />
                 {activeTab === 'Skills' && <span className={headerStyles.tabName}>Kỹ năng (Skill)</span>}
               </button>
               <button
                 className={`${headerStyles.tabButton} ${activeTab === 'Talents' ? headerStyles.active : ''} ${activeTab === 'Talents' ? headerStyles.expanded : ''}`}
-                onClick={() => setActiveTab('Talents')}
+                onClick={() => handleTabClick('Talents')}
               >
-                <Image src="/image/classes/class_talent.png" alt="Talents" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src="/image/classes/class_talent.png" alt="Talents" width={32} height={32} className={headerStyles.tabIcon} />
                 {activeTab === 'Talents' && <span className={headerStyles.tabName}>Thiên phú (Talent)</span>}
               </button>
               <div className={headerStyles.spacer}></div>
             </div>
-      )}
-      <div className="w-full flex-grow border-t-0 border-[3px] border-double border-[#e6ce63] shadow-lg bg-gray-900/20 text-white min-h-0">
-        <div className="p-4 overflow-y-auto">
-          {selectedClass ? (
-            <div>
+            <div id="tab-content-container" className="w-full flex-1 border-t-0 border-[3px] border-double border-[#e6ce63] shadow-lg text-white flex flex-col relative flex-grow">
               {activeTab === 'Overview' && (
-                <div className="flex space-x-4">
-                  <IconFrame size={128} styleType="yellow" altText={selectedClass.name} contentImageUrl={selectedClass.image_assets?.logo || null} />
-                  <p>{selectedClass.description}</p>
-                </div>
+                <>
+                  <ClassOverviewTab classItem={selectedClass} />
+                </>
               )}
-              {activeTab === 'Skills' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedClass.skills?.map(skill => (
-                    <SkillCard key={skill.id} skill={skill} />
-                  ))}
-                </div>
+              {activeTab === 'Skills' && selectedClass.skills && (
+                <SkillDisplay skills={selectedClass.skills} />
               )}
               {activeTab === 'Talents' && memoizedTalentTreeView}
             </div>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-400">Select a class to see details</p>
+          </>
+        ) : (
+          <div className="w-full flex flex-col flex-grow border-t-0 border-[#e6ce63] shadow-lg text-white">
+            <div className="flex items-center justify-center flex-grow">
+              <p className="text-gray-400">Chọn một lớp nhân vật để xem chi tiết</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

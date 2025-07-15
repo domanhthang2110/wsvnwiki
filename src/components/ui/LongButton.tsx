@@ -9,6 +9,7 @@ interface LongButtonProps {
   className?: string;
   hoverHighlightingEnabled?: boolean;
   style?: React.CSSProperties; // Allow external styles, including transform
+  children?: React.ReactNode;
 }
 
 const LongButton: React.FC<LongButtonProps> = ({
@@ -18,6 +19,7 @@ const LongButton: React.FC<LongButtonProps> = ({
   className = '',
   hoverHighlightingEnabled = true,
   style, // Destructure the style prop
+  children,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const capWidth = 16;
@@ -81,15 +83,22 @@ const LongButton: React.FC<LongButtonProps> = ({
       <div style={leftCapStyle} />
       <div style={middleStyle} />
       <div style={rightCapStyle} />
-      {text && (
-        <span
-          className="absolute inset-0 flex items-center justify-center text-white text-center pointer-events-none"
-          style={{
-            textShadow: '1px 1px 2px black',
-          }}
-        >
-          {text}
-        </span>
+      {children ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      ) : (
+        text && (
+          <span
+            className="absolute inset-0 flex items-center justify-center text-center pointer-events-none uppercase font-bold"
+            style={{
+              color: "#feda5d",
+              textShadow: "1px 1px 0px black",
+            }}
+          >
+            {text}
+          </span>
+        )
       )}
     </button>
   );

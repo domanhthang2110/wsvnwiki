@@ -1,0 +1,10 @@
+{
+  "activation_type": "Loại",
+  "skill_type": "Loại",
+  "cooldown": "Hồi chiêu",
+  "range": "Tầm sử dụng",
+  "active": "Chủ động",
+  "passive": "Nội tại",
+  "permanent": "Duy trì",
+  "reduced_energy_regen": "Giảm hồi năng lượng"
+}

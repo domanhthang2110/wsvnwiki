@@ -1,6 +1,7 @@
 'use client';
 
 import { TalentItem } from '@/types/talents';
+import { formatFullTalentDescription, formatKnowledgeCost } from '@/utils/talentUtils';
 
 interface TalentCardProps {
   talent: TalentItem;
@@ -10,6 +11,9 @@ interface TalentCardProps {
 }
 
 export default function TalentCard({ talent, onEdit, onDelete, isSelected }: TalentCardProps) {
+  const formattedDescription = formatFullTalentDescription(talent);
+  const knowledgeCostString = formatKnowledgeCost(talent.knowledge_levels);
+
   return (
     <div 
       className={`relative p-4 group border rounded-lg bg-gray-800 shadow-sm hover:shadow-md transition-all ${
@@ -41,7 +45,13 @@ export default function TalentCard({ talent, onEdit, onDelete, isSelected }: Tal
               {talent.name || 'Unnamed Talent'}
             </h3>
             <p className="text-xs text-gray-400 mt-0.5">
-              {talent.type || 'N/A Type'}
+              {talent.type || 'N/A Type'} - Max Level: {talent.max_level}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              {formattedDescription}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Knowledge: {knowledgeCostString}
             </p>
         </div>
 

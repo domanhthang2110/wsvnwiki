@@ -1,27 +1,41 @@
-.embossed-plaque {
-  box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.5), /* Dark shadow for top/left */
-              inset 0 -2px 2px rgba(255, 255, 255, 0.2), /* Light shadow for bottom/right */
-              0 1px 1px rgba(0, 0, 0, 0.3); /* Subtle outer shadow */
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Light top border */
-  border-bottom: 1px solid rgba(0, 0, 0, 0.4); /* Dark bottom border */
-}
+
+
+
 
 /* New styles for name plate */
 .namePlate {
-  min-height: 42px; /* Example: (14px font * 1.2 line-height * 2 lines) + (4px padding-top + 4px padding-bottom) = 33.6px + 8px = 41.6px. Rounded to 42px. Adjust as needed. */
-  display: flex;
-  align-items: center;    /* Vertically center content (the h3) */
-  justify-content: center; /* Horizontally center content (h3 also has text-center) */
-  padding: 4px 8px;     /* Replaces Tailwind's py-1 (4px vertical) and px-2 (8px horizontal) */
-  width: 100%; 
-}
+  background-color: #2e2e1f; /* Dark muted blue */
+  color: #ff0;
+  padding: 2px 0px;
+  min-height: 42px;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  border: 2px solid #c4b059; /* Subtle border */
+  text-shadow: 1px 1px 0 #000; /* Pixel-contrast shadow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .nameText {
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Limit to 2 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2; /* Adjust based on font for good spacing between lines */
-  width: 100%; /* Ensure text uses full width for clamping and alignment */
-}
+  width: 100%;
+  word-break: break-word;
+  color: rgb(255, 255, 255); /* Bright yellow text */
+
+  text-shadow:
+  -1px -1px 0 black,
+   1px -1px 0 black,
+  -1px  1px 0 black,
+   1px  1px 0 black,
+   0   -1px 0 black,
+   0    1px 0 black,
+  -1px  0   0 black,
+   1px  0   0 black;}
+

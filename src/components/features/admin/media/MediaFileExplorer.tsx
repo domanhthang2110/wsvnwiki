@@ -21,6 +21,7 @@ const FileIcon = () => <span role="img" aria-label="file" className="text-3xl sm
 const GridViewIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm8 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zm-8 8a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm8 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>;
 const ListViewIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>;
 const RenameIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>;
+const MoveIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>;
 const DeleteIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
 const CloseIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>;
 const UploadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
@@ -85,6 +86,7 @@ export default function MediaFileExplorer({
   const [previewFile, setPreviewFile] = useState<CombinedStorageItem | null>(null);
   const [renamingItem, setRenamingItem] = useState<CombinedStorageItem | null>(null);
   const [newItemName, setNewItemName] = useState("");
+  const [itemToMove, setItemToMove] = useState<{ item: CombinedStorageItem; fromPath: string } | null>(null);
 
   const fetchItems = useCallback(async () => {
     setLoadingItems(true);
@@ -99,7 +101,10 @@ export default function MediaFileExplorer({
         currentPathForFetch = formatPathForListing(supabasePath);
         const { data, error: listError } = await supabase.storage
           .from(bucketName)
-          .list(currentPathForFetch, { sortBy: { column: 'name', order: 'asc' } });
+          .list(currentPathForFetch, { 
+            sortBy: { column: 'name', order: 'asc' },
+            limit: 1000,
+          });
 
         if (listError) throw listError;
 
@@ -334,6 +339,41 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     finally { setRenamingItem(null); }
   };
 
+  const handleMoveItem = (item: CombinedStorageItem) => {
+    if (activeTab !== 'supabase') {
+      alert("Move operations are only supported for Supabase Storage.");
+      return;
+    }
+    setItemToMove({ item: item, fromPath: supabasePath });
+  };
+
+  const executeMove = async () => {
+    if (!itemToMove) return;
+
+    const { item, fromPath } = itemToMove;
+    const oldPath = normalizePath(fromPath ? `${fromPath}/${item.name}` : item.name);
+    const destinationFolder = supabasePath;
+    const newPath = normalizePath(destinationFolder ? `${destinationFolder}/${item.name}` : item.name);
+
+    if (newPath === oldPath) {
+      alert("Source and destination paths are the same. Cannot move.");
+      setItemToMove(null);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.storage.from(bucketName).move(oldPath, newPath);
+      if (error) throw error;
+      
+      fetchItems(); 
+      alert(`Successfully moved "${item.name}" to "${destinationFolder || 'root'}".`);
+    } catch (err: any) {
+      alert(`Error moving file: ${err.message}`);
+    } finally {
+      setItemToMove(null);
+    }
+  };
+
   return (
     <div 
       className="border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow relative"
@@ -382,22 +422,34 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                   ))}
               </div>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
+              <div className="flex items-center space-x-1 sm:space-x-2 flex-wrap">
               <button onClick={() => setViewMode('grid')} title="Grid View" className={`p-1.5 rounded-md ${viewMode === 'grid' ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'}`}><GridViewIcon /></button>
               <button onClick={() => setViewMode('list')} title="List View" className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'}`}><ListViewIcon /></button>
-              {activeTab === 'supabase' && (
+              {activeTab === 'supabase' && !itemToMove && (
                 <>
                   <button onClick={triggerFileInput} disabled={isUploading || loadingItems} className="py-1.5 px-2 sm:px-3 text-white font-semibold rounded-md shadow-sm text-xs sm:text-sm disabled:opacity-50 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 flex items-center"><UploadIcon /> <span className="hidden sm:inline ml-1">Upload</span></button>
                   <input type="file" ref={fileInputRef} multiple accept={accept} onChange={handleFileInputChange} className="hidden" disabled={isUploading || loadingItems} />
                 </>
               )}
-              {activeTab === 'supabase' && mode === 'manage' && (
+              {activeTab === 'supabase' && mode === 'manage' && !itemToMove && (
                 <>
                   <button onClick={() => { setSelectModeActive(!selectModeActive); setSelectedItems(new Set()); }} className={`py-1.5 px-2 sm:px-3 font-semibold rounded-md shadow-sm text-xs sm:text-sm ${selectModeActive ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-purple-500 hover:bg-purple-600 text-white'} flex items-center`}><SelectIcon/> <span className="hidden sm:inline ml-1">{selectModeActive ? 'Cancel' : 'Select'}</span></button>
                 </>
               )}
           </div>
         </div>
+
+        {itemToMove && (
+          <div className="my-2 p-2 bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-md flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              Moving: <strong className="font-semibold">{itemToMove.item.name}</strong>. Navigate to the destination folder.
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={executeMove} className="py-1 px-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md text-xs">Move Here</button>
+              <button onClick={() => setItemToMove(null)} className="py-1 px-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-md text-xs">Cancel</button>
+            </div>
+          </div>
+        )}
         
         {activeTab === 'supabase' && mode === 'manage' && selectModeActive && selectedItems.size > 0 && (
             <div className="my-2 p-2 bg-indigo-50 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 rounded-md flex items-center justify-between">
@@ -416,11 +468,11 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
 
         {/* Gallery Content */}
         <div> {/* Added min-height to ensure dropzone is always available */}
-            {loadingItems && <p className="text-center py-10 dark:text-gray-300">Loading items...</p>}
+            {loadingItems && items.length === 0 && <p className="text-center py-10 dark:text-gray-300">Loading items...</p>}
             {itemsError && <p className="text-center py-10 text-red-500 dark:text-red-400">Error: {itemsError}</p>}
             {!loadingItems && !itemsError && items.length === 0 && ( <p className="text-center py-10 text-gray-500 dark:text-gray-400">This folder is empty. Drag files here or use the 'Upload' button.</p> )}
 
-            {!loadingItems && !itemsError && items.length > 0 && (
+            {items.length > 0 && (
             viewMode === 'grid' ? (
                 <div className="flex flex-wrap gap-2 sm:gap-3 justify-start items-start">
                 {items.map((item) => (
@@ -436,15 +488,18 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                     >
                     <div className="text-3xl sm:text-4xl mb-1 flex-grow flex items-center justify-center overflow-hidden">
                         {item.itemType === 'folder' ? <FolderIcon /> : 
+                        (item.name.match(/\.(webm|mp4|ogg)$/i) && item.publicUrl) ?
+                            <video src={item.publicUrl} muted loop autoPlay playsInline className="max-w-full max-h-full object-contain" /> :
                         ( (item.thumbnailUrl || item.publicUrl) && (item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
                             <img src={item.thumbnailUrl || item.publicUrl || ''} alt={item.name} className="max-w-full max-h-full object-contain" />
                             : <FileIcon /> ))}
                     </div>
                     <p className="text-[10px] sm:text-xs truncate w-full text-gray-700 dark:text-gray-300 group-hover:underline mt-auto flex-shrink-0 py-1">{item.name}</p>
                     
-                    {item.itemType === 'file' && activeTab === 'supabase' && mode === 'manage' && !selectModeActive && (
+                    {item.itemType === 'file' && activeTab === 'supabase' && mode === 'manage' && !selectModeActive && !itemToMove && (
                         <div className="absolute top-1 right-1 flex flex-col space-y-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <button onClick={(e) => { e.stopPropagation(); handleRenameItem(item); }} className="p-1 bg-blue-500/80 text-white rounded-full shadow hover:bg-blue-600 text-xs" title="Rename"><RenameIcon/></button>
+                        <button onClick={(e) => { e.stopPropagation(); handleMoveItem(item); }} className="p-1 bg-green-500/80 text-white rounded-full shadow hover:bg-green-600 text-xs" title="Move"><MoveIcon/></button>
                         <button onClick={(e) => { e.stopPropagation(); handleDeleteItem(item); }} className="p-1 bg-red-500/80 text-white rounded-full shadow hover:bg-red-600 text-xs" title="Delete"><DeleteIcon/></button>
                         </div>
                     )}
@@ -466,14 +521,17 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                     >
                     <span className="text-base mr-3">
                         {item.itemType === 'folder' ? <FolderIcon /> : 
+                        (item.name.match(/\.(webm|mp4|ogg)$/i) && item.publicUrl) ?
+                            <video src={item.publicUrl} muted loop autoPlay playsInline className="w-7 h-7 object-contain rounded" /> :
                         ((item.thumbnailUrl || item.publicUrl) && item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
                             <img src={item.thumbnailUrl || item.publicUrl || ''} alt="" className="w-7 h-7 object-contain rounded" /> 
                             : <FileIcon />)}
                     </span>
                     <span className="text-sm text-gray-700 dark:text-gray-300 truncate flex-grow">{item.name}</span>
-                    {item.itemType === 'file' && activeTab === 'supabase' && mode === 'manage' && !selectModeActive && (
+                    {item.itemType === 'file' && activeTab === 'supabase' && mode === 'manage' && !selectModeActive && !itemToMove && (
                         <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
                         <button onClick={(e) => { e.stopPropagation(); handleRenameItem(item); }} className="p-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" title="Rename"><RenameIcon/></button>
+                        <button onClick={(e) => { e.stopPropagation(); handleMoveItem(item); }} className="p-1 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300" title="Move"><MoveIcon/></button>
                         <button onClick={(e) => { e.stopPropagation(); handleDeleteItem(item); }} className="p-1 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" title="Delete"><DeleteIcon/></button>
                         </div>
                     )}

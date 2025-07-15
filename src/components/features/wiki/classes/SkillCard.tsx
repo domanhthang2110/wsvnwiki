@@ -14,12 +14,11 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill }) => {
       <IconFrame
         size={64}
         styleType="yellow"
-        altText={skill.name}
+        altText={skill.name || ''}
         contentImageUrl={skill.icon_url}
       />
-      <div>
-        <h4 className="text-lg font-semibold">{skill.name}</h4>
-        <p className="text-sm text-gray-400">{skill.description}</p>
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <h4 className="text-lg font-semibold break-words whitespace-normal" style={{ wordBreak: 'break-word' }}>{skill.name || ''}</h4>
       </div>
     </div>
   );

@@ -25,20 +25,24 @@ type TalentParametersDefinition = TalentParameterDefinitionStored[];
 type TalentLevelValues = TalentLevelValue[];
 
 // Extended interface for Talent item, picking fields from TalentRow and overriding JSONB
-export interface TalentItem extends Omit<TalentRow, 'parameters_definition' | 'level_values'> {
+// Define the specific types for the JSONB columns
+type TalentKnowledgeCost = Record<number, number>;
+
+// Extended interface for Talent item, picking fields from TalentRow and overriding JSONB
+export interface TalentItem extends Omit<TalentRow, 'parameters_definition' | 'level_values' | 'knowledge_levels'> {
   parameters_definition: TalentParametersDefinition | null;
   level_values: TalentLevelValues | null;
-  cost_levels: number | null;
-  knowledge_levels: number | null;
+  knowledge_levels: TalentKnowledgeCost | null;
 }
 
 // For the form data submission
 export type TalentFormData = Omit<TalentItem, 'id' | 'created_at'> & {
   parameters_definition?: TalentParameterDefinitionInForm[] | null;
   level_values?: TalentLevelValue[] | null;
+  knowledge_levels?: TalentKnowledgeCost | null;
 };
 
-export const TALENT_TYPE_OPTIONS: Array<NonNullable<TalentItem['type']>> = ["normal", "key", "composite"];
+export const TALENT_TYPE_OPTIONS: Array<NonNullable<TalentItem['type']>> = ["normal", "key", "lesser"];
 
 // Talent Tree Types
 export interface TalentNode {
@@ -47,11 +51,14 @@ export interface TalentNode {
   x: number;
   y: number;
   icon_url?: string | null;
-  node_type: 'normal' | 'composite' | 'composite_sub';
+  node_type: 'normal' | 'key' | 'lesser' | 'composite' | 'composite_sub' | 'free_composite'; // Added 'key' and 'lesser'
   group_id?: string | null;
   is_group_main?: boolean;
   width?: number;
   isToolbarItem?: boolean;
+  talent?: {
+    icon_url?: string | null;
+  };
 }
 
 export interface TalentEdge {

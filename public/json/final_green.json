@@ -1,0 +1,338 @@
+[
+  {
+    "name": "Relic of Dexterity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 20% hồi chiêu (Skill Cooldown) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Agility",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 20% tốc đánh (Attack Speed) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Physical Resistance",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 15% giáp vật lý (Physical Defense) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Magic Resistance",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 15% giáp phép (Magic Defense) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Physical Might",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 10% sức mạnh vật lý (Physical Power) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Magic Might",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 10% sức mạnh phép thuật (Magic Power) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Relic of Unprecedented Health",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 15% máu của nhân vật trong 20 giây."
+  },
+  {
+    "name": "Relic of Will Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 20% năng lượng của nhân vật trong 20 giây."
+  },
+  {
+    "name": "Relic of Consumption",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội áp dụng hiệu ứng Da đá (Stone Skin) lên nhân vật trong 15 giây, giảm 50% sát thương từ đòn tấn công tiếp theo."
+  },
+  {
+    "name": "Relic of the Shield Master",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 5% tỷ lệ chặn đòn (Block) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Relic of Cunning",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 8% tỷ lệ né tránh (Dodge) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Relic of Reflection",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội tăng 8% tỷ lệ đỡ đòn (Parry) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Relic of Immunity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội áp dụng hiệu ứng miễn nhiễm (Immunity) lên nhân vật trong 5 giây, chống lại tất cả các hiệu ứng khống chế."
+  },
+  {
+    "name": "Lesser Relic of Dexterity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 15% hồi chiêu (Skill Cooldown) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Agility",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 15% tốc đánh (Attack Speed) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Physical Resistance",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 10% giáp vật lý (Physical Defense) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Magic Resistance",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 10% giáp phép (Magic Defense) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Physical Might",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 7.0% sức mạnh vật lý (Physical Power) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Lesser Relic of Unprecedented Health",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 10% máu của nhân vật trong 20 giây."
+  },
+  {
+    "name": "Lesser Relic of Will Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 15% năng lượng của nhân vật trong 20 giây."
+  },
+  {
+    "name": "Lesser Relic of Consumption",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội áp dụng hiệu ứng Da đá (Stone Skin) lên nhân vật trong 15 giây, giảm 40% sát thương từ đòn tấn công tiếp theo."
+  },
+  {
+    "name": "Lesser Relic of the Shield Master",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 3% tỷ lệ chặn đòn (Block) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Lesser Relic of Cunning",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 5% tỷ lệ né tránh (Dodge) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Lesser Relic of Reflection",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 5% tỷ lệ đỡ đòn (Parry) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Lesser Relic of Immunity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội áp dụng hiệu ứng miễn nhiễm (Immunity) lên nhân vật trong 4 giây, chống lại tất cả các hiệu ứng khống chế."
+  },
+  {
+    "name": "Lesser Relic of Magic Might",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội tăng 7.0% sức mạnh phép thuật (Magic Power) của nhân vật trong 10 giây."
+  },
+  {
+    "name": "Icy Relic of Retribution",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội áp dụng Khiên Băng (Ice Shield) lên nhân vật trong 10 giây, phản lại tới 30% sát thương nhận từ đòn tấn công tiếp theo."
+  },
+  {
+    "name": "Magic Relic of Deceptive Control",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội áp dụng Thuật Ngủ (Sleep Magic) lên nhân vật trong 15 giây. Nếu kẻ địch sử dụng hiệu ứng khống chế lên nhân vật khi đang có hiệu ứng này, kẻ địch sẽ bị Ngủ (Sleep) trong 5 giây."
+  },
+  {
+    "name": "Terrible Relic of Vampirism",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội tăng 15% hút máu (Health Steal) của nhân vật trong 15 giây."
+  },
+  {
+    "name": "Terrible Relic of Secret Theft",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội áp dụng Bí Thuật Hồi Máu (Secret Theft) lên nhân vật trong 20 giây. Khi đang chịu hiệu ứng khống chế, nhân vật hồi lại máu bằng 30% sát thương nhận vào."
+  },
+  {
+    "name": "Icy Relic of Rampage",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% tỷ lệ chí mạng (Critical Hit) của nhân vật trong 10 giây khi sử dụng kỹ năng trong trạng thái Cuồng nộ (Rage)."
+  },
+  {
+    "name": "Magic Relic of Physical Blocking",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội áp dụng chặn vật lý (Physical Block) lên nhân vật trong 5 giây, hấp thụ toàn bộ sát thương vật lý."
+  },
+  {
+    "name": "Magic Relic of Magical Blocking",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội áp dụng chặn phép (Magic Block) lên nhân vật trong 5 giây, hấp thụ toàn bộ sát thương phép."
+  },
+  {
+    "name": "Relic of Absolute Protection",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% giáp vật lý (Physical Defense) và giáp phép (Magic Defense) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Relic of Solidity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% vững chãi (Solidity) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Relic of Nimbleness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% hồi chiêu (Skill Cooldown) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Relic of Swiftness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 30% tốc đánh (Attack Speed) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Physical Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% sức mạnh vật lý (Physical Power) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Magic Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% sức mạnh phép thuật (Magic Power) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Deadliness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 12% tỷ lệ chí mạng (Critical Hit) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Relic of Accuracy",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 12% độ chính xác (Accuracy) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Absolute Protection",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 5% giáp vật lý (Physical Defense) và giáp phép (Magic Defense) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Solidity",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 5% vững chãi (Solidity) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Nimbleness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 7.5% hồi chiêu (Skill Cooldown) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Swiftness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% tốc đánh (Attack Speed) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Physical Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 5% sức mạnh vật lý (Physical Power) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Magic Power",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 7.5% sức mạnh phép thuật (Magic Power) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Deadliness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% tỷ lệ chí mạng (Critical Hit) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Accuracy",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% độ chính xác (Accuracy) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Terrible Relic of Health Steal",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 15% hút máu (Health Steal) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Terrible Relic of Stun",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 7.5% tỷ lệ Choáng (Stun) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Icy Relic of Rage",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Áp dụng hiệu ứng Cuồng nộ (Rage) cho nhân vật khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  },
+  {
+    "name": "Icy Relic of Reflected Damage",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 20% phản sát thương (Damage Reflection) của nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Magic Relic of Cruelty",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Áp dụng hiệu ứng Xuyên phá (Punching) lên nhân vật trong 20 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng, tăng 4% xuyên giáp (Penetration) mỗi 5 giây."
+  },
+  {
+    "name": "Magic Relic of Reaction",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Áp dụng hiệu ứng kháng khống chế (Resistance) lên nhân vật trong 10 giây khi kẻ địch kháng hiệu ứng của kỹ năng, chống lại hiệu ứng khống chế tiếp theo."
+  },
+  {
+    "name": "Icy Relic of Piercing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% xuyên thấu (Piercing Attack) của nhân vật trong 10 giây khi kẻ địch né, đỡ hoặc chặn đòn tấn công của kỹ năng."
+  }
+]

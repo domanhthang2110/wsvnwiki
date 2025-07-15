@@ -1,0 +1,278 @@
+[
+  {
+    "name": "Great Relic of Inaccessibility",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 2 ô tầm sử dụng của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Higher Mastery",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội sử dụng lại kỹ năng ngay lập tức mà không cần hồi chiêu."
+  },
+  {
+    "name": "Great Relic of Concentration",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 40% hồi chiêu của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Energy Retribution",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hút 20% năng lượng tối đa của kẻ địch."
+  },
+  {
+    "name": "Great Relic of Energy Efficiency",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Giảm 40% năng lượng tiêu hao của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Punishing Ability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 12% sát thương của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Defense Ignoring",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% xuyên giáp (Penetration) của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Sudden Strength",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 8% tỷ lệ chí mạng (Critical Hit) của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Indomitable Blow",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 20% sát thương chí mạng (Critical Hit Strength) của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Refreshment",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hồi 20% máu tối đa của nhân vật."
+  },
+  {
+    "name": "Great Relic of Mass Retribution",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây 40% sát thương của kỹ năng lên tất cả kẻ địch trong vòng 2 ô của mục tiêu."
+  },
+  {
+    "name": "Great Relic of Spirit Rebirth",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội hồi lại năng lượng tiêu hao bởi kỹ năng."
+  },
+  {
+    "name": "Great Relic of Multiple Spells",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 3 số lượng mục tiêu tối đa bị ảnh hưởng bởi hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Menace",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 60% lượng gây hấn (aggression) tạo ra bởi kỹ năng."
+  },
+  {
+    "name": "Great Relic of Salutary Healing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội hồi máu cho nhân vật bằng lượng máu của đồng minh khi sử dụng lên đồng minh."
+  },
+  {
+    "name": "Great Relic of Continuous Effect",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 40% thời gian hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Great Relic of Dispelling",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 20% cơ hội loại bỏ một hiệu ứng lợi từ kẻ địch."
+  },
+  {
+    "name": "Great Relic of Curse Removal",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 30% cơ hội loại bỏ một hiệu ứng bất lợi từ nhân vật."
+  },
+  {
+    "name": "Great Relic of Killing Insight",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Hồi lại năng lượng tiêu hao bởi kỹ năng khi mục tiêu bị hạ gục bởi kỹ năng này."
+  },
+  {
+    "name": "Lesser Relic of Inaccessibility",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 1 ô tầm sử dụng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Higher Mastery",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 5% cơ hội sử dụng lại kỹ năng ngay lập tức mà không cần hồi chiêu."
+  },
+  {
+    "name": "Lesser Relic of Concentration",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội giảm 20% hồi chiêu của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Energy Retribution",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hút 10% năng lượng tối đa của kẻ địch."
+  },
+  {
+    "name": "Lesser Relic of Energy Efficiency",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Giảm 20% năng lượng tiêu hao của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Punishing Ability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 6% sát thương của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Defense Ignoring",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 5% xuyên giáp (Penetration) của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Sudden Strength",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 4% tỷ lệ chí mạng (Critical Hit) của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Indomitable Blow",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 10% sát thương chí mạng (Critical Hit Strength) của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Refreshment",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hồi 10% máu tối đa của nhân vật."
+  },
+  {
+    "name": "Lesser Relic of Mass Retribution",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội gây 20% sát thương của kỹ năng lên tất cả kẻ địch trong vòng 1 ô của mục tiêu."
+  },
+  {
+    "name": "Lesser Relic of Spirit Rebirth",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hồi lại năng lượng tiêu hao bởi kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Multiple Spells",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 1 số lượng mục tiêu tối đa bị ảnh hưởng bởi hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Menace",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 30% lượng gây hấn (aggression) tạo ra bởi kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Salutary Healing",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội hồi máu cho nhân vật bằng lượng máu của đồng minh khi sử dụng lên đồng minh."
+  },
+  {
+    "name": "Lesser Relic of Continuous Effect",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 20% thời gian hiệu ứng của kỹ năng."
+  },
+  {
+    "name": "Lesser Relic of Dispelling",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 10% cơ hội loại bỏ một hiệu ứng lợi từ kẻ địch."
+  },
+  {
+    "name": "Lesser Relic of Curse Removal",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Cho 15% cơ hội loại bỏ một hiệu ứng bất lợi từ nhân vật."
+  },
+  {
+    "name": "Terrible Relic of Bloodsucking",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Hồi máu cho nhân vật bằng 7.5% sát thương gây ra bởi kỹ năng."
+  },
+  {
+    "name": "Magic Relic of Killing Health",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Hồi 50% máu của nhân vật khi giết kẻ địch bằng hoặc cao hơn cấp độ của bạn bằng kỹ năng."
+  },
+  {
+    "name": "Great Relic of Energy Stability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Giảm 50% lượng hồi năng lượng (Energy Regeneration) bị giảm khi kỹ năng đang hoạt động."
+  },
+  {
+    "name": "Lesser Relic of Energy Stability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Giảm 30% lượng hồi năng lượng (Energy Regeneration) bị giảm khi kỹ năng đang hoạt động."
+  },
+  {
+    "name": "Icy Relic of Ruthlessness",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Đảm bảo chí mạng (critical strike) lên kẻ địch có máu dưới 30% tối đa khi tấn công bằng kỹ năng."
+  },
+  {
+    "name": "Icy Relic of Cruelty",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Đảm bảo chí mạng (critical strike) bằng kỹ năng khi sử dụng trong trạng thái Cuồng nộ (Rage)."
+  },
+  {
+    "name": "Icy Relic of Intractability",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 40% hiệu ứng của kỹ năng khi sử dụng trong trạng thái Cuồng nộ (Rage)."
+  },
+  {
+    "name": "Magic Relic of Resilience",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 40% hiệu ứng của kỹ năng khi máu của nhân vật giảm xuống dưới 30% máu tối đa."
+  },
+  {
+    "name": "Terrible Relic of Control",
+    "icon_url": null,
+    "type": "simple",
+    "description": "Tăng 25% thời gian hiệu ứng của kỹ năng với cơ hội bằng chỉ số hút máu (Health Steal)."
+  }
+]

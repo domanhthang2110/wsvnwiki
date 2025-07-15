@@ -1,0 +1,54 @@
+.burgerButton {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 50;
+  width: 3rem; /* w-12 */
+  height: 3rem; /* h-12 */
+  transition: all 0.2s;
+  image-rendering: pixelated;
+}
+
+.burgerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.menuGrid {
+  position: relative;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem; /* gap-6 */
+  padding: 2rem; /* p-8 */
+}
+
+/* Mobile styles - just scale everything down */
+@media (max-width: 768px) {
+  .menuGrid {
+    transform: scale(0.9);
+  }
+}
+
+/* Very small mobile screens */
+@media (max-width: 480px) {
+  .menuGrid {
+    transform: scale(0.9);
+  }
+}

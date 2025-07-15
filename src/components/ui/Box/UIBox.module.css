@@ -9,12 +9,10 @@
   z-index: 0;
   height: 100%;
   min-width: 0;
-  background-image: url('/background.png');
-  background-repeat: repeat;
-  background-size: 70px 40px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   box-sizing: border-box;
+  background-color: #a7dbef;
   display: flex;
   flex-direction: column;
 }
@@ -23,9 +21,9 @@
   background-color: rgb(187, 90, 21);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Change back to center */
   position: absolute;
-  font-size: 24px;
+  font-size: 20px;
   color: yellow;
   letter-spacing: -1px;
   text-shadow:
@@ -38,8 +36,8 @@
   right: 0;
   flex-shrink: 0;
   padding: 0 20px;
-  box-sizing: border-box;
-  z-index: 10; /* Ensure header is above scrolling content */
+ box-sizing: border-box;
+ z-index: 20; /* Ensure header is above scrolling content */
 }
 
 .box-header-border-top {
@@ -61,50 +59,70 @@
 }
 
 .box-children-wrapper {
-  padding: 10px; /* Default smaller padding for mobile */
+  padding: 0px; /* Default smaller padding for mobile */
   flex-grow: 1;
   box-sizing: border-box;
   min-width: 0;
   width: 100%;
-  padding-top: calc(var(--header-height, 0px) + 8px); /* Adjusted top padding for mobile */
+  height: 100%;
+  padding-top: calc(var(--header-height, 0px)); /* Adjusted top padding for mobile */
   overflow-y: auto; /* Add this line to enable vertical scrolling */
 }
 
-@media (min-width: 768px) { /* Or your preferred breakpoint, e.g., md */
-  .box-children-wrapper {
-    padding: 20px; /* Larger padding for desktop */
-    padding-top: calc(var(--header-height, 0px) + 16px); /* Adjusted top padding for desktop */
-  }
-}
 
-.corner-sprite {
+.box-component::before,
+.box-component::after,
+.box-content::before,
+.box-content::after {
+  content: '';
   position: absolute;
   width: 44px;
   height: 38px;
-  z-index: 1;
+  background-image: url('/corner_decor.png');
+  background-repeat: no-repeat;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+  z-index: 1;
 }
 
-.corner-sprite.top-left {
+.box-component::before {
   top: -1px;
   left: -1px;
 }
 
-.corner-sprite.top-right {
+.box-component::after {
   top: -1px;
   right: -1px;
   transform: scaleX(-1);
 }
 
-.corner-sprite.bottom-left {
+.box-content::before {
   bottom: -1px;
   left: -1px;
   transform: scaleY(-1);
 }
 
-.corner-sprite.bottom-right {
+.box-content::after {
   bottom: -1px;
   right: -1px;
   transform: scale(-1, -1);
+}
+
+.header-center-content {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add space between title and button */
+}
+
+.alt-burger-button-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.alt-burger-button {
+  /* No special styles needed now */
+}
+
+.alt-burger-button:hover {
+  filter: brightness(1.2);
 }

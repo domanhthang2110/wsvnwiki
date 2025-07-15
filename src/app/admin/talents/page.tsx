@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { TalentItem } from '@/types/talents';
 import TalentForm from '@/components/features/admin/talents/TalentForm';
 import TalentCard from '@/components/features/admin/talents/TalentCard';
+import BulkTalentImport from '@/components/features/admin/talents/BulkTalentImport';
 
 export default function AdminTalentsPage() {
   const [talents, setTalents] = useState<TalentItem[]>([]);
@@ -104,6 +105,8 @@ export default function AdminTalentsPage() {
       <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
         Manage Talents
       </h1>
+
+      <BulkTalentImport onImportSuccess={fetchTalents} />
 
       <div id="talentForm">
         <TalentForm 

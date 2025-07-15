@@ -21,7 +21,7 @@
 }
 
 .tabButton.active {
-  background-color: color-mix(in oklab, var(--color-gray-900) 20%, transparent);
+  background-color: rgba(17, 24, 39, 0.4);
   border-bottom-color: transparent;
 }
 

@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase/client';
 import type { PostItem, PostFormData } from '@/types/posts'; 
 import PostForm from '@/components/features/admin/posts/PostForm'; 
 import Link from 'next/link';
-import { Edit, Trash2, PlusCircle, X } from 'lucide-react'; 
+import { Edit, Trash2, PlusCircle, X, Copy } from 'lucide-react'; 
+import { slugify } from '@/lib/utils';
 
 export default function AdminPostsPage() {
 
@@ -112,6 +113,33 @@ export default function AdminPostsPage() {
     }
   };
 
+  const handleDuplicate = async (post: PostItem) => {
+    if (!window.confirm(`Are you sure you want to duplicate the post "${post.title}"?`)) return;
+
+    const duplicatedTitle = `${post.title} (Duplicate)`;
+    const duplicatedSlug = slugify(duplicatedTitle);
+
+    const newPostData: PostFormData = {
+      title: duplicatedTitle,
+      slug: duplicatedSlug,
+      content: post.content,
+      status: post.status,
+      image_url: post.image_url,
+      type_id: post.type_id,
+      updated_at: new Date().toISOString(),
+      tag_ids: post.tags?.map(tag => tag.id) || [],
+      featured_image_url: post.featured_image_url,
+      published_at: post.published_at,
+    };
+
+    try {
+      await handleFormSubmit(newPostData);
+      alert(`Post "${duplicatedTitle}" duplicated successfully!`);
+    } catch (error: any) {
+      alert(`Failed to duplicate post: ${error.message}`);
+    }
+  };
+
   const handleEdit = (post: PostItem) => { 
     setEditingPost(post); 
     setShowForm(true);
@@ -195,6 +223,9 @@ export default function AdminPostsPage() {
                       </p>
                     </div>
                     <div className="space-x-1 flex-shrink-0 ml-4">
+                      <button onClick={() => handleDuplicate(post)} className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" title="Duplicate">
+                        <Copy size={16}/>
+                      </button>
                       <button onClick={() => handleEdit(post)} className="p-2 text-gray-500 hover:text-yellow-600 dark:text-gray-400 dark:hover:text-yellow-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" title="Edit">
                         <Edit size={16}/>
                       </button>

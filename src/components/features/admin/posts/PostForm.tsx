@@ -7,6 +7,7 @@ import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplor
 import { CloseIcon } from '@/components/shared/icons'; // Update icons path
 import TiptapEditor from '@/components/features/editor/TiptapEditor'; // Update TiptapEditor path
 import { type Editor } from '@tiptap/react';
+import { slugify } from '@/lib/utils'; // Import slugify from utils
 
 // Removed local PostTypeItem interface, using TypeRow from '@/types/posts'
 
@@ -16,18 +17,6 @@ interface PostFormProps {
   isEditing: boolean;
   postType: 'guide' | 'other'; 
 }
-
-// Helper function to generate slugs (assuming it's defined elsewhere or here)
-const slugify = (text: string): string => {
-  if (!text) return '';
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-') 
-    .replace(/[^\w-]+/g, '') 
-    .replace(/--+/g, '-'); 
-};
 
 export default function PostForm({ onSubmit, initialData, isEditing, postType }: PostFormProps) {
   // --- 1. STATE DECLARATIONS ---

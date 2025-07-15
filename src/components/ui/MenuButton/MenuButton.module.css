@@ -1,0 +1,55 @@
+.menuButton {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 8rem; /* 32 * 0.25rem = 8rem (w-32) */
+  height: 8rem; /* 32 * 0.25rem = 8rem (h-32) */
+  transition: all 0.2s;
+}
+
+.buttonBackground {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url('/image/menu_button.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonBackground:hover {
+  filter: brightness(1.3);
+}
+.iconContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-1.3rem);
+}
+
+.icon {
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.text {
+  position: absolute;
+  bottom: 0.8rem; /* 2 * 0.25rem = 0.5rem (bottom-2) */
+  left: 50%;
+  width: 90%;
+  transform: translateX(-50%);
+  font-size: 1rem; /* text-xs */
+  text-align: center;
+  white-space: normal;
+  padding: 0 0.25rem;
+  color: #ffdb58;
+}

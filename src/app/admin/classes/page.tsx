@@ -19,6 +19,17 @@ export default function AdminClassesPage() {
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
   const [pageError, setPageError] = useState<string | null>(null); // New state for page-level errors
+  const [assignedSkillIds, setAssignedSkillIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const newAssignedSkillIds = new Set<number>();
+    classes.forEach(cls => {
+      cls.skills?.forEach(skill => {
+        newAssignedSkillIds.add(skill.id);
+      });
+    });
+    setAssignedSkillIds(newAssignedSkillIds);
+  }, [classes]);
   
   const fetchClasses = useCallback(async () => {
     // Use client-side supabase for fetching
@@ -74,6 +85,7 @@ export default function AdminClassesPage() {
       const classTablePayload = {
         name: formData.name,
         description: formData.description,
+        lore: formData.lore,
         image_assets: formData.image_assets, // Use the new image_assets object
       };
 
@@ -212,6 +224,7 @@ export default function AdminClassesPage() {
           setSelectedSkills(availableSkills.filter(s => ids.includes(s.id)));
           setIsSkillModalOpen(false);
         }}
+        assignedSkillIds={assignedSkillIds}
       />
 
       {/* Classes List */}

@@ -9,6 +9,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/classes', label: 'Classes' },
   { href: '/admin/skills', label: 'Skills' },
+  { href: '/admin/items', label: 'Items' },
   { href: '/admin/talents', label: 'Talents' },
   { href: '/admin/talent-trees', label: 'Talent Trees' },
   { href: '/admin/posts', label: 'Posts' },

@@ -17,16 +17,12 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const mounted = useMounted();
+  const nameRef = useRef<HTMLHeadingElement>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const isWebm = classItem.image_assets?.avatar?.endsWith('.gif');
 
-  let avatarSrc = defaultAvatarPath;
-  if (isWebm) {
-    avatarSrc = classItem.image_assets?.avatar?.replace('.gif', '.webm') || defaultAvatarPath;
-  } else {
-    avatarSrc = classItem.image_assets?.avatar || defaultAvatarPath;
-  }
+  const avatarUrl = (typeof classItem.image_assets?.avatar === 'string' ? classItem.image_assets.avatar : null) || defaultAvatarPath;
+  const isVideoAvatar = avatarUrl.endsWith('.webm') || avatarUrl.endsWith('.mp4');
 
   useEffect(() => {
     const video = videoRef.current;
@@ -39,6 +35,28 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
       }
     }
   }, [isHovered]);
+
+  useEffect(() => {
+    const adjustFontSize = () => {
+      const nameElement = nameRef.current;
+      if (nameElement) {
+        const parent = nameElement.parentElement;
+        if (parent) {
+          let fontSize = 12; // Starting font size (14px - 2px)
+          nameElement.style.fontSize = `${fontSize}px`;
+          
+          requestAnimationFrame(() => {
+            while (nameElement.scrollWidth > parent.clientWidth && fontSize > 8) {
+              fontSize -= 1;
+              nameElement.style.fontSize = `${fontSize}px`;
+            }
+          });
+        }
+      }
+    };
+
+    adjustFontSize();
+  }, [classItem.name, mounted]);
 
   const cardWidth = isMobile ? 66 : 77;
   const cardHeight = isMobile ? 99 : 116;
@@ -69,30 +87,30 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
         width={cardWidth} 
         height={cardHeight} 
         scale={1} 
-        overflowVisible={isWebm && isHovered}
+        overflowVisible={isVideoAvatar && isHovered}
       >
-        {isWebm ? (
+        {isVideoAvatar ? (
           <video
+            draggable={false}
             ref={videoRef}
-            src={avatarSrc}
+            src={avatarUrl}
             width={cardWidth}
             height={cardHeight}
-            className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${
-              isHovered ? 'z-10' : ''
-            }`}
+            className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${isHovered ? 'z-10' : ''}`}
             muted
+            loop
             playsInline
+            preload="metadata"
           />
         ) : (
           <img
-            src={classItem.image_assets?.avatar || defaultAvatarPath}
+            draggable={false}
+            src={avatarUrl}
             alt={classItem.name}
             width={cardWidth}
             height={cardHeight}
             className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center`}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = defaultAvatarPath;
-            }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatarPath; }}
           />
         )}
       </FancyFrame>
@@ -102,7 +120,8 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
         className={`w-full bg-gray-700 text-center ${styles['embossed-plaque']} ${styles.namePlate}`}
       >
         <h3
-          className={`text-sm font-semibold text-gray-100 transition-colors text-center ${styles.nameText}`}
+          ref={nameRef}
+          className={`font-semibold text-gray-100 transition-colors text-center ${styles.nameText}`}
         >
           {classItem.name}
         </h3>

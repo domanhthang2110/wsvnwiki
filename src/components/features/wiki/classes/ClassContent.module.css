@@ -1,0 +1,13 @@
+.pixelBackground {
+  position: relative;
+  background-image: url('/background.png');
+  background-repeat: repeat;
+  background-size: 70px 40px;
+  image-rendering: pixelated;
+}
+
+.pixelBackgroundDark {
+  position: relative;
+  background: rgba(17, 24, 39, 0.2);
+  image-rendering: pixelated;
+}

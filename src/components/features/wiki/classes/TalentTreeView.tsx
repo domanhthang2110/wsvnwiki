@@ -1,156 +1,438 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { TalentTreeItem, TalentItem } from '@/types/talents';
-import IconFrame from '@/components/shared/IconFrame';
-import TalentInfoModal from './TalentInfoModal';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import screenfull from "screenfull";
+import { TalentTreeItem, TalentItem } from "@/types/talents";
+import InfoModal from "@/components/ui/InfoModal";
+import Dropdown from "@/components/ui/Dropdown/Dropdown";
+import GridCell from "./GridCell";
+import {
+  TransformWrapper,
+  TransformComponent,
+  ReactZoomPanPinchRef,
+} from "react-zoom-pan-pinch";
+import TotalTalentCostDisplay from "./TotalTalentCostDisplay";
+import LongButton from "@/components/ui/LongButton";
+import { useTalentTreeInteractiveStore } from "./talent-tree-store";
 
 interface TalentTreeViewProps {
   talentTree: TalentTreeItem;
   talents: TalentItem[];
 }
 
-const TalentTreeView: React.FC<TalentTreeViewProps> = ({ talentTree, talents }) => {
-  const [selectedTalent, setSelectedTalent] = React.useState<TalentItem | null>(null);
-  const [isDebugMode, setIsDebugMode] = React.useState(false);
+const TalentTreeView: React.FC<TalentTreeViewProps> = ({
+  talentTree,
+  talents,
+}) => {
+  const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const transformWrapperRef = useRef<ReactZoomPanPinchRef>(null);
+  const talentTreeContainerRef = useRef<HTMLDivElement>(null);
 
-  if (!talentTree.talents_data) {
-    return <p>No talent tree data available.</p>;
+  const {
+    selectedTalent,
+    modalLevel,
+    selectedTalentLevels,
+    setTalentTreeData,
+    setTalentLevel,
+    setSelectedTalent,
+    setModalLevel,
+    reset,
+    nodes,
+    edges,
+    talentInfoMap,
+    nodeMap,
+  } = useTalentTreeInteractiveStore();
+
+  useEffect(() => {
+    if (talentTree.talents_data) {
+      setTalentTreeData(talentTree.talents_data, talents);
+    }
+  }, [talentTree, talents, setTalentTreeData]);
+
+  const handleConfirmTalentLevel = (talentId: number, level: number) => {
+    setTalentLevel(talentId, level);
+    setSelectedTalent(null);
+  };
+
+  const handleFullscreen = () => {
+    if (screenfull.isEnabled && talentTreeContainerRef.current) {
+      screenfull.toggle(talentTreeContainerRef.current);
+      setIsFullscreen(!isFullscreen);
+    }
+  };
+
+  const { totalCost, costBreakdown } = useMemo(() => {
+    const breakdown: { name: string; level: number; cost: number }[] = [];
+    let total = 0;
+    const processedGroupIds = new Set<string>();
+
+    for (const [talentId, level] of selectedTalentLevels.entries()) {
+      if (level > 0) {
+        const talent = talentInfoMap.get(talentId);
+        const node = nodes.find((n) => n.talent_id === talentId);
+
+        if (talent?.knowledge_levels) {
+          if (node?.group_id) {
+            if (!processedGroupIds.has(node.group_id)) {
+              const groupNodes = nodes.filter(
+                (n) => n.group_id === node.group_id
+              );
+              const mainNode =
+                groupNodes.find((n) => n.is_group_main) || groupNodes[0];
+              const mainTalent = talentInfoMap.get(mainNode.talent_id);
+
+              if (mainTalent?.knowledge_levels) {
+                let talentCost = 0;
+                for (
+                  let i = 1;
+                  i <= (selectedTalentLevels.get(mainTalent.id) || 0);
+                  i++
+                ) {
+                  talentCost += mainTalent.knowledge_levels[i] || 0;
+                }
+                if (talentCost > 0) {
+                  breakdown.push({
+                    name: "Talent cluster",
+                    level: selectedTalentLevels.get(mainTalent.id) || 0,
+                    cost: talentCost,
+                  });
+                  total += talentCost;
+                }
+              }
+              processedGroupIds.add(node.group_id);
+            }
+          } else {
+            let talentCost = 0;
+            for (let i = 1; i <= level; i++) {
+              talentCost += talent.knowledge_levels[i] || 0;
+            }
+            if (talentCost > 0) {
+              breakdown.push({
+                name: talent.name,
+                level: level,
+                cost: talentCost,
+              });
+              total += talentCost;
+            }
+          }
+        }
+      }
+    }
+    return { totalCost: total, costBreakdown: breakdown };
+  }, [selectedTalentLevels, talentInfoMap, nodes]);
+
+  const talentCellSize = "48px";
+  const arrowCellSize = "34px";
+
+  // --- ARROW POSITIONING ---
+  // You can adjust these values to fine-tune the arrow positions for each direction.
+  const arrowOffsets = {
+    up: { x: 12, y: -5 },
+    down: { x: 12, y: 6 },
+    left: { x: 5, y: 12 },
+    right: { x: 5, y: 12 },
+    composite_target_offset: { x: 0, y: -6 },
+  };
+  // -------------------------
+
+  const { treeWidth, treeHeight, columnOffsets, rowOffsets, minX, minY } = useMemo(() => {
+  const talentWidth = parseInt(talentCellSize, 10);
+  const arrowWidth = parseInt(arrowCellSize, 10);
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const node of nodes) {
+    minX = Math.min(minX, node.x);
+    minY = Math.min(minY, node.y);
+    maxX = Math.max(maxX, node.x);
+    maxY = Math.max(maxY, node.y);
   }
 
-  const talentDataMap = new Map(talentTree.talents_data.map(t => [`${t.x},${t.y}`, t]));
-  const talentInfoMap = new Map(talents.map(t => [t.id, t]));
+  const normalizedWidth = maxX - minX + 1;
+  const normalizedHeight = maxY - minY + 1;
 
-  const talentCellSize = '48px';
-  const arrowCellSize = '34px';
+  const colOffsets = [0];
+  for (let i = 0; i < normalizedWidth; i++) {
+    const prevOffset = colOffsets[i];
+    const width = (i + minX) % 2 === 0 ? talentWidth : arrowWidth;
+    colOffsets.push(prevOffset + width);
+  }
 
-  const fixedMaxX = 16; // 9 talent columns + 8 arrow columns = 17 total columns (0-16)
-  const fixedMaxY = 52; // 27 talent rows + 26 arrow rows = 53 total rows (0-52)
+  const rowOffsets = [0];
+  for (let i = 0; i < normalizedHeight; i++) {
+    const prevOffset = rowOffsets[i];
+    const height = (i + minY) % 2 === 0 ? talentWidth : arrowWidth;
+    rowOffsets.push(prevOffset + height);
+  }
 
-  const gridTemplateColumns = Array.from({ length: fixedMaxX + 1 }, (_, i) =>
-    i % 2 === 0 ? talentCellSize : arrowCellSize
-  ).join(' ');
+  return {
+    treeWidth: colOffsets[normalizedWidth - 1] + talentWidth,
+    treeHeight: rowOffsets[normalizedHeight - 1] + talentWidth,
+    columnOffsets: colOffsets,
+    rowOffsets: rowOffsets,
+    minX,
+    minY
+  };
+}, [nodes, talentCellSize, arrowCellSize]);
 
-  const gridTemplateRows = Array.from({ length: fixedMaxY + 1 }, (_, i) =>
-    i % 2 === 0 ? talentCellSize : arrowCellSize
-  ).join(' ');
+
+  React.useEffect(() => {
+    if (transformWrapperRef.current && treeWidth > 0 && treeHeight > 0) {
+      setTimeout(() => {
+        transformWrapperRef.current?.centerView();
+      }, 100);
+    }
+  }, [treeWidth, treeHeight, talentTree]);
+
+  if (
+    !talentTree.talents_data ||
+    !Array.isArray(talentTree.talents_data.nodes)
+  ) {
+    return <p>Đang tải...</p>;
+  }
 
   return (
-    <>
-      <div className="flex justify-end p-2">
-        <button
-          onClick={() => setIsDebugMode(!isDebugMode)}
-          className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
-        >
-          Toggle Debug Grid ({isDebugMode ? 'ON' : 'OFF'})
-        </button>
-      </div>
+    <div
+      ref={talentTreeContainerRef}
+      className="flex flex-1 flex-row relative min-h-[320px]"
+    >
       <TransformWrapper
+        ref={transformWrapperRef}
         initialScale={1}
         minScale={0.5}
         maxScale={2}
-        limitToBounds={false} // Allow panning past limits
-        centerOnInit={true} // Center the content initially
-        panning={{
-          velocityDisabled: true, // Disable inertia for simpler panning
-        }}
-        wheel={{
-          disabled: true, // Disable wheel zoom
-        }}
-        doubleClick={{ disabled: true }} // Disable double click zoom
+        limitToBounds={false}
+        centerOnInit={true}
+        panning={{ velocityDisabled: true }}
+        wheel={{ disabled: true }}
+        doubleClick={{ disabled: true }}
       >
-        <TransformComponent
-          wrapperStyle={{
-            width: '100%',
-            height: '500px', // Ensure a fixed height for the wrapper
-            overflow: 'hidden', // Hide native scrollbars
-            border: '1px solid #e6ce63', // Re-add border from original div
-            backgroundColor: 'rgba(26, 32, 44, 0.3)', // Re-add background from original div
-          }}
-          contentStyle={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <div
-            className="grid p-8" /* Added p-8 for padding to allow panning past limits */
-            style={{
-              gridTemplateColumns,
-              gridTemplateRows,
-              gap: '0px',
-            }}
-          >
-            {Array.from({ length: (fixedMaxY + 1) * (fixedMaxX + 1) }).map((_, index) => {
-              const x = index % (fixedMaxX + 1);
-              const y = Math.floor(index / (fixedMaxX + 1));
-              const talentData = talentDataMap.get(`${x},${y}`);
-
-              const debugBgColor = isDebugMode
-                ? (x % 2 === 0 && y % 2 === 0 && (x === 4 || x === 8 || x === 12)) // Check if it's a talent cell at 3rd, 5th, or 7th talent column
-                  ? 'bg-purple-500/20' // Color for marked talent columns
-                  : talentData?.type === 'talent'
-                  ? 'bg-green-500/20' // Color for other talent cells
-                  : talentData?.type === 'arrow'
-                  ? 'bg-blue-500/20' // Color for arrow cells
-                  : 'bg-red-500/20' // Color for empty cells
-                : '';
-
-              if (!talentData) {
-                return <div key={index} className={`${debugBgColor}`} />;
-              }
-
-              if (talentData.type === 'talent') {
-                const talentInfo = talentData.talent_id ? talentInfoMap.get(talentData.talent_id) : null;
-                return (
-                  <div key={index} className={`flex items-center justify-center ${debugBgColor}`} onClick={() => {
-                    if (talentInfo) {
-                      setSelectedTalent(talentInfo);
-                    } else {
-                      console.log('Talent info not found for click:', talentData);
-                    }
-                  }}>
-                    <IconFrame
-                      size={parseInt(talentCellSize, 10)}
-                      styleType="yellow"
-                      altText={talentInfo?.name || "Talent"}
-                      contentImageUrl={talentInfo?.icon_url}
-                    />
-                  </div>
-                );
-              }
-
-              if (talentData.type === 'arrow') {
-                return (
-                  <div key={index} className={`flex items-center justify-center ${debugBgColor}`}>
-                    <img
-                      src="/image/talent_arrow.svg"
-                      alt={`Arrow pointing ${talentData.direction}`}
-                      className="object-contain"
-                      style={{
-                        width: `calc(${arrowCellSize} * 0.7)`,
-                        height: `calc(${arrowCellSize} * 0.7)`,
-                        transform: talentData.direction === 'down' ? 'rotate(90deg)' :
-                                   talentData.direction === 'left' ? 'rotate(180deg)' :
-                                   talentData.direction === 'up' ? 'rotate(270deg)' : 'none'
-                      }}
-                    />
-                  </div>
-                );
-              }
-
-              return <div key={index} className={`${debugBgColor}`} />;
-            })}
+        <div className="relative w-full h-full overflow-hidden bg-gray-900/30">
+          <div className="absolute top-2 left-2 z-10 flex flex-col space-y-2">
+            <LongButton
+              width={40}
+              onClick={() => setIsCalculatorVisible(!isCalculatorVisible)}
+            >
+              <img
+                src="/image/talents/calculator.svg"
+                alt="Toggle Calculator"
+                className="w-full h-full p-1.5"
+              />
+            </LongButton>
+            <LongButton
+              width={40}
+              onClick={() => {
+                transformWrapperRef.current?.centerView();
+              }}
+            >
+              <img
+                src="/image/reset_view_icon.svg"
+                alt="Reset View"
+                className="w-full h-full p-1.5"
+              />
+            </LongButton>
+            <LongButton width={40} onClick={handleFullscreen}>
+              <img
+                src={
+                  isFullscreen
+                    ? "/image/talents/fullscreen_exit.svg"
+                    : "/image/talents/fullscreen.svg"
+                }
+                alt="Fullscreen"
+                className="w-full h-full p-1.5"
+              />
+            </LongButton>
           </div>
-        </TransformComponent>
+          {isCalculatorVisible && (
+            <div className="absolute top-0 right-0 z-10 h-full">
+              <TotalTalentCostDisplay
+                totalCost={totalCost}
+                costBreakdown={costBreakdown}
+                onReset={reset}
+              />
+            </div>
+          )}
+          <TransformComponent
+            wrapperStyle={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              overflow: "hidden",
+              paddingTop: "20px",
+            }}
+            contentStyle={{
+              width: "100%",
+              height: "100%",
+            }}
+            contentClass="w-full h-full flex items-center justify-center"
+          >
+            <div
+              className="relative"
+              style={{
+                width: `${treeWidth}px`,
+                height: `${treeHeight}px`,
+              }}
+            >
+              {nodes.map((node) => {
+                const left = columnOffsets[node.x - minX];
+                const top = rowOffsets[node.y - minY];
+
+                return (
+                  <div
+                    key={`node-${node.id}`}
+                    className="absolute"
+                    style={{ top: `${top}px`, left: `${left}px` }}
+                  >
+                    <GridCell
+                      node={node}
+                      arrow={undefined}
+                      talentCellSize={talentCellSize}
+                      arrowCellSize={arrowCellSize}
+                      isArrowActive={false}
+                    />
+                  </div>
+                );
+              })}
+              {edges.map((edge) => {
+                const sourceNode = nodeMap.get(edge.source);
+                const targetNode = nodeMap.get(edge.target);
+                if (!sourceNode || !targetNode) return null;
+
+                const arrowX = (sourceNode.x + targetNode.x) / 2;
+                const arrowY = (sourceNode.y + targetNode.y) / 2;
+                
+                let direction: "up" | "down" | "left" | "right" | "" = "";
+                if (sourceNode.x < targetNode.x) direction = "right";
+                else if (sourceNode.x > targetNode.x) direction = "left";
+                else if (sourceNode.y < targetNode.y) direction = "down";
+                else if (sourceNode.y > targetNode.y) direction = "up";
+
+                const baseOffset = direction ? arrowOffsets[direction] : { x: 0, y: 0 };
+                const compositeOffset =
+                  direction === "down" && targetNode?.node_type === "composite"
+                    ? arrowOffsets.composite_target_offset
+                    : { x: 0, y: 0 };
+
+                const left = columnOffsets[arrowX - minX] + baseOffset.x + compositeOffset.x;
+                const top = rowOffsets[arrowY - minY] + baseOffset.y + compositeOffset.y;
+
+                const isArrowActive =
+                  (selectedTalentLevels.get(targetNode.talent_id) || 0) > 0;
+
+                return (
+                  <div
+                    key={`arrow-${edge.source}-${edge.target}`}
+                    className="absolute"
+                    style={{ top: `${top}px`, left: `${left}px` }}
+                  >
+                    <GridCell
+                      node={undefined}
+                      arrow={{ direction, targetNodeId: targetNode.id }}
+                      talentCellSize={talentCellSize}
+                      arrowCellSize={arrowCellSize}
+                      isArrowActive={isArrowActive}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </TransformComponent>
+        </div>
       </TransformWrapper>
       {selectedTalent && (
-        <TalentInfoModal talent={selectedTalent} onClose={() => setSelectedTalent(null)} />
+        <InfoModal
+          data={selectedTalent}
+          isOpen={!!selectedTalent}
+          onClose={() => setSelectedTalent(null)}
+          title={selectedTalent.name}
+          iconUrl={selectedTalent.icon_url ?? undefined}
+          width="334px"
+          footer={() => (
+            <div className="flex justify-between w-full">
+              <LongButton
+                onClick={() => setSelectedTalent(null)}
+                text="Hủy"
+                width={100}
+              />
+              <LongButton
+                onClick={() => {
+                  handleConfirmTalentLevel(selectedTalent.id, modalLevel);
+                }}
+                text="Lưu"
+                width={100}
+              />
+            </div>
+          )}
+        >
+          <div className="mt-4">
+            <div className="flex items-center justify-center mb-4">
+              <Dropdown
+                title={`${modalLevel} / ${selectedTalent.max_level}`}
+                width="188px"
+                showArrows
+                dropdownDisabled={true}
+                onPrevious={() => setModalLevel(Math.max(0, modalLevel - 1))}
+                onNext={() =>
+                  setModalLevel(
+                    Math.min(selectedTalent.max_level || 0, modalLevel + 1)
+                  )
+                }
+              >
+                {/* This content will not be shown, but it's required by the component */}
+                <div></div>
+              </Dropdown>
+            </div>
+            <div className="min-h-[6em]">
+              <p className="text-gray-300 mb-4">
+                {(() => {
+                  if (
+                    !selectedTalent.description ||
+                    !selectedTalent.level_values
+                  ) {
+                    return selectedTalent.description;
+                  }
+
+                  const placeholder = /{\w+}/g;
+                  const match =
+                    selectedTalent.description.match(placeholder);
+                  if (!match) {
+                    return selectedTalent.description;
+                  }
+
+                  const key = match[0].slice(1, -1);
+
+                  if (modalLevel === 0) {
+                    const allValues = selectedTalent.level_values
+                      .map((lv: any) => lv[key])
+                      .join(" / ");
+                    return selectedTalent.description.replace(
+                      placeholder,
+                      allValues
+                    );
+                  }
+
+                  const levelValue = selectedTalent.level_values.find(
+                    (lv: any) => lv.level === modalLevel
+                  );
+                  if (levelValue) {
+                    return selectedTalent.description.replace(
+                      placeholder,
+                      levelValue[key]
+                    );
+                  }
+
+                  return selectedTalent.description;
+                })()}
+              </p>
+            </div>
+          </div>
+        </InfoModal>
       )}
-    </>
+    </div>
   );
 };
 
