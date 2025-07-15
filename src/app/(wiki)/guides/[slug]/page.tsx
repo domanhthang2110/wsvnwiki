@@ -1,6 +1,6 @@
 import { getPostBySlug, getAllPostSlugs } from '@/lib/data/posts';
 import { notFound } from 'next/navigation';
-import { GuideContentRenderer } from '@/components/features/wiki/guides/GuideContentRenderer'; // New Client Component
+import { GuideContentRenderer } from '@/components/features/wiki/guides/GuideContentRenderer';
 
 // Revalidate data every hour
 export const revalidate = 3600;
@@ -11,11 +11,11 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug: slug.slug }));
 }
 
-interface GuidePostPageProps {
+type GuidePostPageProps = {
   params: {
     slug: string;
   };
-}
+};
 
 export default async function GuidePostPage({ params }: GuidePostPageProps) {
   const { slug } = params;
