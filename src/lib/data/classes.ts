@@ -22,8 +22,8 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
   //   return cachedData;
   // }
 
-  
   const supabase = await createClient();
+  console.log('Attempting to fetch classes data from Supabase...'); // New log before fetch
   const { data, error } = await supabase
     .from('classes')
     .select(`
@@ -43,6 +43,8 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
   if (error) {
     console.error('Error fetching classes:', error.message);
     console.error('Supabase fetch error details:', error); // More detailed error logging
+    // Log the full error object for more context
+    console.error('Full Supabase error object:', JSON.stringify(error, null, 2));
     return [];
   }
 
