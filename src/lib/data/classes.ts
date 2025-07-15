@@ -45,7 +45,6 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
 
   // Transform the data to match our ClassItem type
   const transformedData = data.map(cls => {
-    const classInfo = CLASSES_DATA.find(c => c.name === cls.name);
     const talent_tree = Array.isArray(cls.talent_tree) ? cls.talent_tree[0] : cls.talent_tree;
     if (talent_tree && talent_tree.talents_data && talent_tree.talents_data.nodes) {
       talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: TalentNode) => ({ ...td, talent_id: td.talent_id || null }))
