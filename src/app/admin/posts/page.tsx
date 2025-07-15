@@ -29,16 +29,16 @@ export default function AdminPostsPage() {
     if (fetchError) {
         setPageError(fetchError.message);
     } else if (data) {
-      const formattedData = data.map((post: PostItem) => ({
+      const formattedData = data.map((post) => ({
         ...post,
         tags: Array.isArray(post.tags) ? post.tags : [],
         type: post.type, 
-        type_id: post.type_id || (post.type as any)?.id || null,
+        type_id: post.type_id || (post.type as { id: number })?.id || null,
       })) as PostItem[];
       setPosts(formattedData);
     }
     setIsLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => { 
     fetchPosts(); 
@@ -104,12 +104,16 @@ export default function AdminPostsPage() {
       await fetchPosts();
       return true; // Indicate success to the form
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       // Catch any error thrown from the try block (post save, tags delete, or tags insert)
-      console.error("Error in handleFormSubmit:", error);
-      setPageError(`Error saving post: ${error.message}`);
+      console.error("Error in handleFormSubmit:", errorMessage);
+      setPageError(`Error saving post: ${errorMessage}`);
       // Re-throw the error so PostForm can catch it and display it in its local formError state
-      throw error; 
+      throw new Error(errorMessage); 
     }
   };
 
@@ -135,8 +139,12 @@ export default function AdminPostsPage() {
     try {
       await handleFormSubmit(newPostData);
       alert(`Post "${duplicatedTitle}" duplicated successfully!`);
-    } catch (error: any) {
-      alert(`Failed to duplicate post: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      alert(`Failed to duplicate post: ${errorMessage}`);
     }
   };
 

@@ -10,6 +10,7 @@ import TiptapEditor from '@/components/features/editor/TiptapEditor';
 import { Editor } from '@tiptap/react';
 import DOMPurify from 'dompurify';
 import JsonDisplayModal from '@/components/shared/JsonDisplayModal';
+import Image from 'next/image';
 
 // Helper component to render image or video based on URL
 const MediaPreview = ({ url, alt }: { url: string; alt: string }) => {
@@ -31,11 +32,14 @@ const MediaPreview = ({ url, alt }: { url: string; alt: string }) => {
   }
 
   return (
-    <img
-      src={url}
-      alt={alt}
-      className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
-    />
+    <div className="relative w-24 h-24">
+      <Image
+        src={url}
+        alt={alt}
+        fill
+        className="rounded-lg object-cover border-2 border-gray-700"
+      />
+    </div>
   );
 };
 
@@ -126,8 +130,12 @@ export default function ClassForm({
       } else if (result.error) {
         setFormError(result.error);
       }
-    } catch (error: any) {
-      setFormError(error.message || 'An unexpected error occurred during submission.');
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred during submission.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setFormError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -324,6 +332,7 @@ export default function ClassForm({
                   skill={skill}
                   onEdit={() => {}}
                   onDelete={() => {}}
+                  onIconChange={() => {}}
                   isSelected={false}
                 />
               </div>

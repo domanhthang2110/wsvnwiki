@@ -88,7 +88,7 @@ export default function AdminSkillsPage() {
     // Create a map from class_id to class_name and icon_url
     const classIdToInfoMap = new Map<number, { name: string, iconUrl: string | null }>();
     classesData.forEach(cls => {
-      const iconUrl = (cls.image_assets as any)?.logo || null; // Use 'logo' as per ClassContent.tsx
+      const iconUrl = (cls.image_assets as { logo?: string })?.logo || null; // Use 'logo' as per ClassContent.tsx
       classIdToInfoMap.set(cls.id, { name: cls.name, iconUrl });
     });
 
@@ -137,7 +137,7 @@ export default function AdminSkillsPage() {
       let skillId: number;
 
       // Destructure to remove client-side properties
-      const { className, classIconUrl, ...dbData } = dataFromForm;
+      const { ...dbData } = dataFromForm;
 
       if (selectedSkill && selectedSkill.id) {
         const { error: updateError } = await supabase
@@ -181,9 +181,13 @@ export default function AdminSkillsPage() {
       await fetchSkills();
       setSelectedSkill(null);
       setSelectedItems([]);
-    } catch (error: any) {
-      console.error('Error saving skill:', error.message);
-      throw error;
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error saving skill:', errorMessage);
+      throw new Error(errorMessage);
     }
   };
 
@@ -210,9 +214,13 @@ export default function AdminSkillsPage() {
       if (selectedSkill?.id === skill.id) {
         setSelectedSkill(null);
       }
-    } catch (error: any) {
-      console.error('Error deleting skill:', error.message);
-      alert(`Failed to delete skill: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error deleting skill:', errorMessage);
+      alert(`Failed to delete skill: ${errorMessage}`);
     }
   };
 
@@ -230,9 +238,13 @@ export default function AdminSkillsPage() {
           skill.id === skillId ? { ...skill, icon_url: newIconUrl } : skill
         )
       );
-    } catch (error: any) {
-      console.error('Error updating skill icon:', error.message);
-      alert(`Failed to update icon: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error updating skill icon:', errorMessage);
+      alert(`Failed to update icon: ${errorMessage}`);
     }
   };
 

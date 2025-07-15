@@ -2,7 +2,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getPostBySlug, getAllPostSlugs } from '@/lib/data/posts'; // Import data fetching functions
-import type { PostItem } from '@/types/posts'; // Only need PostItem here
+import Image from 'next/image';
 
 export async function generateStaticParams() {
   return getAllPostSlugs();
@@ -30,11 +30,14 @@ export default async function GuideDisplayPage({ params }: { params: { slug: str
       {/* Apply Tailwind Typography for styling the HTML content from CKEditor */}
       <article className="prose dark:prose-invert lg:prose-xl max-w-3xl mx-auto">
         {guide.featured_image_url && (
-          <img
-            src={guide.featured_image_url || ''} // Handle null for src
-            alt={guide.title || ''}
-            className="w-full h-auto max-h-[450px] object-cover rounded-lg mb-8 shadow-lg"
-          />
+          <div className="relative w-full h-96 mb-8">
+            <Image
+              src={guide.featured_image_url || ''} // Handle null for src
+              alt={guide.title || ''}
+              fill
+              className="object-cover rounded-lg shadow-lg"
+            />
+          </div>
         )}
         <div className="mb-6 pb-4 border-b dark:border-gray-700">
             <h1 className="!mb-2 !text-3xl sm:!text-4xl md:!text-5xl font-extrabold tracking-tight leading-tight">{guide.title}</h1>

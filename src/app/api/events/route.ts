@@ -76,7 +76,7 @@ function cleanHtmlContent(html: string): string {
   return document.body.innerHTML;
 }
 
-async function translateText(text: string, debugInfo: any, targetLanguage: string = 'vi'): Promise<string> {
+async function translateText(text: string, debugInfo: { translationApiCallCount: number }, targetLanguage: string = 'vi'): Promise<string> {
   if (!text || text.trim() === '') return text;
   try {
     debugInfo.translationApiCallCount++;
@@ -89,7 +89,7 @@ async function translateText(text: string, debugInfo: any, targetLanguage: strin
   }
 }
 
-async function translateAndSanitizeHTML(htmlContent: string, debugInfo: any, targetLanguage: string = 'vi'): Promise<string> {
+async function translateAndSanitizeHTML(htmlContent: string, debugInfo: { translationApiCallCount: number }, targetLanguage: string = 'vi'): Promise<string> {
   if (!htmlContent || htmlContent.trim() === '') return htmlContent;
   try {
     debugInfo.translationApiCallCount++;
@@ -204,8 +204,8 @@ export async function GET(request: NextRequest) {
 
       pageItems = [];
       for (const item of itemsToTranslate) {
-        const translatedTitle = await translateText(item.title ?? '', {} as any);
-        const translatedDescription = await translateAndSanitizeHTML(item.originalDescription ?? '', {} as any);
+        const translatedTitle = await translateText(item.title ?? '', { translationApiCallCount: 0 });
+        const translatedDescription = await translateAndSanitizeHTML(item.originalDescription ?? '', { translationApiCallCount: 0 });
         pageItems.push({ ...item, title: translatedTitle, description: translatedDescription });
       }
 

@@ -3,6 +3,7 @@
 import { FormEvent, useState, useEffect } from 'react';
 import { Item } from '@/types/items';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
+import Image from 'next/image';
 
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
@@ -52,7 +53,7 @@ export default function ItemForm({ onSubmit, isEditing, initialData }: ItemFormP
     }
   }, [initialData]);
 
-  const handleIconSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
+  const handleIconSelectedFromPicker = (publicUrl: string) => {
     setFormIconUrl(publicUrl);
     setShowIconPickerModal(false);
   };
@@ -82,9 +83,13 @@ export default function ItemForm({ onSubmit, isEditing, initialData }: ItemFormP
       }
       setFormError(null);
 
-    } catch (error: any) {
-      console.error("ItemForm handleSubmit error:", error);
-      setFormError(error.message || 'An error occurred while saving the item');
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred while saving the item';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error("ItemForm handleSubmit error:", errorMessage);
+      setFormError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -115,8 +120,8 @@ export default function ItemForm({ onSubmit, isEditing, initialData }: ItemFormP
             Item Icon:
           </label>
           {formIconUrl && (
-            <div className="mb-2">
-              <img src={formIconUrl} alt="Selected item icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+            <div className="mb-2 relative w-16 h-16">
+              <Image src={formIconUrl} alt="Selected item icon" fill className="object-contain rounded border p-1 border-gray-600 bg-gray-700" />
             </div>
           )}
           <button

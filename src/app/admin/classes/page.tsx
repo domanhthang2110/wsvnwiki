@@ -10,6 +10,7 @@ import SkillSelectorModal from '@/components/features/admin/skills/SkillSelector
 import ClassForm from '@/components/features/admin/classes/ClassForm'; // Update path
 import { SkillItem } from '@/types/skills'; // Import SkillItem
 import { AlertTriangle } from 'lucide-react'; // Import icon for error message
+import Image from 'next/image';
 
 export default function AdminClassesPage() {
   const [classes, setClasses] = useState<ClassItem[]>([]);
@@ -239,12 +240,13 @@ export default function AdminClassesPage() {
               <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 transition-all">
                 <div className="flex items-start space-x-3">
                   {/* Class Logo (formerly Avatar) */}
-                  <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
+                  <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700 relative overflow-hidden">
                     {cls.image_assets?.logo ? (
-                      <img 
+                      <Image 
                         src={cls.image_assets.logo || ''} 
                         alt={cls.name} 
-                        className="w-full h-full object-cover rounded"
+                        fill
+                        className="object-cover rounded"
                       />
                     ) : (
                       <div className="w-full h-12 flex items-center justify-center">
@@ -330,11 +332,14 @@ export default function AdminClassesPage() {
                             className="flex items-center gap-2 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded"
                           >
                             {skill.icon_url ? (
-                              <img 
-                                src={skill.icon_url || ''} 
-                                alt={skill.name || 'Skill icon'} 
-                                className="w-4 h-4 object-cover rounded"
-                              />
+                              <div className="w-4 h-4 relative overflow-hidden">
+                                <Image 
+                                  src={skill.icon_url || ''} 
+                                  alt={skill.name || 'Skill icon'} 
+                                  fill
+                                  className="object-cover rounded"
+                                />
+                              </div>
                             ) : (
                               <div className="w-4 h-4 bg-gray-600 rounded flex items-center justify-center">
                                 <span className="text-[8px]">?</span>

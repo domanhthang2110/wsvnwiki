@@ -42,7 +42,7 @@ export default function ItemSelectorModal({
       } else {
         throw new Error('Not a JSON array');
       }
-    } catch (e) {
+    } catch {
       // Fallback to comma-separated
       parsedIds = idInputValue.split(',')
         .map(s => s.trim())

@@ -3,7 +3,7 @@
 import { Item } from '@/types/items';
 import { useState } from 'react';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
-import { supabase } from '@/lib/supabase/client';
+import Image from 'next/image';
 
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
@@ -27,7 +27,9 @@ export default function ItemCard({ item, onEdit, onDelete, onIconChange, isSelec
     <div className={`p-4 border rounded-lg shadow-sm transition-all duration-200 ${isSelected ? 'bg-blue-900 border-blue-600' : 'bg-gray-800 border-gray-700 hover:bg-gray-700'}`}>
       <div className="flex items-start gap-4">
         {item.icon_url && (
-          <img src={item.icon_url} alt={item.name ?? ""} className="w-16 h-16 object-contain rounded-md border border-gray-600" />
+          <div className="relative w-16 h-16">
+            <Image src={item.icon_url} alt={item.name ?? ""} fill className="object-contain rounded-md border border-gray-600" />
+          </div>
         )}
         <div className="flex-grow">
           <h3 className="text-lg font-bold text-gray-100">{item.name}</h3>

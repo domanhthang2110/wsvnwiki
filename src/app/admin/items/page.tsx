@@ -41,11 +41,10 @@ export default function AdminItemsPage() {
     try {
       if (selectedItem && selectedItem.id) {
         // ---- EDITING EXISTING ITEM ----
-        const { data: updateData, error: updateError } = await supabase
+        const { error: updateError } = await supabase
           .from('items')
           .update(dataFromForm)
-          .eq('id', selectedItem.id)
-          .select();
+          .eq('id', selectedItem.id);
 
         if (updateError) {
           console.error("Supabase UPDATE error:", updateError);
@@ -56,10 +55,9 @@ export default function AdminItemsPage() {
       
       } else {
         // ---- CREATING NEW ITEM ----
-        const { data: insertData, error: insertError } = await supabase
+        const { error: insertError } = await supabase
           .from('items')
-          .insert([dataFromForm])
-          .select();
+          .insert([dataFromForm]);
 
         if (insertError) {
           console.error("Supabase INSERT error:", insertError);
@@ -69,9 +67,13 @@ export default function AdminItemsPage() {
       
       await fetchItems();
 
-    } catch (error: any) {
-      console.error('Error saving item (in AdminItemsPage):', error.message);
-      throw error; 
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error saving item (in AdminItemsPage):', errorMessage);
+      throw new Error(errorMessage); 
     }
   };
 
@@ -115,9 +117,13 @@ export default function AdminItemsPage() {
       if (selectedItem?.id === item.id) {
         setSelectedItem(null);
       }
-    } catch (error: any) {
-      console.error('Error deleting item:', error.message);
-      alert(`Failed to delete item: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error deleting item:', errorMessage);
+      alert(`Failed to delete item: ${errorMessage}`);
     }
   };
 
@@ -136,9 +142,13 @@ export default function AdminItemsPage() {
           item.id === itemId ? { ...item, icon_url: newIconUrl } : item
         )
       );
-    } catch (error: any) {
-      console.error('Error updating item icon:', error.message);
-      alert(`Failed to update icon: ${error.message}`);
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error updating item icon:', errorMessage);
+      alert(`Failed to update icon: ${errorMessage}`);
     }
   };
 

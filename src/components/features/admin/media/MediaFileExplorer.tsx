@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, ChangeEvent, DragEvent, useRef } from
 import { supabase } from '@/lib/supabase/client';
 import type { FileObject } from '@supabase/storage-js';
 import PreviewModal from './PreviewModal'; // Import the new PreviewModal component
+import Image from 'next/image';
 
 // Define a type for the items to be returned, similar to Supabase FileObject
 interface LocalStorageItem {
@@ -23,7 +24,6 @@ const ListViewIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-
 const RenameIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>;
 const MoveIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>;
 const DeleteIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
-const CloseIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>;
 const UploadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
 const SelectIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>;
 
@@ -36,10 +36,12 @@ interface MediaFileExplorerProps {
   mode?: 'manage' | 'select'; // New prop, defaults to 'manage'
 }
 
-interface StorageItem extends FileObject { // Supabase item
+export interface CombinedStorageItem { // Unified type for both Supabase and Local items
+  name: string;
   itemType: 'file' | 'folder';
   publicUrl?: string;
   thumbnailUrl?: string;
+  id: string | null; // Supabase items have id, local items use name as id
 }
 
 export interface CombinedStorageItem { // Unified type for both Supabase and Local items
@@ -148,8 +150,12 @@ export default function MediaFileExplorer({
         return a.name.localeCompare(b.name);
       });
       setItems(processedItems);
-    } catch (err: any) {
-      setItemsError(err.message || "Failed to load media items.");
+    } catch (err: unknown) {
+      let errorMessage = "Failed to load media items.";
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      setItemsError(errorMessage);
     } finally {
       setLoadingItems(false);
     }
@@ -183,7 +189,13 @@ export default function MediaFileExplorer({
         const { error: uploadError } = await supabase.storage.from(bucketName).upload(fullFilePathInBucket, file, { cacheControl: '3600', upsert: false });
         if (uploadError) throw uploadError;
         newSuccessMessages.push(`Uploaded: ${uniqueFileName}`);
-      } catch (error: any) { setUploadError(prev => prev ? `${prev}\n${file.name} failed: ${error.message}` : `${file.name} failed: ${error.message}`); }
+      } catch (error: unknown) {
+        let errorMessage = 'Unknown error';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        setUploadError(prev => prev ? `${prev}\n${file.name} failed: ${errorMessage}` : `${file.name} failed: ${errorMessage}`);
+      }
     }
     setUploadSuccessMessages(newSuccessMessages);
     if (newSuccessMessages.length > 0) setTimeout(() => setUploadSuccessMessages([]), 5000);
@@ -296,7 +308,13 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
       const { error } = await supabase.storage.from(bucketName).remove([fullPath]);
       if (error) throw error;
       fetchItems(); 
-    } catch (err: any) { alert(`Error deleting ${itemToDelete.name}: ${err.message}`); }
+    } catch (err: unknown) {
+      let errorMessage = 'Unknown error';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      alert(`Error deleting ${itemToDelete.name}: ${errorMessage}`);
+    }
   };
 
   const handleMassDelete = async () => {
@@ -311,7 +329,13 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
       const { error } = await supabase.storage.from(bucketName).remove(pathsToDelete);
       if (error) throw error;
       fetchItems(); setSelectedItems(new Set()); setSelectModeActive(false);
-    } catch (err: any) { alert(`Error deleting items: ${err.message}`); }
+    } catch (err: unknown) {
+      let errorMessage = 'Unknown error';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      alert(`Error deleting items: ${errorMessage}`);
+    }
   };
 
   const handleRenameItem = (item: CombinedStorageItem) => { 
@@ -335,8 +359,15 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
       const { error } = await supabase.storage.from(bucketName).move(oldPath, newPath);
       if (error) throw error;
       fetchItems();
-    } catch (err: any) { alert(`Error renaming: ${err.message}`); } 
-    finally { setRenamingItem(null); }
+    } catch (err: unknown) {
+      let errorMessage = 'Unknown error';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      alert(`Error renaming: ${errorMessage}`);
+    } finally {
+      setRenamingItem(null);
+    }
   };
 
   const handleMoveItem = (item: CombinedStorageItem) => {
@@ -367,8 +398,12 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
       
       fetchItems(); 
       alert(`Successfully moved "${item.name}" to "${destinationFolder || 'root'}".`);
-    } catch (err: any) {
-      alert(`Error moving file: ${err.message}`);
+    } catch (err: unknown) {
+      let errorMessage = 'Unknown error';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      alert(`Error moving file: ${errorMessage}`);
     } finally {
       setItemToMove(null);
     }
@@ -491,7 +526,9 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                         (item.name.match(/\.(webm|mp4|ogg)$/i) && item.publicUrl) ?
                             <video src={item.publicUrl} muted loop autoPlay playsInline className="max-w-full max-h-full object-contain" /> :
                         ( (item.thumbnailUrl || item.publicUrl) && (item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
-                            <img src={item.thumbnailUrl || item.publicUrl || ''} alt={item.name} className="max-w-full max-h-full object-contain" />
+                            <div className="relative w-full h-full">
+                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt={item.name} fill className="object-contain" />
+                            </div>
                             : <FileIcon /> ))}
                     </div>
                     <p className="text-[10px] sm:text-xs truncate w-full text-gray-700 dark:text-gray-300 group-hover:underline mt-auto flex-shrink-0 py-1">{item.name}</p>
@@ -524,7 +561,9 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                         (item.name.match(/\.(webm|mp4|ogg)$/i) && item.publicUrl) ?
                             <video src={item.publicUrl} muted loop autoPlay playsInline className="w-7 h-7 object-contain rounded" /> :
                         ((item.thumbnailUrl || item.publicUrl) && item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
-                            <img src={item.thumbnailUrl || item.publicUrl || ''} alt="" className="w-7 h-7 object-contain rounded" /> 
+                            <div className="relative w-7 h-7">
+                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt="" fill className="object-contain rounded" /> 
+                            </div>
                             : <FileIcon />)}
                     </span>
                     <span className="text-sm text-gray-700 dark:text-gray-300 truncate flex-grow">{item.name}</span>

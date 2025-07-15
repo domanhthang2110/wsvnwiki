@@ -41,8 +41,12 @@ export default function BulkItemImport({ onImportSuccess }: BulkItemImportProps)
         validated.push(item as Omit<Item, 'id' | 'created_at'>);
       }
       setValidatedItems(validated);
-    } catch (e: any) {
-      setError(`Invalid JSON or data structure: ${e.message}`);
+    } catch (e: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (e instanceof Error) {
+        errorMessage = e.message;
+      }
+      setError(`Invalid JSON or data structure: ${errorMessage}`);
     }
   };
 
