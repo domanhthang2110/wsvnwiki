@@ -89,7 +89,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
                   {skill.items.map(item => (
                     <div key={item.id} className="flex relative items-center gap-1 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
                       {item.icon_url && (
-                        <Image src={item.icon_url} fill alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
+                        <Image src={item.icon_url} fill alt={item.name || ''} className="w-4 h-4 object-cover rounded" draggable={false} />
                       )}
                       {item.name}
                     </div>

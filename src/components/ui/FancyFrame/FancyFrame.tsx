@@ -64,7 +64,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             left: 0;
             width: var(--corner-size);
             height: var(--corner-size);
-            background-image: url(/fancy_corner.png);
+            background-image: url(/fancy_corner.webp);
             background-size: 100% 100%;
             image-rendering: pixelated;
             z-index: 4;
@@ -78,7 +78,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             right: 0;
             width: var(--corner-size);
             height: var(--corner-size);
-            background-image: url(/fancy_corner.png);
+            background-image: url(/fancy_corner.webp);
             background-size: 100% 100%;
             image-rendering: pixelated;
             transform: scaleX(-1);
@@ -94,7 +94,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             left: 0;
             width: var(--corner-size);
             height: var(--corner-size);
-            background-image: url(/fancy_corner.png);
+            background-image: url(/fancy_corner.webp);
             background-size: 100% 100%;
             image-rendering: pixelated;
             transform: scaleY(-1);
@@ -109,7 +109,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             right: 0;
             width: var(--corner-size);
             height: var(--corner-size);
-            background-image: url(/fancy_corner.png);
+            background-image: url(/fancy_corner.webp);
             background-size: 100% 100%;
             image-rendering: pixelated;
             transform: scale(-1, -1);
@@ -125,7 +125,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             left: var(--corner-size);
             width: calc(100% - calc(var(--corner-size) * 2));
             height: var(--h-border-height);
-            background-image: url(/fancy_horizontal.png);
+            background-image: url(/fancy_horizontal.webp);
             background-size: var(--h-border-width) var(--h-border-height);
             background-repeat: repeat-x;
             image-rendering: pixelated;
@@ -139,7 +139,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             left: var(--corner-size);
             width: calc(100% - calc(var(--corner-size) * 2));
             height: var(--h-border-height);
-            background-image: url(/fancy_horizontal.png);
+            background-image: url(/fancy_horizontal.webp);
             background-size: var(--h-border-width) var(--h-border-height);
             background-repeat: repeat-x;
             image-rendering: pixelated;
@@ -156,7 +156,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             left: 0;
             width: var(--v-border-width);
             height: calc(100% - calc(var(--corner-size) * 2));
-            background-image: url(/fancy_vertical.png);
+            background-image: url(/fancy_vertical.webp);
             background-size: var(--v-border-width) var(--v-border-height);
             background-repeat: repeat-y;
             image-rendering: pixelated;
@@ -170,7 +170,7 @@ const FancyFrame: React.FC<FancyFrameProps> = ({
             right: 0;
             width: var(--v-border-width);
             height: calc(100% - calc(var(--corner-size) * 2));
-            background-image: url(/fancy_vertical.png);
+            background-image: url(/fancy_vertical.webp);
             background-size: var(--v-border-width) var(--v-border-height);
             background-repeat: repeat-y;
             image-rendering: pixelated;

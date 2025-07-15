@@ -67,7 +67,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
   };
 
   const pixelBackgroundStyle = {
-    backgroundImage: 'url("/background.png")',
+    backgroundImage: 'url("/background.webp")',
     backgroundRepeat: 'repeat',
     backgroundSize: '70px 40px',
   };

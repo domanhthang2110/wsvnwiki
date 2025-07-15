@@ -292,7 +292,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           </label>
           {formIconUrl && (
             <div className="mb-2">
-              <Image src={formIconUrl} fill alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+              <Image src={formIconUrl} fill alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" draggable={false} />
             </div>
           )}
           <button

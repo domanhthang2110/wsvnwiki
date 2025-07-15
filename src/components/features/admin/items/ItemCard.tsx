@@ -28,7 +28,7 @@ export default function ItemCard({ item, onEdit, onDelete, onIconChange, isSelec
       <div className="flex items-start gap-4">
         {item.icon_url && (
           <div className="relative w-16 h-16">
-            <Image src={item.icon_url} alt={item.name ?? ""} fill className="object-contain rounded-md border border-gray-600" />
+            <Image src={item.icon_url} alt={item.name ?? ""} fill className="object-contain rounded-md border border-gray-600" draggable={false} />
           </div>
         )}
         <div className="flex-grow">

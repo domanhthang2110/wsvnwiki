@@ -423,14 +423,14 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
                 className={`${headerStyles.tabButton} ${activeTab === 'Skills' ? headerStyles.active : ''} ${activeTab === 'Skills' ? headerStyles.expanded : ''}`}
                 onClick={() => handleTabClick('Skills')}
               >
-                <Image draggable={false} src="/image/classes/class_skill.png" alt="Skills" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src="/image/classes/class_skill.webp" alt="Skills" width={32} height={32} className={headerStyles.tabIcon} />
                 {activeTab === 'Skills' && <span className={headerStyles.tabName}>Kỹ năng (Skill)</span>}
               </button>
               <button
                 className={`${headerStyles.tabButton} ${activeTab === 'Talents' ? headerStyles.active : ''} ${activeTab === 'Talents' ? headerStyles.expanded : ''}`}
                 onClick={() => handleTabClick('Talents')}
               >
-                <Image draggable={false} src="/image/classes/class_talent.png" alt="Talents" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src="/image/classes/class_talent.webp" alt="Talents" width={32} height={32} className={headerStyles.tabIcon} />
                 {activeTab === 'Talents' && <span className={headerStyles.tabName}>Thiên phú (Talent)</span>}
               </button>
               <div className={headerStyles.spacer}></div>

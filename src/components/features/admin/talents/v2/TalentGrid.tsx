@@ -243,7 +243,7 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                         style={{
                           width: `calc(${talentCellSize} * 3 + ${arrowCellSize} * 2)`,
                           height: `calc(${talentCellSize})`,
-                          backgroundImage: `url('/image/talents/composite_talent.png')`,
+                          backgroundImage: `url('/image/talents/composite_talent.webp')`,
                           backgroundSize: 'contain',
                           backgroundRepeat: 'no-repeat',
                           backgroundPosition: 'center',
@@ -251,6 +251,7 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                           pointerEvents: 'none',
                           left: `calc((${talentCellSize} + ${arrowCellSize}) * -1)`,
                         }}
+                        draggable={false}
                       />
                     )}
                     {nodeOnCell && (
@@ -284,7 +285,7 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                     )}
                     {arrowDirection && edge ? (
                       <Image
-                        src="/image/talent_arrow.svg"
+                        src="/image/talent_arrow.webp"
                         fill
                         alt={`Arrow pointing ${arrowDirection}`}
                         className="object-contain cursor-pointer"
@@ -297,6 +298,7 @@ const TalentGrid: React.FC<TalentGridProps> = ({ onDropItem, onContextMenu, onIt
                           height: `calc(${arrowCellSize} * 0.5)`,
                           transform: getArrowTransform(arrowDirection)
                         }}
+                        draggable={false}
                       />
                     ) : null}
                   </>

@@ -20,6 +20,7 @@ export default function EventCard({ event, onOpenModal }: EventCardProps) {
           fill
           alt={event.title} 
           className="w-full h-48 object-cover flex-shrink-0" /* Added flex-shrink-0 */
+          draggable={false}
         />
       )}
       <div className="p-6 text-white flex flex-col flex-grow"> {/* Ensure all text inside is white, added flex-grow */}

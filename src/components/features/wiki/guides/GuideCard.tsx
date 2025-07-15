@@ -67,6 +67,7 @@ export function GuideCard({ guide, isCompact = false }: GuideCardProps) {
             fill
             style={{ objectFit: 'cover' }}
             className="transition-transform duration-300"
+            draggable={false}
           />
         </div>
       )}

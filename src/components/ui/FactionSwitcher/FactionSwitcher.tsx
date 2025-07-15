@@ -25,7 +25,7 @@ const FactionSwitcher = ({
     >
       <Image
         draggable={false}
-        src="/image/factions/mc_badge.png"
+        src="/image/factions/mc_badge.webp"
         alt="MC Badge"
         width={size}
         height={size}
@@ -35,7 +35,7 @@ const FactionSwitcher = ({
       />
       <Image
         draggable={false}
-        src="/image/factions/elf_badge.png"
+        src="/image/factions/elf_badge.webp"
         alt="Elf Badge"
         width={size}
         height={size}

@@ -22,7 +22,7 @@ const frameConfigs: Record<FrameType, FrameConfig> = {
   regular: {
     originalWidth: 44,
     originalHeight: 44,
-    spriteSheetUrl: '/icon_frame.png',
+    spriteSheetUrl: '/icon_frame.webp',
     spriteColumns: 3,
     spriteRows: 2,
     originalBorderThickness: 7,
@@ -30,7 +30,7 @@ const frameConfigs: Record<FrameType, FrameConfig> = {
   key: {
     originalWidth: 44,
     originalHeight: 44,
-    spriteSheetUrl: '/image/key_talent_frame.png',
+    spriteSheetUrl: '/image/key_talent_frame.webp',
     spriteColumns: 3,
     spriteRows: 2,
     originalBorderThickness: 7,
@@ -38,7 +38,7 @@ const frameConfigs: Record<FrameType, FrameConfig> = {
   lesser: {
     originalWidth: 44,
     originalHeight: 44,
-    spriteSheetUrl: '/image/lesser_talent_frame.png',
+    spriteSheetUrl: '/image/lesser_talent_frame.webp',
     spriteColumns: 3,
     spriteRows: 2,
     originalBorderThickness: 7,

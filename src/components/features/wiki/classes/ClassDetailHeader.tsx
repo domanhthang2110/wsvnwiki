@@ -29,6 +29,7 @@ export default function ClassDetailHeader({
             alt={className}
             className="w-12 h-12 object-contain"
             style={{ imageRendering: 'pixelated' }}
+            draggable={false}
           />
         )}
         <h1 

@@ -26,6 +26,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onClick, label }) => {
           height={64} // Total sprite height
           style={{ transform: `translateY(${spriteYOffset}px)` }}
           className="absolute top-0 left-0"
+          draggable={false}
         />
       </div>
       <span className="ml-2 text-white text-sm">{label}</span>

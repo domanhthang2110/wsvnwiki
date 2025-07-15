@@ -9,12 +9,12 @@ interface CloudProps {
 }
 
 const cloudImages = [
-  '/image/ui/cloud/cloud_1.png',
-  '/image/ui/cloud/cloud_2.png',
-  '/image/ui/cloud/cloud_3.png',
-  '/image/ui/cloud/cloud_4.png',
-  '/image/ui/cloud/cloud_5.png',
-  '/image/ui/cloud/cloud.png',
+  '/image/ui/cloud/cloud_1.webp',
+  '/image/ui/cloud/cloud_2.webp',
+  '/image/ui/cloud/cloud_3.webp',
+  '/image/ui/cloud/cloud_4.webp',
+  '/image/ui/cloud/cloud_5.webp',
+  '/image/ui/cloud/cloud.webp',
 ];
 
 const Cloud: React.FC<CloudProps> = ({ direction }) => {
@@ -54,6 +54,7 @@ const Cloud: React.FC<CloudProps> = ({ direction }) => {
       className={`${styles.cloud} ${animationClass}`}
       style={style}
       unoptimized
+      draggable={false}
     />
   );
 };

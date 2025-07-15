@@ -446,7 +446,7 @@ useEffect(() => {
           </label>
           {formIconUrl && (
             <div className="mb-2">
-              <Image src={formIconUrl} fill alt="Selected skill icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+              <Image src={formIconUrl} fill alt="Selected skill icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" draggable={false} />
             </div>
           )}
           <button
@@ -584,7 +584,7 @@ useEffect(() => {
             {selectedItems.map(item => (
               <div key={item.id} className="flex items-center gap-2 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
                 {item.icon_url && (
-                  <Image src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
+                  <Image src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" draggable={false} />
                 )}
                 {item.name}
               </div>

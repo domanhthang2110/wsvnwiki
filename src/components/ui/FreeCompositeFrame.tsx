@@ -10,7 +10,7 @@ interface FreeCompositeFrameProps {
 const FreeCompositeFrame: React.FC<FreeCompositeFrameProps> = ({ isUnlocked, imageUrl }) => {
   return (
     <div className={`${styles.frame} ${isUnlocked ? styles.unlocked : styles.locked}`}>
-      {imageUrl && <Image src={imageUrl} fill alt="Talent Icon" className={styles.icon} />}
+      {imageUrl && <Image src={imageUrl} fill alt="Talent Icon" className={styles.icon} draggable={false} />}
     </div>
   );
 };

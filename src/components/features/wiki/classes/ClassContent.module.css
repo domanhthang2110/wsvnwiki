@@ -1,6 +1,6 @@
 .pixelBackground {
   position: relative;
-  background-image: url('/background.png');
+  background-image: url('/background.webp');
   background-repeat: repeat;
   background-size: 70px 40px;
   image-rendering: pixelated;

@@ -247,6 +247,7 @@ export default function AdminClassesPage() {
                         alt={cls.name} 
                         fill
                         className="object-cover rounded"
+                        draggable={false}
                       />
                     ) : (
                       <div className="w-full h-12 flex items-center justify-center">
@@ -338,6 +339,7 @@ export default function AdminClassesPage() {
                                   alt={skill.name || 'Skill icon'} 
                                   fill
                                   className="object-cover rounded"
+                                  draggable={false}
                                 />
                               </div>
                             ) : (

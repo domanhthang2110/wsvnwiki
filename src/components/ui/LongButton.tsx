@@ -26,7 +26,7 @@ const LongButton: React.FC<LongButtonProps> = ({
   const capHeight = 36;
   const middleWidth = Math.max(0, width - 2 * capWidth);
 
-  const spriteUrl = '/long_button.png';
+  const spriteUrl = '/long_button.webp';
 
   const showHighlightedSprite = hoverHighlightingEnabled && isHovered;
 

@@ -65,6 +65,7 @@ export default function MedievalBurgerMenu() {
           width={64}
           height={64}
           className={styles.burgerImage}
+          draggable={false}
         />
       </button>
 

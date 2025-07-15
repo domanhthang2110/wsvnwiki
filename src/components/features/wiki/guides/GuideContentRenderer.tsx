@@ -43,6 +43,7 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
                 fill
                 style={{ objectFit: 'cover' }}
                 className="object-center"
+                draggable={false}
               />
             </div>
           )}

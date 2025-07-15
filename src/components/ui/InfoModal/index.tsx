@@ -74,7 +74,7 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
           <div className="mr-4 flex-shrink-0">
             {(iconUrl || data.icon_url) && (
               <div className="h-12 w-12 border border-[color:var(--box-border-color)] relative">
-                <Image src={iconUrl || data.icon_url!} alt={title || data.name || 'Icon'} layout="fill" objectFit="cover" />
+                <Image src={iconUrl || data.icon_url!} alt={title || data.name || 'Icon'} layout="fill" objectFit="cover" draggable={false} />
               </div>
             )}
           </div>
@@ -124,7 +124,7 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
               <div className="mr-4 flex-shrink-0">
                 {selectedRelic.icon_url && (
                   <div className="h-12 w-12 border border-[color:var(--box-border-color)] relative">
-                    <Image src={selectedRelic.icon_url} alt={selectedRelic.name ?? 'Icon'} layout="fill" objectFit="cover" />
+                    <Image src={selectedRelic.icon_url} alt={selectedRelic.name ?? 'Icon'} layout="fill" objectFit="cover" draggable={false} />
                   </div>
                 )}
               </div>

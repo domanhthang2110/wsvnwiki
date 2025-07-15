@@ -54,26 +54,28 @@ const Dropdown: React.FC<DropdownProps> = ({
     <div className="flex items-center justify-center">
       {showArrows && onPrevious && (
         <button onClick={onPrevious} className="hover:brightness-125 transition-all duration-200">
-          <Image src="/image/arrow_button.svg" alt="Previous" width={45} height={39} className={styles.pixelated} />
+          <Image src="/image/arrow_button.webp" alt="Previous" width={45} height={39} className={styles.pixelated} draggable={false} />
         </button>
       )}
       <div className={styles.dropdown} ref={dropdownRef} style={{ '--dropdown-width': width } as React.CSSProperties}>
         <button className={styles.dropdownButton} onClick={toggleDropdown}>
           <Image
-            src="/image/dropdown_title.png"
+            src="/image/dropdown_title.webp"
             alt="Dropdown Title Background"
             layout="fill"
             objectFit="fill"
             className={styles.dropdownTitleBg}
+            draggable={false}
           />
           <span className={styles.dropdownTitleText}>{title}</span>
          {!dropdownDisabled && (
            <Image
-             src="/image/dropdown_arrow.svg"
+             src="/image/dropdown_arrow.webp"
              alt="Dropdown Arrow"
              width={16}
              height={16}
              className={`${styles.dropdownArrow} ${isOpen ? styles.open : ''}`}
+             draggable={false}
            />
          )}
        </button>
@@ -89,7 +91,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       </div>
       {showArrows && onNext && (
         <button onClick={onNext} className="hover:brightness-125 transition-all duration-200">
-          <Image src="/image/arrow_button.svg" alt="Next" width={45} height={39} className={`${styles.pixelated} scale-x-[-1]`} />
+          <Image src="/image/arrow_button.webp" alt="Next" width={45} height={39} className={`${styles.pixelated} scale-x-[-1]`} draggable={false} />
         </button>
       )}
     </div>

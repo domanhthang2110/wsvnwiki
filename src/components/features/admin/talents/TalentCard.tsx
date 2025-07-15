@@ -32,6 +32,7 @@ export default function TalentCard({ talent, onEdit, onDelete, isSelected }: Tal
               fill
               className="object-cover rounded"
               onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
+              draggable={false}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">

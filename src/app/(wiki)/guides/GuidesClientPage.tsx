@@ -78,6 +78,7 @@ export default function GuidesClientPage({ initialGuides, initialTags }: GuidesC
                   width={20}
                   height={20}
                   className="object-contain"
+                  draggable={false}
                 />
               }
               iconOffsetLeft={8}

@@ -121,7 +121,7 @@ export default function ItemForm({ onSubmit, isEditing, initialData }: ItemFormP
           </label>
           {formIconUrl && (
             <div className="mb-2 relative w-16 h-16">
-              <Image src={formIconUrl} alt="Selected item icon" fill className="object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+              <Image src={formIconUrl} alt="Selected item icon" fill className="object-contain rounded border p-1 border-gray-600 bg-gray-700" draggable={false} />
             </div>
           )}
           <button

@@ -518,7 +518,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                             <video src={item.publicUrl} muted loop autoPlay playsInline className="max-w-full max-h-full object-contain" /> :
                         ( (item.thumbnailUrl || item.publicUrl) && (item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
                             <div className="relative w-full h-full">
-                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt={item.name} fill className="object-contain" />
+                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt={item.name} fill className="object-contain" draggable={false} />
                             </div>
                             : <FileIcon /> ))}
                     </div>
@@ -553,7 +553,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                             <video src={item.publicUrl} muted loop autoPlay playsInline className="w-7 h-7 object-contain rounded" /> :
                         ((item.thumbnailUrl || item.publicUrl) && item.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i) ? 
                             <div className="relative w-7 h-7">
-                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt="" fill className="object-contain rounded" /> 
+                              <Image src={item.thumbnailUrl || item.publicUrl || ''} alt="" fill className="object-contain rounded" draggable={false} /> 
                             </div>
                             : <FileIcon />)}
                     </span>

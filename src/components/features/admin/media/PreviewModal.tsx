@@ -128,6 +128,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ file, onClose }) => {
                 imageRendering: pixelated ? 'pixelated' : 'auto', 
               }}
               onMouseDown={handleMouseDown}
+              draggable={false}
             />
           )}
           {isVideo && file.publicUrl && (

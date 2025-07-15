@@ -41,7 +41,7 @@ const UIBox: React.FC<UIBoxProps> = ({
               {showAltBurgerMenu && (
                 <div className={styles['alt-burger-button-wrapper']}>
                   <button onClick={toggleMenu} className={styles['alt-burger-button']}>
-                    <Image src="/image/burger_button_alt.webp" alt="Menu" width={24} height={24} />
+                    <Image src="/image/burger_button_alt.webp" alt="Menu" width={24} height={24} draggable={false} />
                   </button>
                 </div>
               )}

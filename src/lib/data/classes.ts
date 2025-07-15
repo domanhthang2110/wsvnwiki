@@ -23,7 +23,6 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
   // }
 
   const supabase = await createClient();
-  console.log('Attempting to fetch classes data from Supabase...'); // New log before fetch
   const { data, error } = await supabase
     .from('classes')
     .select(`
@@ -42,17 +41,12 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
 
   if (error) {
     console.error('Error fetching classes:', error.message);
-    console.error('Supabase fetch error details:', error); // More detailed error logging
-    // Log the full error object for more context
-    console.error('Full Supabase error object:', JSON.stringify(error, null, 2));
     return [];
   }
 
-  console.log('Supabase data fetched:', JSON.stringify(data, null, 2)); // Log the raw data
   // Transform the data to match our ClassItem type
   const transformedData = data.map(cls => {
     const talent_tree = Array.isArray(cls.talent_tree) ? cls.talent_tree[0] : cls.talent_tree;
-    console.log(`Processing class: ${cls.name}, Talent Tree Data:`, JSON.stringify(talent_tree?.talents_data, null, 2)); // Log talent tree data
     if (talent_tree && talent_tree.talents_data && talent_tree.talents_data.nodes) {
       talent_tree.talents_data.nodes = talent_tree.talents_data.nodes.map((td: TalentNode) => ({ ...td, talent_id: td.talent_id || null }))
     }

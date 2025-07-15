@@ -95,7 +95,7 @@ const GridCell: React.FC<GridCellProps> = ({
           }}
         >
           <Image
-            src="/image/talents/composite_talent.png"
+            src="/image/talents/composite_talent.webp"
             alt="Composite Talent Frame"
             fill
             style={{
@@ -134,7 +134,7 @@ const GridCell: React.FC<GridCellProps> = ({
       )}
       {arrow && (
         <Image
-          src="/image/talent_arrow.svg"
+          src="/image/talent_arrow.webp"
           alt={`Arrow pointing ${arrow.direction}`}
           className="object-contain"
           width={parseInt(arrowCellSize) * 0.7}

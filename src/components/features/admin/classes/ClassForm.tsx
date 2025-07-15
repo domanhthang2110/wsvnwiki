@@ -38,6 +38,7 @@ const MediaPreview = ({ url, alt }: { url: string; alt: string }) => {
         alt={alt}
         fill
         className="rounded-lg object-cover border-2 border-gray-700"
+        draggable={false}
       />
     </div>
   );

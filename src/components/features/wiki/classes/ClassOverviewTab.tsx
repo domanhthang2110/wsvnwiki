@@ -16,7 +16,7 @@ interface ClassOverviewTabProps {
 const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
   const classData = CLASSES_DATA.find(c => c.name === classItem?.name);
 
-  const sideIcon = classData?.side === 'Sentinel' ? '/image/factions/elf_badge.png' : '/image/factions/mc_badge.png';
+  const sideIcon = classData?.side === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp';
 
   // --- Skill Modal State and Logic (copied from SkillDisplay) ---
   const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
@@ -51,7 +51,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
       <div className={styles.banner}>
         <Image
           draggable={false}
-          src={classItem?.image_assets?.banner || '/public/image/classes/class_overview.png'}
+          src={classItem?.image_assets?.banner || '/public/image/classes/class_overview.webp'}
           alt={`${classItem?.name} banner`}
           objectFit="cover"
           layout='fill'
