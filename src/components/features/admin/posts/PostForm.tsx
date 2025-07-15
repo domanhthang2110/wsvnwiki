@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, FormEvent, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import NextImage from 'next/image';
 import { PostFormData, PostItem, TagRow, TypeRow } from '@/types/posts'; // Use TagRow and TypeRow
 import { supabase } from '@/lib/supabase/client'; // Update Supabase client path
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer'; // Update path
@@ -76,8 +77,12 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         return true;
       }
       return false; // onSubmit indicated failure
-    } catch (error: any) {
-      setFormError(error.message || 'Failed to save post.');
+    } catch (error: unknown) {
+      let errorMessage = 'Failed to save post.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setFormError(errorMessage);
       return false;
     } finally {
       setIsSubmitting(false);
@@ -187,7 +192,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     }
     setShowMediaPickerModal(false);
     setImageTarget(null);
-    editorRef.current?.commands.focus(); 
+    void editorRef.current?.commands.focus(); 
   };
   
 
@@ -235,7 +240,11 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
         <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image:</label>
-            {featuredImageUrl && <img src={featuredImageUrl} alt="Featured" className="max-h-40 rounded border p-1 dark:border-gray-600 mb-2" />}
+            {featuredImageUrl && (
+              <div className="relative w-40 h-40 max-h-40 rounded border p-1 dark:border-gray-600 mb-2 overflow-hidden">
+                <NextImage src={featuredImageUrl} alt="Featured" fill className="object-contain" />
+              </div>
+            )}
             <button type="button" onClick={() => openImagePicker('featured')} className="py-2 px-3 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                 {featuredImageUrl ? 'Change' : 'Select'} Featured Image
             </button>

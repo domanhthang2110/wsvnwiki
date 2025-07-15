@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CombinedStorageItem } from './MediaFileExplorer'; // Adjust path as needed
 import { Switch } from '@/components/ui/Switch/switch'; // Import the Switch component
+import Image from 'next/image';
 
 // Icons
 const CloseIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>;
@@ -102,7 +103,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ file, onClose }) => {
               <button onClick={handleResetZoom} className="p-1.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600" title="Reset Zoom"><ResetZoomIcon/></button>
             </div>
             <div className="flex items-center space-x-2">
-              <label htmlFor="pixelated-switch" className="text-sm text-gray-700 dark:text-gray-300">Pixelated Rendering:</label>
+              <label htmlFor="pixelated-switch" className="text-sm text-gray-700 dark:text-gray-300">Pixelated Rendering <PixelatedIcon />:</label>
               <Switch
                 id="pixelated-switch"
                 checked={pixelated}
@@ -116,11 +117,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ file, onClose }) => {
 
         <div className="flex-grow flex items-center justify-center overflow-hidden relative">
           {isImage && file.publicUrl && (
-            <img 
-              ref={imageRef}
+            <Image 
               src={file.publicUrl} 
               alt={file.name} 
-              className="max-w-full max-h-full object-contain" 
+              fill
+              className="object-contain" 
               style={{ 
                 transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
                 cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',

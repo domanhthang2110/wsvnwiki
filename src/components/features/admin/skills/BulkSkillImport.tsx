@@ -41,8 +41,12 @@ export default function BulkSkillImport({ onImportSuccess }: BulkSkillImportProp
         validated.push(item as SkillFormData);
       }
       setValidatedSkills(validated);
-    } catch (e: any) {
-      setError(`Invalid JSON or data structure: ${e.message}`);
+    } catch (e: unknown) {
+      let errorMessage = 'Unknown error';
+      if (e instanceof Error) {
+        errorMessage = e.message;
+      }
+      setError(`Invalid JSON or data structure: ${errorMessage}`);
     }
   };
 
@@ -117,6 +121,7 @@ export default function BulkSkillImport({ onImportSuccess }: BulkSkillImportProp
                 skill={skill as SkillItem}
                 onEdit={() => {}}
                 onDelete={() => {}}
+                onIconChange={() => {}}
                 isSelected={false}
               />
             ))}

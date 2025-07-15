@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useCallback, ChangeEvent, DragEvent, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import type { FileObject } from '@supabase/storage-js';
 import PreviewModal from './PreviewModal'; // Import the new PreviewModal component
 import Image from 'next/image';
 
@@ -34,14 +33,6 @@ interface MediaFileExplorerProps {
   onFileSelect?: (publicUrl: string, pathInBucket: string) => void;
   accept?: string;
   mode?: 'manage' | 'select'; // New prop, defaults to 'manage'
-}
-
-export interface CombinedStorageItem { // Unified type for both Supabase and Local items
-  name: string;
-  itemType: 'file' | 'folder';
-  publicUrl?: string;
-  thumbnailUrl?: string;
-  id: string | null; // Supabase items have id, local items use name as id
 }
 
 export interface CombinedStorageItem { // Unified type for both Supabase and Local items

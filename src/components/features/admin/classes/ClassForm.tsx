@@ -392,7 +392,7 @@ export default function ClassForm({
               <MediaFileExplorer
                 bucketName="media"
                 initialPath="classes"
-                onFileSelect={handleImageSelect} // Use the generic handler
+                onFileSelect={currentImageField ? handleImageSelect : handleMediaFileSelectForTiptap}
                 mode="select"
                 accept="image/*"
               />
