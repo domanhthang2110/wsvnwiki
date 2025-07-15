@@ -41,8 +41,12 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
         validated.push(item as TalentFormData);
       }
       setValidatedTalents(validated);
-    } catch (e: any) {
-      setError(`Invalid JSON or data structure: ${e.message}`);
+    } catch (e: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (e instanceof Error) {
+        errorMessage = e.message; 
+      }
+      setError(`Invalid JSON or data structure: ${errorMessage}`);
     }
   };
 

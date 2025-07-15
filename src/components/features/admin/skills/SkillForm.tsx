@@ -2,12 +2,10 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
-import type { ChangeEvent } from 'react'; // For completeness, though not used directly if direct upload removed
 import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue, SkillRow } from '@/types/skills'; // Assuming types are here
 import { Item } from '@/types/items';
-import { supabase } from '@/lib/supabase/client'; // Update Supabase client path
-import { MAX_SKILL_LEVEL_OPTIONS, SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
-
+import { SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
+import Image from 'next/image';
 import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
@@ -181,7 +179,7 @@ useEffect(() => {
 
     const newLevels: SkillLevelValue[] = [];
     for (let i = 1; i <= currentMaxLevel; i++) {
-      const existingDataForThisLevel: Record<string, any> = baseValuesSource.find(l => l.level === i) || {};
+      const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
       const levelEntry: SkillLevelValue = { level: i };
       
       formParamDefs.forEach(def => {
@@ -215,7 +213,7 @@ useEffect(() => {
 
     const finalParamDefs = formParamDefs
       .filter(p => p.key.trim())
-      .map(({ id, key }) => ({ key: key.trim() }));
+      .map(({key}) => ({ key: key.trim() }));
 
     if (finalParamDefs.length > 0) {
       skillDataToSubmit.parameters_definition = finalParamDefs;
@@ -289,7 +287,7 @@ useEffect(() => {
   };
 
   // NEW: Handler for when an icon is selected from the MediaFileExplorer
-  const handleIconSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
+  const handleIconSelectedFromPicker = (publicUrl: string) => {
     setFormIconUrl(publicUrl);
     setShowIconPickerModal(false); // Close the modal
   };
@@ -321,7 +319,7 @@ useEffect(() => {
 
       const finalParamDefs = formParamDefs
         .filter(p => p.key.trim())
-        .map(({ id, key }) => ({ key: key.trim() })); // Strip temporary id
+        .map(({key}) => ({ key: key.trim() })); // Strip temporary id
 
       const paramKeysFromDefs = finalParamDefs.map(p => p.key);
       if (finalParamDefs.some(p => !p.key)) {
@@ -406,9 +404,15 @@ useEffect(() => {
       }
       setFormError(null);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("SkillForm handleSubmit error:", error);
-      setFormError(error.message || 'An error occurred while saving the skill');
+
+      // Use type guard to safely access `message`
+      if (error instanceof Error) {
+        setFormError(error.message);
+      } else {
+        setFormError('An unknown error occurred while saving the skill');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -442,7 +446,7 @@ useEffect(() => {
           </label>
           {formIconUrl && (
             <div className="mb-2">
-              <img src={formIconUrl} alt="Selected skill icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+              <Image src={formIconUrl} alt="Selected skill icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
             </div>
           )}
           <button
@@ -580,7 +584,7 @@ useEffect(() => {
             {selectedItems.map(item => (
               <div key={item.id} className="flex items-center gap-2 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded">
                 {item.icon_url && (
-                  <img src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
+                  <Image src={item.icon_url} alt={item.name || ''} className="w-4 h-4 object-cover rounded" />
                 )}
                 {item.name}
               </div>

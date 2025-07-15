@@ -2,7 +2,7 @@
 
 import { TalentItem } from '@/types/talents';
 import { formatFullTalentDescription, formatKnowledgeCost } from '@/utils/talentUtils';
-
+import Image from 'next/image';
 interface TalentCardProps {
   talent: TalentItem;
   onEdit?: (talent: TalentItem) => void;
@@ -24,12 +24,13 @@ export default function TalentCard({ talent, onEdit, onDelete, isSelected }: Tal
     >
       <div className="flex items-start">
         {/* Icon */}
-        <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700">
+        <div className="relative w-12 h-12 flex-shrink-0 rounded bg-gray-700 overflow-hidden">
           {talent.icon_url ? (
-            <img 
+            <Image 
               src={talent.icon_url} 
               alt={talent.name || 'Talent icon'} 
-              className="w-full h-full object-cover rounded"
+              fill
+              className="object-cover rounded"
               onError={(e) => (e.currentTarget.src = 'https://placehold.co/48x48/374151/9CA3AF?text=?')}
             />
           ) : (

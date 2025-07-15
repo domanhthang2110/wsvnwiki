@@ -1,12 +1,12 @@
 'use client';
 
-import { FormEvent, useState, useEffect } from 'react';
+import { FormEvent, useState, useEffect, useMemo } from 'react';
 import { TalentItem, TalentParameterDefinitionInForm, TalentLevelValue, TALENT_TYPE_OPTIONS } from '@/types/talents';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
 import KnowledgeCostRow from './KnowledgeCostRow'; // Import the new component
-
+import Image from 'next/image';
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
 export interface TalentFormProps {
@@ -32,19 +32,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showIconPickerModal, setShowIconPickerModal] = useState(false);
-  const [liveFormData, setLiveFormData] = useState<Omit<TalentItem, 'id' | 'created_at'>>({
-    name: '',
-    icon_url: null,
-    type: 'normal',
-    max_level: 1,
-    description: null,
-    knowledge_levels: null,
-    parameters_definition: null,
-    level_values: null,
-  });
-
-  useEffect(() => {
-    const talentDataToSubmit: Omit<TalentItem, 'id' | 'created_at'> = {
+  const talentDataToSubmit = useMemo<Omit<TalentItem, 'id' | 'created_at'>>(() => {
+    const baseData: Omit<TalentItem, 'id' | 'created_at'> = {
       name: formName.trim(),
       icon_url: formIconUrl.trim() || null,
       type: formType,
@@ -57,10 +46,10 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
     const finalParamDefs = formParamDefs
       .filter(p => p.key.trim())
-      .map(({ id, key }) => ({ key: key.trim() }));
+      .map(({ key }) => ({ key: key.trim() }));
 
     if (finalParamDefs.length > 0) {
-      talentDataToSubmit.parameters_definition = finalParamDefs;
+      baseData.parameters_definition = finalParamDefs;
     }
 
     const finalLevelValues = formLevelValues
@@ -74,7 +63,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       });
 
     if (finalLevelValues.length > 0) {
-      talentDataToSubmit.level_values = finalLevelValues;
+      baseData.level_values = finalLevelValues;
     }
 
     const parsedKnowledgeCosts: Record<number, number> = {};
@@ -85,11 +74,17 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     });
 
     if (Object.keys(parsedKnowledgeCosts).length > 0) {
-      talentDataToSubmit.knowledge_levels = parsedKnowledgeCosts;
+      baseData.knowledge_levels = parsedKnowledgeCosts;
     }
 
-    setLiveFormData(talentDataToSubmit);
+    return baseData;
   }, [formName, formIconUrl, formType, formMaxLevel, formDescription, knowledgeCosts, formParamDefs, formLevelValues]);
+
+  const [liveFormData, setLiveFormData] = useState<Omit<TalentItem, 'id' | 'created_at'>>(talentDataToSubmit);
+
+  useEffect(() => {
+    setLiveFormData(talentDataToSubmit);
+  }, [talentDataToSubmit]);
 
   useEffect(() => {
     if (initialData) {
@@ -139,7 +134,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
     const newLevels: TalentLevelValue[] = [];
     for (let i = 1; i <= currentMaxLevel; i++) {
-      const existingDataForThisLevel: Record<string, any> = baseValuesSource.find(l => l.level === i) || {};
+      const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
       const levelEntry: TalentLevelValue = { level: i };
       
       formParamDefs.forEach(def => {
@@ -181,7 +176,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     });
   };
 
-  const handleIconSelectedFromPicker = (publicUrl: string, pathInBucket: string) => {
+  const handleIconSelectedFromPicker = (publicUrl: string) => {
     setFormIconUrl(publicUrl);
     setShowIconPickerModal(false);
   };
@@ -203,7 +198,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
       const finalParamDefs = formParamDefs
         .filter(p => p.key.trim())
-        .map(({ id, key }) => ({ key: key.trim() }));
+        .map(({key }) => ({ key: key.trim() }));
 
       const paramKeysFromDefs = finalParamDefs.map(p => p.key);
       if (finalParamDefs.some(p => !p.key)) {
@@ -258,9 +253,14 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       }
       setFormError(null);
 
-    } catch (error: any) {
-      console.error("TalentForm handleSubmit error:", error);
-      setFormError(error.message || 'An error occurred while saving the talent');
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      setIsSubmitting(false);
+      setFormError(errorMessage);
+      // Log the error for debugging
     } finally {
       setIsSubmitting(false);
     }
@@ -292,7 +292,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           </label>
           {formIconUrl && (
             <div className="mb-2">
-              <img src={formIconUrl} alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
+              <Image src={formIconUrl} fill alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" />
             </div>
           )}
           <button

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { TalentNode, TalentItem } from '@/types/talents'; // Import TalentNode and TalentItem
+import { TalentNode } from '@/types/talents'; // Import TalentNode and TalentItem
 
 interface ContextMenuProps {
   x: number;
