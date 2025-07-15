@@ -7,9 +7,8 @@ export const dynamic = 'force-dynamic';
 export default async function ClassesPage() {
   console.log('ClassesPage server component rendering at runtime...'); // New log for runtime
   console.log('ClassesPage server component rendering during build...'); // Added log
-  const [classes] = await Promise.all([
-    getClassesWithSkills(),
-  ]);
+  const classes = await getClassesWithSkills();
+  console.log('getClassesWithSkills completed. Classes data:', JSON.stringify(classes?.length, null, 2));
 
 
   return (
