@@ -1,10 +1,11 @@
 import supabase from '@/lib/supabase/static';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ClassItem, ClassRow } from '@/types/classes';
 import type { SkillItem, SkillRow } from '@/types/skills';
 import type { TalentNode } from '@/types/talents';
 import type { Item } from '@/types/items';
 import { CacheManager } from '@/utils/cache';
-import { CLASSES_DATA } from './classesData';
+// import { CLASSES_DATA } from './classesData'; // Removed as it's unused
 
 interface SkillWithItemsQuery extends SkillRow {
   items?: { item: Item }[];
