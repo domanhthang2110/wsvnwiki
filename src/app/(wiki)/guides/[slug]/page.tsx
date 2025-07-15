@@ -18,8 +18,7 @@ interface GuidePostPageProps {
 }
 
 export default async function GuidePostPage({ params }: GuidePostPageProps) {
-  const awaitedParams = await Promise.resolve(params);
-  const { slug } = awaitedParams;
+  const { slug } = params;
   const post = await getPostBySlug(slug);
 
   if (!post) {
