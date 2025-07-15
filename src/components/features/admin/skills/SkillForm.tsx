@@ -2,7 +2,7 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
-import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue, SkillRow } from '@/types/skills'; // Assuming types are here
+import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue } from '@/types/skills'; // Assuming types are here
 import { Item } from '@/types/items';
 import { SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
 import Image from 'next/image';

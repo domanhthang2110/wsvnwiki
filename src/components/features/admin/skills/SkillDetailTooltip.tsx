@@ -1,5 +1,6 @@
 'use client';
 
+import NextImage from 'next/image';
 import { 
   useFloating, 
   offset, 
@@ -56,7 +57,7 @@ export default function SkillDetailTooltip({ skill, isOpen, onClose, referenceEl
         {/* The JSX content does not need to change */}
         <div className="space-y-3">
           <div className="flex items-start space-x-3">
-            {skill.icon_url && <img src={skill.icon_url} alt={skill.name || ''} className="w-12 h-12 object-contain rounded bg-gray-800 p-1" />}
+            {skill.icon_url && <NextImage src={skill.icon_url} alt={skill.name || ''} width={48} height={48} className="w-12 h-12 object-contain rounded bg-gray-800 p-1" />}
             <div className="flex-grow">
               <h3 className="text-base font-medium text-gray-100">{skill.name || "Unnamed Skill"}</h3>
               <p className="text-xs text-gray-400">ID: {skill.id}</p>

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
-import Image from '@tiptap/extension-image'; // Re-import Image
+import NextImageExtension from './extensions/NextImageExtension';
 import Link from '@tiptap/extension-link';
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
@@ -35,13 +35,7 @@ export default function TiptapEditor({ content, onChange, onImagePickerOpen }: T
         },
       }),
       Underline,
-      Image.configure({ // Configure Image separately
-        inline: true,
-        allowBase64: false,
-        HTMLAttributes: {
-          class: 'inline-block align-bottom m-0',
-        },
-      }),
+      NextImageExtension,
       CustomImageResize,
       Link.configure({
         openOnClick: false,

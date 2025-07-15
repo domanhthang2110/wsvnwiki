@@ -22,7 +22,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ file, onClose }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [pixelated, setPixelated] = useState(false); // New state for pixelated rendering
   const lastMousePos = useRef({ x: 0, y: 0 });
-  const imageRef = useRef<HTMLImageElement>(null);
 
   const isImage = file.name.match(/\.(jpeg|jpg|gif|png|svg|webp)$/i);
   const isVideo = file.name.match(/\.(mp4|webm|ogg)$/i);

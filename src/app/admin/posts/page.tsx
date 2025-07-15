@@ -208,7 +208,7 @@ export default function AdminPostsPage() {
           <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Existing Posts</h2>
           {isLoading && <p className="text-center py-4">Loading posts...</p>}
           {pageError && <p className="text-red-500 dark:text-red-400 text-center py-4">Error: {pageError}</p>}
-          {!isLoading && !pageError && posts.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400">No posts yet. Click "New Post" to create one.</p>}
+          {!isLoading && !pageError && posts.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400">No posts yet. Click &quot;New Post&quot; to create one.</p>}
           
           {posts.length > 0 && (
             <ul className="space-y-3">

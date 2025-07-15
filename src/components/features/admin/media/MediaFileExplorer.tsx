@@ -496,7 +496,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
         <div> {/* Added min-height to ensure dropzone is always available */}
             {loadingItems && items.length === 0 && <p className="text-center py-10 dark:text-gray-300">Loading items...</p>}
             {itemsError && <p className="text-center py-10 text-red-500 dark:text-red-400">Error: {itemsError}</p>}
-            {!loadingItems && !itemsError && items.length === 0 && ( <p className="text-center py-10 text-gray-500 dark:text-gray-400">This folder is empty. Drag files here or use the 'Upload' button.</p> )}
+            {!loadingItems && !itemsError && items.length === 0 && ( <p className="text-center py-10 text-gray-500 dark:text-gray-400">This folder is empty. Drag files here or use the &apos;Upload&apos; button.</p> )}
 
             {items.length > 0 && (
             viewMode === 'grid' ? (
