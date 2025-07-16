@@ -1,0 +1,16 @@
+name: Sync Events (Cron)
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Every hour
+  workflow_dispatch:    # Allow manual run
+
+jobs:
+  sync-events:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Vercel cron endpoint
+        run: |
+          curl -X GET "https://wsvnwiki.vercel.app/api/cron/sync-events" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
