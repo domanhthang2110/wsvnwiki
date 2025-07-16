@@ -80,6 +80,18 @@ if (token !== cronSecret) {
   try {
     const supabase = await createClient({ serviceRole: true }); // Use service role key
 
+    // Fetch existing guids to avoid re-translating already processed events
+    const { data: existingGuidsData, error: existingGuidsError } = await supabase
+      .from('events')
+      .select('guid');
+
+    if (existingGuidsError) {
+      console.error('Error fetching existing guids:', existingGuidsError);
+      // If fetching existing guids fails, we proceed but might re-translate existing items.
+      // This is a fallback to ensure the cron job doesn't completely fail.
+    }
+    const existingGuids = new Set(existingGuidsData?.map(row => row.guid) || []);
+
     // 1. Fetch RSS feed
     const rawXmlResponse = await fetch(RSS_URL, { cache: 'no-store' }); // Always fetch fresh for cron
     if (!rawXmlResponse.ok) {
@@ -89,8 +101,17 @@ if (token !== cronSecret) {
     const parser = new RSSParser();
     const feed = await parser.parseString(rawXmlText);
 
-    const processedItems: EventItem[] = [];
+    let insertedCount = 0;
+    let skippedCount = 0; // Renamed from updatedCount to better reflect "skipped translation"
+
     for (const item of feed.items.slice(0, MAX_ITEMS_TO_PROCESS)) {
+      // Check if the event already exists in the database by its GUID
+      if (existingGuids.has(item.guid)) {
+        skippedCount++; // Count as skipped since it was already present and translated
+        continue; // Skip translation and insertion for existing items
+      }
+
+      // Only process and translate new items
       let descriptionHtml = item.content || item.description || '';
       if (descriptionHtml) {
         const $ = cheerio.load(descriptionHtml);
@@ -103,62 +124,27 @@ if (token !== cronSecret) {
       const translatedTitle = await translateText(item.title ?? '');
       const translatedDescription = await translateAndSanitizeHTML(item.originalDescription ?? '');
 
-      processedItems.push({
-        title: translatedTitle,
-        link: item.link || '',
-        description: translatedDescription,
-        originalDescription: item.content || item.description || '', // Keep original for reference if needed
-        pubDate: item.pubDate || new Date().toISOString(),
-        author: item.creator || item.author,
-        guid: item.guid || item.link || '',
-        categories: item.categories || [],
-        imageUrl: cheerio.load(descriptionHtml).root().find('img').first().attr('src'),
-      });
-    }
-
-    // Sort by publication date, newest first
-    processedItems.sort((a, b) => new Date(b.pubDate || 0).getTime() - new Date(a.pubDate || 0).getTime());
-
-    // 2. Insert/Update into Supabase
-    let insertedCount = 0;
-    let updatedCount = 0;
-
-    for (const item of processedItems) {
+      // 2. Insert into Supabase (only new items reach here)
       const { data, error } = await supabase
         .from('events')
-        .upsert(
+        .insert( // Use insert as we've pre-checked for existence
           {
             guid: item.guid,
-            title: item.title,
+            title: translatedTitle, // Use translated content
             link: item.link,
-            description: item.description,
+            description: translatedDescription, // Use translated content
             pub_date: item.pubDate,
             author: item.author,
-            image_url: item.imageUrl,
-          },
-          { onConflict: 'guid', ignoreDuplicates: false }
+            image_url: cheerio.load(descriptionHtml).root().find('img').first().attr('src'), // Image URL from processed HTML
+          }
         )
         .select();
 
       if (error) {
-        if (error.code === '23505') { // PostgreSQL unique_violation error code
-          updatedCount++;
-        } else {
-          console.error(`Error upserting event ${item.guid}:`, error);
-        }
+        console.error(`Error inserting new event ${item.guid}:`, error);
       } else {
         if (data && data.length > 0) {
-          const { data: existingEvent } = await supabase
-            .from('events')
-            .select('id')
-            .eq('guid', item.guid)
-            .single();
-          
-          if (existingEvent) {
-            updatedCount++;
-          } else {
-            insertedCount++;
-          }
+          insertedCount++;
         }
       }
     }
@@ -166,8 +152,8 @@ if (token !== cronSecret) {
     return NextResponse.json({
       message: 'Events synchronized successfully',
       inserted: insertedCount,
-      updated: updatedCount,
-      totalProcessed: processedItems.length,
+      skippedExisting: skippedCount, // Reflects items that were already in the DB and thus skipped translation
+      totalProcessedFromFeed: feed.items.slice(0, MAX_ITEMS_TO_PROCESS).length, // Total items from RSS feed considered
     });
 
   } catch (error) {
