@@ -65,10 +65,10 @@ async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: str
 export async function GET(request: NextRequest) {
   // Ensure this route is only accessible via a secure cron job or authenticated request
   // For Vercel Cron Jobs, you might check a secret header or IP whitelist
-  const authHeader = request.headers.get('Authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
+const cronSecret = request.headers.get('x-vercel-cron-secret');
+if (cronSecret !== process.env.VERCEL_CRON_SECRET) {
+  return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+}
 
   try {
     const supabase = await createClient({ serviceRole: true }); // Use service role key
