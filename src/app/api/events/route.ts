@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { Database } from '@/types/database.types';
 import { EventItem } from '@/types/events'; // Assuming EventItem is still needed for response type
 
 // --- Constants ---

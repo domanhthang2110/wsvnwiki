@@ -3,10 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/sync-events",
-      "schedule": "0 * * * *",
-      "headers": {
-        "x-vercel-cron-secret": "@CRON_SECRET"
-      }
+      "schedule": "* * 0 * *"
     }
   ]
 }

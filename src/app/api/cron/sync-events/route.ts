@@ -6,7 +6,6 @@ import * as cheerio from 'cheerio';
 import { EventItem } from '@/types/events';
 import { Translate } from '@google-cloud/translate/build/src/v2';
 import { createClient } from '@/lib/supabase/server';
-import { Database } from '@/types/database.types';
 
 // --- Constants ---
 const RSS_URL = 'https://forum.warspear-online.com/index.php?/forum/23-news-announcements.xml/';
@@ -82,7 +81,7 @@ if (cronSecret !== process.env.VERCEL_CRON_SECRET) {
     const parser = new RSSParser();
     const feed = await parser.parseString(rawXmlText);
 
-    let processedItems: EventItem[] = [];
+    const processedItems: EventItem[] = [];
     for (const item of feed.items.slice(0, MAX_ITEMS_TO_PROCESS)) {
       let descriptionHtml = item.content || item.description || '';
       if (descriptionHtml) {
