@@ -58,7 +58,7 @@ export async function getAllPostSlugs(): Promise<{ slug: string }[]> {
 
 // Function to get a list of posts (e.g., for an index page)
 export async function getPosts(options?: { typeSlug?: string; limit?: number }): Promise<PostItem[]> {
-  const supabase = await createServerSupabaseClient(); // Use server client for request-scoped data
+  const supabase = browserSupabaseClient; // Use browser client for build-time data fetching
   let query = supabase
     .from('posts')
     .select(`
@@ -96,7 +96,7 @@ export async function getPosts(options?: { typeSlug?: string; limit?: number }):
 
 // Function to get all tags
 export async function getAllTags(): Promise<TagRow[]> {
-  const supabase = await createServerSupabaseClient(); // Use server client for request-scoped data
+  const supabase = browserSupabaseClient; // Use browser client for build-time data fetching
   const { data, error } = await supabase
     .from('tags')
     .select('*')

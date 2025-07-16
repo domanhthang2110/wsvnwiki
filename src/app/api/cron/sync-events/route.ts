@@ -64,9 +64,17 @@ async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: str
 export async function GET(request: NextRequest) {
   // Ensure this route is only accessible via a secure cron job or authenticated request
   // For Vercel Cron Jobs, you might check a secret header or IP whitelist
-const cronSecret = request.headers.get('x-vercel-cron-secret');
-if (cronSecret !== process.env.VERCEL_CRON_SECRET) {
-  return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+const authHeader = request.headers.get('Authorization');
+const cronSecret = process.env.CRON_SECRET;
+
+if (!authHeader || !cronSecret || !authHeader.startsWith('Bearer ')) {
+  return NextResponse.json({ message: 'Unauthorized: Missing or malformed Authorization header' }, { status: 401 });
+}
+
+const token = authHeader.split(' ')[1];
+
+if (token !== cronSecret) {
+  return NextResponse.json({ message: 'Unauthorized: Invalid token' }, { status: 401 });
 }
 
   try {
