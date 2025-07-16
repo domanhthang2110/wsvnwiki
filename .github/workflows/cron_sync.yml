@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Vercel cron endpoint
+      - name: Call sync-events API
         run: |
           curl -X GET "https://wsvnwiki.vercel.app/api/cron/sync-events" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
