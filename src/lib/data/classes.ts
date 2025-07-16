@@ -4,7 +4,6 @@ import type { ClassItem, ClassRow } from '@/types/classes';
 import type { SkillItem, SkillRow } from '@/types/skills';
 import type { TalentNode } from '@/types/talents';
 import type { Item } from '@/types/items';
-import { CacheManager } from '@/utils/cache';
 // import { CLASSES_DATA } from './classesData'; // Removed as it's unused
 
 interface SkillWithItemsQuery extends SkillRow {
@@ -13,15 +12,6 @@ interface SkillWithItemsQuery extends SkillRow {
 
 // Function to fetch all classes with their associated skills
 export async function getClassesWithSkills(): Promise<ClassItem[]> {
-  // const cacheKey = 'classes-with-skills';
-  // const cachedData = CacheManager.get<ClassItem[]>(
-  //   'classes',
-  //   cacheKey,
-  // );
-  // if (cachedData) {
-  //   return cachedData;
-  // }
-
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('classes')
@@ -70,7 +60,6 @@ export async function getClassesWithSkills(): Promise<ClassItem[]> {
     }
   });
 
-  // CacheManager.set('classes', cacheKey, transformedData);
   return transformedData as ClassItem[];
 }
 

@@ -71,6 +71,42 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string | null
+          guid: string
+          id: number
+          image_url: string | null
+          link: string | null
+          pub_date: string | null
+          title: string | null
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          guid: string
+          id?: number
+          image_url?: string | null
+          link?: string | null
+          pub_date?: string | null
+          title?: string | null
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          guid?: string
+          id?: number
+          image_url?: string | null
+          link?: string | null
+          pub_date?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       items: {
         Row: {
           created_at: string

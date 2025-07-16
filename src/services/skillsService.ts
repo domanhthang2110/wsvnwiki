@@ -1,24 +1,16 @@
 import { supabase } from '../lib/supabase/client';
 import type { SkillItem } from '../types/skills';
 import { validateSkill } from '../utils/validation';
-import { CacheManager } from '../utils/cache';
 import { RetryManager } from '../utils/retry';
 
-const CACHE_NAMESPACE = 'skills';
-const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+// const CACHE_NAMESPACE = 'skills'; // No longer needed
+// const CACHE_TTL = 1000 * 60 * 5; // No longer needed
 
 export class SkillsService {
   /**
    * Fetch all skills ordered by name with caching
    */
   static async getAllSkills(): Promise<SkillItem[]> {
-    const cacheKey = 'all-skills';
-    const cached = CacheManager.get<SkillItem[]>(CACHE_NAMESPACE, cacheKey, { ttl: CACHE_TTL });
-    if (cached) {
-      console.log('Returning cached skills data');
-      return cached;
-    }
-
     console.log('Fetching all skills');
     return await RetryManager.retry(async () => {
       const { data, error } = await supabase
@@ -35,9 +27,6 @@ export class SkillsService {
         throw new Error('No data returned when fetching skills');
       }
 
-      // Update cache
-      CacheManager.set(CACHE_NAMESPACE, cacheKey, data);
-
       return data;
     });
   }
@@ -46,7 +35,7 @@ export class SkillsService {
    * Create a new skill with validation
    */
   static async createSkill(skillData: Omit<SkillItem, 'id' | 'created_at'>): Promise<SkillItem> {
-    const validation = validateSkill(skillData as SkillItem); // Assuming validateSkill is compatible with Omit<SkillItem, 'id' | 'created_at'>
+    const validation = validateSkill(skillData as SkillItem);
     if (!validation.isValid) {
       throw new Error('Invalid skill data: ' + validation.errors.join(', '));
     }
@@ -64,9 +53,6 @@ export class SkillsService {
         throw new Error('Failed to create skill: ' + (error?.message || 'No data returned'));
       }
 
-      // Invalidate cache
-      CacheManager.clear(CACHE_NAMESPACE);
-
       return data;
     });
   }
@@ -75,7 +61,7 @@ export class SkillsService {
    * Update an existing skill with validation
    */
   static async updateSkill(id: number, skillData: Partial<SkillItem>): Promise<SkillItem> {
-    const validation = validateSkill(skillData); // Assuming validateSkill is compatible with Partial<SkillItem>
+    const validation = validateSkill(skillData);
     if (!validation.isValid) {
       throw new Error('Invalid skill data: ' + validation.errors.join(', '));
     }
@@ -93,9 +79,6 @@ export class SkillsService {
         console.error('Error updating skill:', error);
         throw new Error('Failed to update skill: ' + (error?.message || 'No data returned'));
       }
-
-      // Invalidate cache
-      CacheManager.clear(CACHE_NAMESPACE);
 
       return data;
     });
@@ -116,9 +99,6 @@ export class SkillsService {
         console.error('Error deleting skill:', error);
         throw new Error('Failed to delete skill: ' + error.message);
       }
-
-      // Invalidate cache
-      CacheManager.clear(CACHE_NAMESPACE);
     });
   }
 }

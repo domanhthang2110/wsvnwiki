@@ -74,7 +74,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
 
   if (isLoading) {
     return (
-      <div className="w-full flex flex-col p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
+      <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
         <div className="mb-8 text-center">
           <p className="text-gray-400">Đang tải sự kiện...</p>
         </div>
@@ -93,7 +93,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
 
   if (error) {
     return (
-      <div className="w-full flex flex-col p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
+      <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
         <div className="text-center py-12">
           <p className="text-red-400 mb-4">Lỗi: {error}</p>
           <div className="flex justify-center space-x-4">
@@ -114,7 +114,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
 
   return (
     <>
-      <div className="w-full flex flex-col p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
+      <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
         {/* {debugInfo && (
           <div className="bg-gray-800 border border-yellow-400 p-4 mb-6 rounded-lg shadow-inner">
             <h3 className="text-lg font-bold text-yellow-300 mb-2">Debug Info</h3>
