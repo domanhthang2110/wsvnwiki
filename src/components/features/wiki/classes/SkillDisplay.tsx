@@ -147,22 +147,24 @@ const SkillDisplay: React.FC<SkillDisplayProps> = ({ skills }) => {
         <div className="bg-[#3a2a2a] border-t border-b border-[#e6ce63] text-center w-full mb-2 py-1">
           <h3 className="text-lg font-semibold text-[#e6ce63]" style={{ textShadow: '1px 1px 1px #000' }}>{header}</h3>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {skillList.map((skill) => (
-            <div
-              key={skill.id}
-              className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200"
-              onClick={() => handleSkillClick(skill)}
-            >
-              <IconFrame
-                size={64}
-                styleType="yellow"
-                altText={skill.name ?? undefined}
-                contentImageUrl={skill.icon_url ?? undefined}
-              />
-              <p className="text-sm text-center mt-1">{skill.name}</p>
-            </div>
-          ))}
+        <div className="w-full flex justify-center px-10">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 justify-center">
+            {skillList.map((skill) => (
+              <div
+                key={skill.id}
+                className="w-20 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-200"
+                onClick={() => handleSkillClick(skill)}
+              >
+                <IconFrame
+                  size={64}
+                  styleType="yellow"
+                  altText={skill.name ?? undefined}
+                  contentImageUrl={skill.icon_url ?? undefined}
+                />
+                <p className="text-sm text-center mt-1">{skill.name}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     )
