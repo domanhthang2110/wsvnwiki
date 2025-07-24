@@ -53,8 +53,17 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div className="flex items-center justify-center">
       {showArrows && onPrevious && (
-        <button onClick={onPrevious} className="hover:brightness-125 transition-all duration-200">
-          <Image src="/image/arrow_button.webp" alt="Previous" width={45} height={39} className={styles.pixelated} draggable={false} priority={true} />
+        <button onClick={onNext} className="hover:brightness-125 transition-all duration-200">
+          <Image 
+            src="/image/arrow_button.webp" 
+            alt="Next" 
+            width={45} 
+            height={45} // placeholder height
+            className={`${styles.pixelated}`} 
+            draggable={false} 
+            priority={true}
+            style={{height: 'auto'}}
+          />
         </button>
       )}
       <div className={styles.dropdown} ref={dropdownRef} style={{ '--dropdown-width': width } as React.CSSProperties}>
@@ -62,8 +71,8 @@ const Dropdown: React.FC<DropdownProps> = ({
           <Image
             src="/image/dropdown_title.webp"
             alt="Dropdown Title Background"
-            layout="fill"
-            objectFit="fill"
+            fill
+            sizes="300px"
             className={styles.dropdownTitleBg}
             draggable={false}
             priority={true}
@@ -93,7 +102,16 @@ const Dropdown: React.FC<DropdownProps> = ({
       </div>
       {showArrows && onNext && (
         <button onClick={onNext} className="hover:brightness-125 transition-all duration-200">
-          <Image src="/image/arrow_button.webp" alt="Next" width={45} height={39} className={`${styles.pixelated} scale-x-[-1]`} draggable={false} priority={true} />
+          <Image 
+            src="/image/arrow_button.webp" 
+            alt="Next" 
+            width={45} 
+            height={45} // placeholder height
+            className={`${styles.pixelated} scale-x-[-1]`} 
+            draggable={false} 
+            priority={true}
+            style={{height: 'auto'}}
+          />
         </button>
       )}
     </div>

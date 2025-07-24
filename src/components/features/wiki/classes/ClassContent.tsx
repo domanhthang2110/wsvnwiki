@@ -374,9 +374,9 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   }
 
   return (
-    <div id="class-content-wrapper" className={`${classContentStyles.pixelBackground} flex flex-col flex-grow w-full`}>
+    <div id="class-content-wrapper" className={`${classContentStyles.pixelBackground} border-[#e6ce63] border-b-0 border-[7px] border-double flex flex-col flex-grow w-full`}>
       <PreloadImages classes={classes} /> {/* Add the preloader here */}
-      <div id="upper-box-container" className={`relative pt-2 border border-[#e6ce63] shadow-lg text-white w-full transition-all duration-300 ${isClassListCollapsed ? 'h-16' : 'h-auto'}`}>
+      <div id="upper-box-container" className={`relative pt-2 border-b-[#e6ce63] border-[3px] border-double text-white w-full transition-all duration-300 ${isClassListCollapsed ? 'h-16' : 'h-auto'}`}>
         <div className="flex items-center mb-4">
           <div className="text-xl font-bold text-center flex-grow">
             {getHeaderContent()}
@@ -427,10 +427,10 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
           </div>
         )}
       </div>
-      <div id="lower-box-container" className="w-full border-t-0 border-[3px] border-double border-[#e6ce63] shadow-lg text-white flex flex-col flex-grow">
+      <div id="lower-box-container" className="w-full shadow-lg text-white flex flex-col flex-grow">
         {selectedClass ? (
           <>
-            <div id="tab-header-container" className={`${headerStyles.header} ${classContentStyles.pixelBackground}`}>
+            <div id="tab-header-container" className={`${headerStyles.header}`}>
               <button
                 className={`${headerStyles.tabButton} ${headerStyles.overview} ${activeTab === 'Overview' ? headerStyles.active : ''} ${activeTab === 'Overview' ? headerStyles.expanded : ''}`}
                 onClick={() => handleTabClick('Overview')}
@@ -454,7 +454,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
               </button>
               <div className={headerStyles.spacer}></div>
             </div>
-            <div id="tab-content-container" className="w-full flex-1 border-t-0 border-[3px] border-double border-[#e6ce63] shadow-lg text-white flex flex-col relative flex-grow">
+            <div id="tab-content-container" className="w-full flex-1  shadow-lg text-white flex flex-col relative flex-grow">
               {activeTab === 'Overview' && (
                 <>
                   <ClassOverviewTab classItem={selectedClass} />

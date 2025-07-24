@@ -37,8 +37,7 @@ export default function WikiLayout({ children }: WikiLayoutProps) {
   const pageTitle = getPageTitle(pathname);
 
   const headerContent = (
-    <div className="flex items-center justify-between">
-      <MedievalBurgerMenu />
+    <div className="flex items-center justify-end">
       <span 
         className="text-yellow-300 font-bold text-lg"
         style={{

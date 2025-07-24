@@ -167,23 +167,19 @@ useEffect(() => {
 
 // Effect to update formLevelValues based on maxLevel and paramDefs
 useEffect(() => {
-  const currentMaxLevel = formMaxLevel; // formMaxLevel is now a number
+  const currentMaxLevel = formMaxLevel;
 
-  setFormLevelValues(prevLevelsOrInitial => {
-    // Determine the base for existing values: if editing and initialData's levels are relevant, use them.
-    // This logic helps preserve initialData values when the form loads for an edit.
-    const baseValuesSource = (isEditing && initialData && initialData.max_level === currentMaxLevel && initialData.level_values) 
-                            ? initialData.level_values 
-                            : prevLevelsOrInitial;
-
+  setFormLevelValues(prevLevels => {
     const newLevels: SkillLevelValue[] = [];
     for (let i = 1; i <= currentMaxLevel; i++) {
-      const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
+      // Find existing data for this level from the previous state
+      const existingDataForThisLevel = prevLevels.find(l => l.level === i) ?? { level: i };
       const levelEntry: SkillLevelValue = { level: i };
-      
+
       formParamDefs.forEach(def => {
         const trimmedKey = def.key.trim();
         if (trimmedKey) {
+          // Preserve existing value if it exists, otherwise default to empty string
           levelEntry[trimmedKey] = existingDataForThisLevel[trimmedKey] ?? '';
         }
       });
@@ -191,7 +187,7 @@ useEffect(() => {
     }
     return newLevels;
   });
-}, [formMaxLevel, formParamDefs, initialData, isEditing]); // Added isEditing and initialData
+}, [formMaxLevel, formParamDefs]); // Removed initialData and isEditing from dependencies
 
   // Effect to update liveFormData
   useEffect(() => {
@@ -548,7 +544,7 @@ useEffect(() => {
             onChange={(e) => setFormDescriptionTemplate(e.target.value)} 
             rows={6}
             className="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 resize-y block w-full"
-            style={{ overflowWrap: 'break-word', overflowX: 'hidden', boxSizing: 'border-box' }}
+            style={{ overflowWrap: 'break-word', overflowX: 'hidden', wordBreak: 'break-word', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -619,7 +615,7 @@ useEffect(() => {
 
       <div className="mt-4 p-4 bg-gray-900 border border-gray-700 rounded overflow-hidden">
         <h3 className="text-lg font-semibold text-gray-200 mb-2">Raw Form Data</h3>
-        <pre className="text-xs text-gray-300 bg-gray-800 p-2 rounded max-h-60 block w-full" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', overflowX: 'auto', boxSizing: 'border-box' }}>
+        <pre className="text-xs text-gray-300 bg-gray-800 p-2 rounded max-h-60 block w-full" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowX: 'hidden', boxSizing: 'border-box' }}>
           {JSON.stringify(liveFormData, null, 2)}
         </pre>
       </div>

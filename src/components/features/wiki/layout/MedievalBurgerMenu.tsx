@@ -19,8 +19,7 @@ const menuItems: MenuItem[] = [
   { href: '/guides', label: 'Hướng dẫn', icon: '/image/menu/guides.webp' },
   { href: '/events', label: 'Tin tức & Sự kiện', icon: '/image/menu/events.webp' },
   { href: '/lore', label: 'Biên niên sử', icon: '/image/menu/lore.webp' },
-  { href: '/quests', label: 'Nhiệm vụ', icon: '/image/quest_icon.webp' },
-  { href: '/dungeons', label: 'Dungeon', icon: '/image/dungeon_icon.webp' },
+  { href: '/calculator', label: 'Máy tính', icon: '/image/menu/calculator.webp' },
   { href: '/auth/login', label: 'Admin', icon: '/image/menu/admin.webp' }];
 
 export default function MedievalBurgerMenu() {
@@ -53,22 +52,24 @@ export default function MedievalBurgerMenu() {
 
   return (
     <>
-      {/* Sticky Burger Button - Bottom Right */}
-      <button
-        onClick={toggleMenu}
-        className={styles.burgerButton}
-        aria-label="Open menu"
-      >
-        <Image
-          src="/image/burger_button.webp"
-          alt="Menu"
-          width={64}
-          height={64}
-          className={styles.burgerImage}
-          draggable={false}
-          priority={true}
-        />
-      </button>
+      <div className={styles.stickyWrapper}>
+        {/* Sticky Burger Button - Bottom Right */}
+        <button
+          onClick={toggleMenu}
+          className={styles.burgerButton}
+          aria-label="Open menu"
+        >
+          <Image
+            src="/image/burger_button.webp"
+            alt="Menu"
+            width={64}
+            height={64}
+            className={styles.burgerImage}
+            draggable={false}
+            priority={true}
+          />
+        </button>
+      </div>
 
       {/* Menu Overlay */}
       {isMenuOpen && (

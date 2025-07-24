@@ -3,6 +3,7 @@ import Image from 'next/image';
 import styles from './UIBox.module.css'; // Import the CSS Module
 import Cloud from '../Cloud/Cloud';
 import { useUIStore } from '@/stores/ui-store';
+import MedievalBurgerMenu from '@/components/features/wiki/layout/MedievalBurgerMenu'; // Import MedievalBurgerMenu
 
 interface UIBoxProps {
   children?: React.ReactNode;
@@ -50,8 +51,9 @@ const UIBox: React.FC<UIBoxProps> = ({
             <div className={styles['box-header-border-bottom']}></div>
           </div>
         )}
-        <div className={`${styles['box-children-wrapper']} flex-grow flex flex-col ${contentWrapperClasses}`}>
+        <div className={`${styles['box-children-wrapper']} flex-grow flex flex-col ${contentWrapperClasses} relative`}>
           {children}
+          <MedievalBurgerMenu /> {/* Render MedievalBurgerMenu here */}
         </div>
       </div>
     </div>
