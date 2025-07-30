@@ -4,14 +4,14 @@ import { getClassesWithSkills } from '@/lib/data/classes';
 
 export const dynamic = 'force-dynamic';
 
-interface ClassesPageProps {
-  searchParams: {
-    class?: string;
-  };
-}
-
-export default async function ClassesPage({ searchParams }: ClassesPageProps) {
-  const { class: classSlug } = searchParams;
+export default async function ClassesPage({
+  params: _params,
+  searchParams,
+}: {
+  params: Promise<object>;
+  searchParams: Promise<{ class?: string }>;
+}) {
+  const { class: classSlug } = await searchParams;
   const [classes] = await Promise.all([getClassesWithSkills()]);
 
   return (

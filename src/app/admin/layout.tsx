@@ -8,7 +8,7 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [, setIsSidebarCollapsed] = useState(false);
 
   return (
     <div className="flex min-h-screen">

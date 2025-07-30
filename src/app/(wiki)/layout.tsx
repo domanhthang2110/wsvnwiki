@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import UIBox from '@/components/ui/Box/UIBox';
-import MedievalBurgerMenu from '@/components/features/wiki/layout/MedievalBurgerMenu';
 
 interface WikiLayoutProps {
   children: React.ReactNode;

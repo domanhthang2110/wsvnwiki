@@ -69,6 +69,21 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
   const classListContainerRef = useRef<HTMLDivElement>(null);
   const [showDiamondDot, setShowDiamondDot] = useState(false);
 
+  const handleOpenDetail = async (classItem: ClassItem) => {
+    if (selectedClass?.id !== classItem.id) {
+      setSelectedClass(classItem);
+      setActiveTab('Overview');
+      fetchTalentData(classItem);
+
+      const classInfo = CLASSES_DATA.find(c => c.name === classItem.name);
+      if (classInfo) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('class', classInfo.slug);
+        router.push(`?${params.toString()}`);
+      }
+    }
+  };
+
   useEffect(() => {
     if (initialClassSlug) {
       const classInfo = CLASSES_DATA.find(c => c.slug === initialClassSlug);
@@ -79,7 +94,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
         }
       }
     }
-  }, [initialClassSlug, classes]);
+  }, [initialClassSlug, classes, handleOpenDetail]);
 
   // Smart gap detection for FactionSwitcher
   useEffect(() => {
@@ -205,20 +220,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
     }
   }, [fetchedTalents]);
 
-  const handleOpenDetail = async (classItem: ClassItem) => {
-    if (selectedClass?.id !== classItem.id) {
-      setSelectedClass(classItem);
-      setActiveTab('Overview');
-      fetchTalentData(classItem);
-
-      const classInfo = CLASSES_DATA.find(c => c.name === classItem.name);
-      if (classInfo) {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('class', classInfo.slug);
-        router.push(`?${params.toString()}`);
-      }
-    }
-  };
+  
 
   const handleTabClick = (tab: 'Overview' | 'Skills' | 'Talents') => {
     setActiveTab(tab);

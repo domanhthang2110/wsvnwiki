@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Clock from '@/components/ui/Clock/Clock';
-import { getPosts } from '@/lib/data/posts';
-import { PostItem } from '@/types/posts';
 import { EventItem } from '@/types/events';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -28,7 +26,6 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
         if (data) {
           // Convert to EventItem format
           const eventItems: EventItem[] = data.map(event => ({
-            id: event.id,
             title: event.title || 'Untitled',
             description: event.description || '',
             originalDescription: event.description || '',
@@ -80,7 +77,7 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
         <div className={styles.newsTrack}>
           {events.map((event) => (
             <div 
-              key={event.id} 
+              key={event.guid} 
               className={styles.newsCard}
               onClick={() => onOpenModal(event)}
             >

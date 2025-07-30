@@ -3,7 +3,6 @@ import RSSParser from 'rss-parser';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import * as cheerio from 'cheerio';
-import { EventItem } from '@/types/events';
 import { Translate } from '@google-cloud/translate/build/src/v2';
 import { createClient } from '@/lib/supabase/server';
 

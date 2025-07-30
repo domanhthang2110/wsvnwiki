@@ -55,7 +55,6 @@ interface GuidesClientPageProps {
 export default function GuidesClientPage({ initialGuides, initialTags }: GuidesClientPageProps) {
   const [allGuides] = useState<PostItem[]>(initialGuides);
   const [filteredGuides, setFilteredGuides] = useState<PostItem[]>(initialGuides);
-  const [allTags] = useState<TagRow[]>(initialTags);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'card' | 'compact'>('compact');
@@ -122,7 +121,7 @@ export default function GuidesClientPage({ initialGuides, initialTags }: GuidesC
 
   useEffect(() => {
     setFilteredGuides(getFilteredGuides());
-  }, [searchQuery, activeCategory, allGuides]);
+  }, [searchQuery, activeCategory, allGuides, getFilteredGuides]);
 
   // Calculate responsive search width
   useEffect(() => {

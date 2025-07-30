@@ -9,12 +9,12 @@ export async function generateStaticParams() {
   return slugs.map(({ slug }) => ({ slug }));
 }
 
-interface PageProps {
-  params: { slug: string };
-}
-
-export default async function Page({ params }: PageProps) {
-  const { slug } = params;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const post = await getPostBySlug(slug);
   
   if (!post) {
