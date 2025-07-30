@@ -1,17 +1,28 @@
 .tableOfContentsContainer {
-  position: sticky;
-  top: 24px; /* Adjust as needed */
-  max-height: calc(100vh - 40px); /* Adjust as needed */
+  position: relative;
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
-  padding-left: 10px; /* Space for the tracker bar */
-  /* Hide on mobile */
-  display: none;
+  padding-left: 12px; /* Space for the tracker bar */
+  display: block;
 }
 
-@media (min-width: 769px) {
-  .tableOfContentsContainer {
-    display: block; /* Show on larger screens */
-  }
+/* Custom scrollbar for medieval theme */
+.tableOfContentsContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tableOfContentsContainer::-webkit-scrollbar-track {
+  background: #2d1810;
+  border-radius: 3px;
+}
+
+.tableOfContentsContainer::-webkit-scrollbar-thumb {
+  background: #e6ce63;
+  border-radius: 3px;
+}
+
+.tableOfContentsContainer::-webkit-scrollbar-thumb:hover {
+  background: #d4b942;
 }
 
 .tocList {
@@ -22,33 +33,67 @@
 }
 
 .tocListItem {
-  margin-bottom: 5px;
-  transition: margin-left 0.2s ease-in-out; /* Smooth indentation change */
+  margin-bottom: 8px;
+  transition: all 0.2s ease-in-out;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.tocListItem:hover {
+  background-color: rgba(230, 206, 99, 0.1);
 }
 
 .tocListItem a {
   text-decoration: none;
-  color: #888; /* Default link color */
+  color: #d1d5db; /* Default link color - light gray */
   display: block;
-  padding: 3px 0;
-  transition: color 0.2s ease-in-out;
+  padding: 6px 0;
+  transition: all 0.2s ease-in-out;
+  font-size: 14px;
+  line-height: 1.4;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
 }
 
 .tocListItem a:hover {
-  color: #eee; /* Hover color */
+  color: #e6ce63; /* Medieval gold on hover */
+  border-left-color: #e6ce63;
+}
+
+.tocListItem.active {
+  background-color: rgba(230, 206, 99, 0.15);
 }
 
 .tocListItem.active a {
-  color: #fff; /* Active link color */
-  font-weight: bold;
+  color: #e6ce63; /* Active link color - medieval gold */
+  font-weight: 600;
+  border-left-color: #e6ce63;
 }
 
 .trackerBar {
   position: absolute;
   left: 0;
-  width: 3px; /* Width of the tracker bar */
-  background-color: #007bff; /* Color of the tracker bar */
+  width: 4px; /* Width of the tracker bar */
+  background: linear-gradient(180deg, #e6ce63 0%, #d4b942 100%); /* Medieval gold gradient */
   border-radius: 2px;
   transition: top 0.3s ease-in-out, height 0.3s ease-in-out; /* Smooth animation */
   z-index: 1; /* Ensure it's above list items */
+  box-shadow: 0 0 8px rgba(230, 206, 99, 0.3);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 1023px) {
+  .tableOfContentsContainer {
+    max-height: 400px;
+    padding-left: 8px;
+  }
+  
+  .tocListItem a {
+    font-size: 13px;
+    padding: 4px 0;
+  }
+  
+  .trackerBar {
+    width: 3px;
+  }
 }

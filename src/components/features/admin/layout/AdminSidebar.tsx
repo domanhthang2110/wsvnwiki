@@ -15,7 +15,8 @@ const navItems = [
   { href: '/admin/talent-trees', label: 'Talent Trees' },
   { href: '/admin/posts', label: 'Posts' },
   { href: '/admin/media', label: 'Media' },
-  { href: '/admin/tags', label: 'Tags' }
+  { href: '/admin/tags', label: 'Tags' },
+  { href: '/admin/weekly-schedules', label: 'Weekly Schedules' }
 ];
 
 export function AdminSidebar({ onToggleCollapse }: { onToggleCollapse: (isCollapsed: boolean) => void }) {

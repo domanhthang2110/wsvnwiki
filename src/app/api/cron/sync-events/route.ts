@@ -48,11 +48,17 @@ async function translateText(text: string, targetLanguage: string = 'vi'): Promi
 async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: string = 'vi'): Promise<string> {
   if (!htmlContent || htmlContent.trim() === '') return htmlContent;
   try {
+    console.log("--- Before Sanitization ---");
+    console.log(htmlContent);
     const { window } = new JSDOM('');
     const purify = DOMPurify(window);
     const sanitizedHtml = purify.sanitize(htmlContent, { USE_PROFILES: { html: true } });
+    console.log("--- After Sanitization, Before Translation ---");
+    console.log(sanitizedHtml);
     const translate = getTranslateClient();
     const [translation] = await translate.translate(sanitizedHtml, targetLanguage);
+    console.log("--- After Translation ---");
+    console.log(translation);
     return translation;
   } catch (error) {
     console.error('HTML translation and sanitization error:', error);
@@ -113,21 +119,25 @@ if (token !== cronSecret) {
 
       // Only process and translate new items
       let descriptionHtml = item.content || item.description || '';
+      console.log(`--- Initial descriptionHtml for ${item.guid} ---`);
+      console.log(descriptionHtml);
       if (descriptionHtml) {
         const $ = cheerio.load(descriptionHtml);
         $('span[style*="color:#006633"]').css('color', 'white');
         $('span[style*="color:#8e44ad"]').css('color', 'yellow');
         $('span[style*="color:#d35400"]').css('color', 'white');
         descriptionHtml = cleanHtmlContent($.html());
+        console.log(`--- After cleanHtmlContent for ${item.guid} ---`);
+        console.log(descriptionHtml);
       }
 
       const translatedTitle = await translateText(item.title ?? '');
-      const translatedDescription = await translateAndSanitizeHTML(item.originalDescription ?? '');
+      const translatedDescription = await translateAndSanitizeHTML(descriptionHtml);
 
       // 2. Insert into Supabase (only new items reach here)
       const { data, error } = await supabase
         .from('events')
-        .insert( // Use insert as we've pre-checked for existence
+        .insert(
           {
             guid: item.guid,
             title: translatedTitle, // Use translated content

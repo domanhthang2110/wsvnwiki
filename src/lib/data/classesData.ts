@@ -4,6 +4,7 @@ export type ClassName = 'Barbarian' | 'Rogue' | 'Shaman' | 'Hunter' | 'Blade Dan
 
 export interface ClassInfo {
   name: ClassName;
+  slug: string;
   faction: Faction;
   side: Side;
   faction_icon: string;
@@ -11,26 +12,26 @@ export interface ClassInfo {
 }
 
 export const CLASSES_DATA: ClassInfo[] = [
-  { name: 'Barbarian', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
-  { name: 'Rogue', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
-  { name: 'Shaman', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
-  { name: 'Hunter', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
-  { name: 'Blade Dancer', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
-  { name: 'Ranger', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
-  { name: 'Druid', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
-  { name: 'Warden', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
-  { name: 'Death Knight', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
-  { name: 'Warlock', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
-  { name: 'Necromancer', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
-  { name: 'Reaper', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
-  { name: 'Paladin', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
-  { name: 'Mage', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp', banner: '/image/classes/mage/banner.gif' },
-  { name: 'Priest', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
-  { name: 'Seeker', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
-  { name: 'Chieftain', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
-  { name: 'Templar', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
-  { name: 'Beast Master', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
-  { name: 'Charmer', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
+  { name: 'Barbarian', slug: 'barbarian', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
+  { name: 'Rogue', slug: 'rogue', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
+  { name: 'Shaman', slug: 'shaman', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
+  { name: 'Hunter', slug: 'hunter', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
+  { name: 'Blade Dancer', slug: 'blade-dancer', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
+  { name: 'Ranger', slug: 'ranger', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
+  { name: 'Druid', slug: 'druid', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
+  { name: 'Warden', slug: 'warden', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
+  { name: 'Death Knight', slug: 'death-knight', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
+  { name: 'Warlock', slug: 'warlock', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
+  { name: 'Necromancer', slug: 'necromancer', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
+  { name: 'Reaper', slug: 'reaper', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
+  { name: 'Paladin', slug: 'paladin', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
+  { name: 'Mage', slug: 'mage', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp', banner: '/image/classes/mage/banner.gif' },
+  { name: 'Priest', slug: 'priest', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
+  { name: 'Seeker', slug: 'seeker', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
+  { name: 'Chieftain', slug: 'chieftain', faction: 'Mountain Clan', side: 'Legion', faction_icon: '/image/factions/mountain-clan/icon.webp' },
+  { name: 'Templar', slug: 'templar', faction: 'Chosen', side: 'Sentinel', faction_icon: '/image/factions/chosen/icon.webp' },
+  { name: 'Beast Master', slug: 'beast-master', faction: 'Firstborn', side: 'Sentinel', faction_icon: '/image/factions/firstborn/icon.webp' },
+  { name: 'Charmer', slug: 'charmer', faction: 'Forsaken', side: 'Legion', faction_icon: '/image/factions/forsaken/icon.webp' },
 ];
 
 export const FACTION_ORDER: Faction[] = ['Chosen', 'Firstborn', 'Mountain Clan', 'Forsaken'];

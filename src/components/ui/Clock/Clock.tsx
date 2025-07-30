@@ -25,31 +25,21 @@ const Clock: React.FC<ClockProps> = ({ timeZone, label }) => {
     timeZone,
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
     hour12: false,
   });
 
-  const dateString = time.toLocaleDateString('en-US', {
+  const dateString = time.toLocaleDateString('en-GB', {
     timeZone,
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
   });
-
-  const tzString = time
-    .toLocaleTimeString('en-US', {
-      timeZone,
-      timeZoneName: 'short',
-    })
-    .split(' ')[2];
 
   return (
     <div className={styles.clockWrapper}>
       <h2 className={styles.title}>{label}</h2>
       <div className={styles.time}>{timeString}</div>
       <div className={styles.date}>{dateString}</div>
-      <div className={styles.timezone}>{tzString}</div>
     </div>
   );
 };

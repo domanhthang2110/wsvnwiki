@@ -35,6 +35,7 @@ const getPageTitle = (pathname: string): string => {
 export default function WikiLayout({ children }: WikiLayoutProps) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+  
 
   const headerContent = (
     <div className="flex items-center justify-end">
@@ -56,7 +57,7 @@ export default function WikiLayout({ children }: WikiLayoutProps) {
         headerEnabled={true} 
         headerHeight={40}
         headerContent={headerContent}
-        contentCenteredAndMaxWidth={true} // Apply centering and max-width here
+        contentCenteredAndMaxWidth={true}
         showClouds={true} // Enable clouds for this layout
         showAltBurgerMenu={true}
       >

@@ -405,6 +405,33 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_schedules: {
+        Row: {
+          created_at: string
+          day_of_week: Json | null
+          event_desc: string | null
+          id: number
+          name: string | null
+          time_slot: string | null
+        }
+        Insert: {
+          created_at?: string
+          day_of_week?: Json | null
+          event_desc?: string | null
+          id?: number
+          name?: string | null
+          time_slot?: string | null
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: Json | null
+          event_desc?: string | null
+          id?: number
+          name?: string | null
+          time_slot?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

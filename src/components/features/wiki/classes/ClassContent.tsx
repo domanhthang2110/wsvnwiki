@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ClassSimpleCard from './ClassSimpleCard';
 import { ClassItem } from '@/types/classes';
 import { CLASSES_DATA, FACTION_ORDER, SIDE_ORDER } from '@/lib/data/classesData';
@@ -20,6 +21,7 @@ import ClassOverviewTab from './ClassOverviewTab';
 import classContentStyles from './ClassContent.module.css';
 interface ClassContentProps {
   classes: ClassItem[];
+  initialClassSlug?: string;
 }
 
 // Helper component to preload images
@@ -51,7 +53,9 @@ function DiamondDot({ size = DIAMOND_DOT_SIZE, color = DIAMOND_DOT_COLOR, left =
   );
 }
 
-const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
+const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentSideIndex, setCurrentSideIndex] = useState(0);
   const [currentFactionIndex, setCurrentFactionIndex] = useState(0);
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
@@ -64,6 +68,18 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const [fetchedTalents, setFetchedTalents] = useState<Record<number, TalentItem[]>>({});
   const classListContainerRef = useRef<HTMLDivElement>(null);
   const [showDiamondDot, setShowDiamondDot] = useState(false);
+
+  useEffect(() => {
+    if (initialClassSlug) {
+      const classInfo = CLASSES_DATA.find(c => c.slug === initialClassSlug);
+      if (classInfo) {
+        const classToSelect = classes.find(c => c.name === classInfo.name);
+        if (classToSelect) {
+          handleOpenDetail(classToSelect);
+        }
+      }
+    }
+  }, [initialClassSlug, classes]);
 
   // Smart gap detection for FactionSwitcher
   useEffect(() => {
@@ -194,6 +210,13 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
       setSelectedClass(classItem);
       setActiveTab('Overview');
       fetchTalentData(classItem);
+
+      const classInfo = CLASSES_DATA.find(c => c.name === classItem.name);
+      if (classInfo) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('class', classInfo.slug);
+        router.push(`?${params.toString()}`);
+      }
     }
   };
 

@@ -95,6 +95,7 @@ export async function getClassById(id: number): Promise<ClassItem | null> {
   } as ClassItem;
 }
 
+
 // Function to get all class IDs for static generation (if you have individual class pages)
 export async function getAllClassIds(): Promise<{ id: number }[]> {
   try {
