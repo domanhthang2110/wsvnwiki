@@ -10,11 +10,11 @@ export async function generateStaticParams() {
 }
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug } = params;
   const post = await getPostBySlug(slug);
   
   if (!post) {

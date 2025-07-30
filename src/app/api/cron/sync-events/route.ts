@@ -119,16 +119,12 @@ if (token !== cronSecret) {
 
       // Only process and translate new items
       let descriptionHtml = item.content || item.description || '';
-      console.log(`--- Initial descriptionHtml for ${item.guid} ---`);
-      console.log(descriptionHtml);
       if (descriptionHtml) {
         const $ = cheerio.load(descriptionHtml);
         $('span[style*="color:#006633"]').css('color', 'white');
         $('span[style*="color:#8e44ad"]').css('color', 'yellow');
         $('span[style*="color:#d35400"]').css('color', 'white');
         descriptionHtml = cleanHtmlContent($.html());
-        console.log(`--- After cleanHtmlContent for ${item.guid} ---`);
-        console.log(descriptionHtml);
       }
 
       const translatedTitle = await translateText(item.title ?? '');
