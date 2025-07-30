@@ -11,7 +11,7 @@ interface ClassesPageProps {
 }
 
 export default async function ClassesPage({ searchParams }: ClassesPageProps) {
-  const { class: classSlug } = await searchParams;
+  const { class: classSlug } = searchParams;
   const [classes] = await Promise.all([getClassesWithSkills()]);
 
   return (
