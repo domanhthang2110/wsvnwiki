@@ -26,11 +26,11 @@ interface ClassContentProps {
 // Helper component to preload images
 const PreloadImages: React.FC<{ classes: ClassItem[] }> = ({ classes }) => {
   return (
-    <div style={{ display: 'none' }}>
+    <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
       {classes.map(cls => (
         <React.Fragment key={cls.id}>
           {cls.image_assets?.logo && (
-            <Image src={cls.image_assets.logo} alt="" width={1} height={1} priority={false} loading="eager" />
+            <Image src={cls.image_assets.logo} alt="" width={32} height={32} priority={true} loading="eager" />
           )}
           {cls.image_assets?.banner && (
             <video src={cls.image_assets.banner} preload="auto" style={{ display: 'none' }} />
@@ -453,7 +453,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
                 className={`${headerStyles.tabButton} ${headerStyles.overview} ${activeTab === 'Overview' ? headerStyles.active : ''} ${activeTab === 'Overview' ? headerStyles.expanded : ''}`}
                 onClick={() => handleTabClick('Overview')}
               >
-                <Image draggable={false} src={selectedClass.image_assets?.logo || ''} alt="Overview" width={32} height={32} className={headerStyles.tabIcon} />
+                <Image draggable={false} src={selectedClass.image_assets?.logo || ''} alt="Overview" width={32} height={32} className={headerStyles.tabIcon} priority={true} />
                 {activeTab === 'Overview' && <span className={headerStyles.tabName}>{selectedClass.name}</span>}
               </button>
               <button
