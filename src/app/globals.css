@@ -246,3 +246,9 @@
 .font-size-2xl { font-size: 1.5rem; }
 .font-size-3xl { font-size: 1.875rem; }
 .font-size-4xl { font-size: 2.25rem; }
+
+@layer utilities {
+  .prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: inherit;
+  }
+}

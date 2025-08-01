@@ -7,6 +7,7 @@ import ItemForm from '@/components/features/admin/items/ItemForm';
 import ItemCard from '@/components/features/admin/items/ItemCard';
 import BulkItemImport from '@/components/features/admin/items/BulkItemImport';
 import LongButton from '@/components/ui/LongButton';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AdminItemsPage() {
   const [items, setItems] = useState<Item[]>([]);
@@ -221,9 +222,7 @@ export default function AdminItemsPage() {
       </div>
       
       {listLoading && (
-        <div className="text-center text-gray-600 dark:text-gray-400">
-          Loading items...
-        </div>
+        <LoadingOverlay />
       )}
       
       {listError && (

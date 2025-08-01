@@ -7,6 +7,7 @@ import PostForm from '@/components/features/admin/posts/PostForm';
 import Link from 'next/link';
 import { Edit, Trash2, PlusCircle, X, Copy } from 'lucide-react'; 
 import { slugify } from '@/lib/utils';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AdminPostsPage() {
 
@@ -206,7 +207,7 @@ export default function AdminPostsPage() {
       {!showForm && (
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-200">Existing Posts</h2>
-          {isLoading && <p className="text-center py-4">Loading posts...</p>}
+          {isLoading && <LoadingOverlay />}
           {pageError && <p className="text-red-500 dark:text-red-400 text-center py-4">Error: {pageError}</p>}
           {!isLoading && !pageError && posts.length === 0 && <p className="text-center py-4 text-gray-500 dark:text-gray-400">No posts yet. Click &quot;New Post&quot; to create one.</p>}
           

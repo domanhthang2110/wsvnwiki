@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       title: event.title || 'No Title',
       link: event.link || '',
       description: event.description || '',
-      originalDescription: event.description || '', // Assuming description from DB is already translated/processed
+      originalDescription: event.original_desc,
       pubDate: event.pub_date || new Date().toISOString(),
       author: event.author || '',
       guid: event.guid,

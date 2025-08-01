@@ -51,7 +51,7 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
               style={{ minWidth: '40px' }}
             >
               <span className=" text-white text-xs leading-none">
-                {showOriginal ? 'VI' : 'EN'}
+                {showOriginal ? 'EN' : 'VI'}
               </span>
             </LongButton>
           )}
@@ -64,6 +64,7 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
             {formattedDate} {event.author && `by ${event.author}`}
           </p>
           <div 
+            key={showOriginal ? 'original' : 'translated'}
             className="leading-relaxed prose prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: displayedDescription ?? '' }}
           />

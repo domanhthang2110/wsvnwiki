@@ -72,22 +72,6 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
               ref={contentRef} 
               className="prose prose-lg prose-invert max-w-none text-white p-6"
               style={{
-                '--tw-prose-body': '#e5e5e5',
-                '--tw-prose-headings': '#e6ce63',
-                '--tw-prose-lead': '#d1d5db',
-                '--tw-prose-links': '#60a5fa',
-                '--tw-prose-bold': '#ffffff',
-                '--tw-prose-counters': '#9ca3af',
-                '--tw-prose-bullets': '#6b7280',
-                '--tw-prose-hr': '#374151',
-                '--tw-prose-quotes': '#9ca3af',
-                '--tw-prose-quote-borders': '#374151',
-                '--tw-prose-captions': '#9ca3af',
-                '--tw-prose-code': '#e6ce63',
-                '--tw-prose-pre-code': '#d1d5db',
-                '--tw-prose-pre-bg': '#0f0f0f',
-                '--tw-prose-th-borders': '#374151',
-                '--tw-prose-td-borders': '#374151',
               } as React.CSSProperties}
             >
               {content && parse(content)}

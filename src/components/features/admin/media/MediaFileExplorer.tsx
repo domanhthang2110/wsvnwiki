@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, ChangeEvent, DragEvent, useRef } from
 import { supabase } from '@/lib/supabase/client';
 import PreviewModal from './PreviewModal'; // Import the new PreviewModal component
 import Image from 'next/image';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 // Define a type for the items to be returned, similar to Supabase FileObject
 interface LocalStorageItem {
@@ -486,7 +487,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
         
         {(isUploading || uploadError || uploadSuccessMessages.length > 0) && (
           <div className="my-2 text-xs">
-            {isUploading && <p className="text-blue-600 dark:text-blue-400 animate-pulse">Processing uploads...</p>}
+            {isUploading && <LoadingOverlay />}
             {uploadError && <p className="text-red-600 dark:text-red-400">Upload Error: {uploadError}</p>}
             {uploadSuccessMessages.length > 0 && ( <div className="p-1 bg-green-50 dark:bg-green-800 border border-green-200 dark:border-green-700 rounded-md"> {uploadSuccessMessages.map((msg, idx) => <p key={idx} className="text-green-700 dark:text-green-300">{msg}</p>)} </div> )}
           </div>
@@ -494,7 +495,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
 
         {/* Gallery Content */}
         <div> {/* Added min-height to ensure dropzone is always available */}
-            {loadingItems && items.length === 0 && <p className="text-center py-10 dark:text-gray-300">Loading items...</p>}
+            {loadingItems && items.length === 0 && <LoadingOverlay />}
             {itemsError && <p className="text-center py-10 text-red-500 dark:text-red-400">Error: {itemsError}</p>}
             {!loadingItems && !itemsError && items.length === 0 && ( <p className="text-center py-10 text-gray-500 dark:text-gray-400">This folder is empty. Drag files here or use the &apos;Upload&apos; button.</p> )}
 

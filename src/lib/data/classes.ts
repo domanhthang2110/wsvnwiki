@@ -1,3 +1,4 @@
+import { staticSupabase } from '@/lib/supabase/static';
 import { createClient } from '@/lib/supabase/server';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ClassItem, ClassRow } from '@/types/classes';
@@ -12,8 +13,7 @@ interface SkillWithItemsQuery extends SkillRow {
 
 // Function to fetch all classes with their associated skills
 export async function getClassesWithSkills(): Promise<ClassItem[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = await staticSupabase
     .from('classes')
     .select(`
       *,

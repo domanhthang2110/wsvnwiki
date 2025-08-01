@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { supabase } from '@/lib/supabase/client'; 
 import { Edit3, Trash2, Tag, Type, AlertTriangle } from 'lucide-react';
 import { slugify } from '@/lib/utils'; // Import slugify from utils
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 // --- TypeScript Interfaces ---
 interface TaxonomyItem {
@@ -314,7 +315,7 @@ export default function AdminTaxonomyPage() {
   };
 
   const renderList = (items: TaxonomyItem[], categoryName: 'Tag' | 'Type', categoryKey: 'tags' | 'types', loading: boolean, error: string | null) => {
-    if (loading) return <p className="text-center text-gray-600 dark:text-gray-400 py-4">Loading {categoryName}s...</p>;
+    if (loading) return <LoadingOverlay />;
     if (error) return <p className="text-red-500 dark:text-red-400 py-4">Error loading {categoryName}s: {error}</p>;
     if (items.length === 0) return <p className="text-center text-gray-600 dark:text-gray-400 py-4">No {categoryName}s found. Add one using the form above.</p>;
 

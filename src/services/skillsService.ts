@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase/client';
+import type { Item } from '../types/items';
 import type { SkillItem } from '../types/skills';
 import { validateSkill } from '../utils/validation';
 import { RetryManager } from '../utils/retry';
@@ -10,12 +11,61 @@ export class SkillsService {
   /**
    * Fetch all skills ordered by name with caching
    */
+  static async getSkillList(): Promise<Pick<SkillItem, 'id' | 'name' | 'icon_url'>[]> {
+    console.log('Fetching skill list');
+    return await RetryManager.retry(async () => {
+      const { data, error } = await supabase
+        .from('skills')
+        .select('id, name, icon_url')
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching skill list:', error);
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error('No data returned when fetching skill list');
+      }
+
+      return data;
+    });
+  }
+
+  static async getSkillById(id: number): Promise<SkillItem> {
+    console.log('Fetching skill by id', id);
+    return await RetryManager.retry(async () => {
+      const { data, error } = await supabase
+        .from('skills')
+        .select('*, items:skill_items(items(*))')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching skill by id:', error);
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error('No data returned when fetching skill by id');
+      }
+
+      // We need to flatten the items array
+      const skillData = { ...data, items: data.items.map((i: { items: Item }) => i.items) };
+
+      return skillData as SkillItem;
+    });
+  }
+
+  /**
+   * Fetch all skills ordered by name with caching
+   */
   static async getAllSkills(): Promise<SkillItem[]> {
     console.log('Fetching all skills');
     return await RetryManager.retry(async () => {
       const { data, error } = await supabase
         .from('skills')
-        .select('*')
+        .select('*, items:skill_items(items(*))')
         .order('name');
 
       if (error) {
@@ -26,8 +76,11 @@ export class SkillsService {
       if (!data) {
         throw new Error('No data returned when fetching skills');
       }
+      
+      // We need to flatten the items array
+      const skillsData = data.map(d => ({ ...d, items: d.items.map((i: { items: Item }) => i.items) }));
 
-      return data;
+      return skillsData as SkillItem[];
     });
   }
 

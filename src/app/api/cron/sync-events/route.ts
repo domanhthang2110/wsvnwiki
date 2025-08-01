@@ -20,16 +20,19 @@ function getTranslateClient(): Translate {
 
 function cleanHtmlContent(html: string): string {
   if (!html) return '';
-  const dom = new JSDOM(html);
-  const document = dom.window.document;
-  const elements = document.querySelectorAll('*');
-  elements.forEach(element => {
-    const htmlElement = element as HTMLElement;
-    htmlElement.style.removeProperty('background-color');
-    htmlElement.style.removeProperty('background');
-    htmlElement.style.removeProperty('text-shadow');
+  const $ = cheerio.load(html);
+  $('*').each((i, el) => {
+    const element = $(el);
+    // Keep existing styles, but remove problematic ones
+    const style = element.attr('style');
+    if (style) {
+      let newStyle = style.replace(/background-color:[^;]+;?/g, '');
+      newStyle = newStyle.replace(/background:[^;]+;?/g, '');
+      newStyle = newStyle.replace(/text-shadow:[^;]+;?/g, '');
+      element.attr('style', newStyle.trim());
+    }
   });
-  return document.body.innerHTML;
+  return $('body').html() || '';
 }
 
 async function translateText(text: string, targetLanguage: string = 'vi'): Promise<string> {
@@ -51,7 +54,10 @@ async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: str
     console.log(htmlContent);
     const { window } = new JSDOM('');
     const purify = DOMPurify(window);
-    const sanitizedHtml = purify.sanitize(htmlContent, { USE_PROFILES: { html: true } });
+    const sanitizedHtml = purify.sanitize(htmlContent, {
+      USE_PROFILES: { html: true },
+      ADD_ATTR: ['style']
+    });
     console.log("--- After Sanitization, Before Translation ---");
     console.log(sanitizedHtml);
     const translate = getTranslateClient();
@@ -123,11 +129,16 @@ if (token !== cronSecret) {
         $('span[style*="color:#006633"]').css('color', 'white');
         $('span[style*="color:#8e44ad"]').css('color', 'yellow');
         $('span[style*="color:#d35400"]').css('color', 'white');
+
+        $('span[style*="color:#006633"]').css('color', 'white');
+        $('span[style*="color:#8e44ad"]').css('color', 'yellow');
+        $('span[style*="color:#d35400"]').css('color', 'white');
         descriptionHtml = cleanHtmlContent($.html());
       }
 
+      const originalDescription = descriptionHtml;
       const translatedTitle = await translateText(item.title ?? '');
-      const translatedDescription = await translateAndSanitizeHTML(descriptionHtml);
+      const translatedDescription = await translateAndSanitizeHTML(originalDescription);
 
       // 2. Insert into Supabase (only new items reach here)
       const { data, error } = await supabase
@@ -138,6 +149,7 @@ if (token !== cronSecret) {
             title: translatedTitle, // Use translated content
             link: item.link,
             description: translatedDescription, // Use translated content
+            original_desc: originalDescription, // Save the original, processed description
             pub_date: item.pubDate,
             author: item.author,
             image_url: cheerio.load(descriptionHtml).root().find('img').first().attr('src'), // Image URL from processed HTML

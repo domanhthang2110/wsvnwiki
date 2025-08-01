@@ -16,6 +16,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { href: '/', label: 'Trang chủ', icon: '/image/menu/home.webp' },
   { href: '/classes', label: 'Lớp nhân vật', icon: '/image/menu/classes.webp' },
+  { href: '/skills', label: 'Kỹ năng', icon: '/image/menu/classes.webp' },
   { href: '/guides', label: 'Hướng dẫn', icon: '/image/menu/guides.webp' },
   { href: '/events', label: 'Tin tức & Sự kiện', icon: '/image/menu/events.webp' },
   { href: '/lore', label: 'Biên niên sử', icon: '/image/menu/lore.webp' },

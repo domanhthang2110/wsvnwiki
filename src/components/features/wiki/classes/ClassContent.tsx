@@ -21,7 +21,6 @@ import ClassOverviewTab from './ClassOverviewTab';
 import classContentStyles from './ClassContent.module.css';
 interface ClassContentProps {
   classes: ClassItem[];
-  initialClassSlug?: string;
 }
 
 // Helper component to preload images
@@ -53,9 +52,9 @@ function DiamondDot({ size = DIAMOND_DOT_SIZE, color = DIAMOND_DOT_COLOR, left =
   );
 }
 
-const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }) => {
-  const router = useRouter();
+const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const searchParams = useSearchParams();
+  const initialClassSlug = searchParams.get('class');
   const [currentSideIndex, setCurrentSideIndex] = useState(0);
   const [currentFactionIndex, setCurrentFactionIndex] = useState(0);
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
@@ -69,20 +68,69 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
   const classListContainerRef = useRef<HTMLDivElement>(null);
   const [showDiamondDot, setShowDiamondDot] = useState(false);
 
-  const handleOpenDetail = async (classItem: ClassItem) => {
+  const fetchTalentData = useCallback(async (classItem: ClassItem) => {
+    if (!classItem.talent_tree) return;
+
+    const tree = classItem.talent_tree;
+    const hasFullData = !!tree.talents_data;
+    const hasFetchedDetails = !!fetchedTalents[tree.id];
+
+    if (hasFullData && hasFetchedDetails) {
+      return;
+    }
+
+    let treeData = tree;
+    if (!hasFullData) {
+      const { data, error } = await supabase
+        .from('talent_trees')
+        .select('id, name, talents_data')
+        .eq('id', tree.id)
+        .single();
+      
+      if (error || !data) {
+        console.error("Failed to fetch talent tree data", error);
+        return;
+      }
+      treeData = { ...tree, ...data };
+    }
+
+    if (treeData.talents_data && !hasFetchedDetails) {
+      const talentIds = treeData.talents_data.nodes
+        .map(n => n.talent_id)
+        .filter(Boolean);
+
+      if (talentIds.length > 0) {
+        const { data: talentDetails, error: talentError } = await supabase
+          .from('talents')
+          .select('*')
+          .in('id', talentIds);
+
+        if (talentError) {
+          console.error("Failed to fetch talent details", talentError);
+          return;
+        }
+        
+        setFetchedTalents(prev => ({ ...prev, [treeData.id]: talentDetails as TalentItem[] }));
+      }
+    }
+
+    if (!hasFullData) {
+      setSelectedClass(current => {
+        if (current?.id === classItem.id) {
+          return { ...current, talent_tree: treeData as TalentTreeItem };
+        }
+        return current;
+      });
+    }
+  }, [fetchedTalents]);
+
+  const handleOpenDetail = useCallback(async (classItem: ClassItem) => {
     if (selectedClass?.id !== classItem.id) {
       setSelectedClass(classItem);
       setActiveTab('Overview');
-      fetchTalentData(classItem);
-
-      const classInfo = CLASSES_DATA.find(c => c.name === classItem.name);
-      if (classInfo) {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set('class', classInfo.slug);
-        router.push(`?${params.toString()}`);
-      }
+      await fetchTalentData(classItem);
     }
-  };
+  }, [selectedClass, fetchTalentData]);
 
   useEffect(() => {
     if (initialClassSlug) {
@@ -94,7 +142,8 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
         }
       }
     }
-  }, [initialClassSlug, classes, handleOpenDetail]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialClassSlug, classes]);
 
   // Smart gap detection for FactionSwitcher
   useEffect(() => {
@@ -163,62 +212,6 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes, initialClassSlug }
     }
     return groups;
   }, [classes]);
-
-  const fetchTalentData = useCallback(async (classItem: ClassItem) => {
-    if (!classItem.talent_tree) return;
-
-    const tree = classItem.talent_tree;
-    const hasFullData = !!tree.talents_data;
-    const hasFetchedDetails = !!fetchedTalents[tree.id];
-
-    if (hasFullData && hasFetchedDetails) {
-      return;
-    }
-
-    let treeData = tree;
-    if (!hasFullData) {
-      const { data, error } = await supabase
-        .from('talent_trees')
-        .select('id, name, talents_data')
-        .eq('id', tree.id)
-        .single();
-      
-      if (error || !data) {
-        console.error("Failed to fetch talent tree data", error);
-        return;
-      }
-      treeData = { ...tree, ...data };
-    }
-
-    if (treeData.talents_data && !hasFetchedDetails) {
-      const talentIds = treeData.talents_data.nodes
-        .map(n => n.talent_id)
-        .filter(Boolean);
-
-      if (talentIds.length > 0) {
-        const { data: talentDetails, error: talentError } = await supabase
-          .from('talents')
-          .select('*')
-          .in('id', talentIds);
-
-        if (talentError) {
-          console.error("Failed to fetch talent details", talentError);
-          return;
-        }
-        
-        setFetchedTalents(prev => ({ ...prev, [treeData.id]: talentDetails as TalentItem[] }));
-      }
-    }
-
-    if (!hasFullData) {
-      setSelectedClass(current => {
-        if (current?.id === classItem.id) {
-          return { ...current, talent_tree: treeData as TalentTreeItem };
-        }
-        return current;
-      });
-    }
-  }, [fetchedTalents]);
 
   
 

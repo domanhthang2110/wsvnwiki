@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { PostItem, TagRow } from '@/types/posts';
 import { GuideCard } from '@/components/features/wiki/guides/GuideCard';
 import { InputField } from '@/components/ui/InputField';
@@ -52,7 +52,7 @@ interface GuidesClientPageProps {
   initialTags: TagRow[];
 }
 
-export default function GuidesClientPage({ initialGuides, initialTags }: GuidesClientPageProps) {
+export default function GuidesClientPage({ initialGuides }: GuidesClientPageProps) {
   const [allGuides] = useState<PostItem[]>(initialGuides);
   const [filteredGuides, setFilteredGuides] = useState<PostItem[]>(initialGuides);
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,7 +83,7 @@ export default function GuidesClientPage({ initialGuides, initialTags }: GuidesC
     return allGuides.filter(isEssentialGuide).slice(0, 6); // Limit to 6 essential guides
   };
 
-  const getFilteredGuides = (): PostItem[] => {
+  const getFilteredGuides = useCallback((): PostItem[] => {
     let guides = allGuides;
     
     // Filter by category
@@ -102,7 +102,7 @@ export default function GuidesClientPage({ initialGuides, initialTags }: GuidesC
     }
     
     return guides;
-  };
+  }, [allGuides, activeCategory, searchQuery]);
 
   const getCategoryPlaceholder = (): string => {
     switch (activeCategory) {

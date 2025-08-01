@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import EventCard from './EventCard';
 import EventModal from './EventModal';
-import { EventItem } from '@/types/events';export default function EventsContent() {
+import { EventItem } from '@/types/events';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import LongButton from '@/components/ui/LongButton';
+import Image from 'next/image';
+
+export default function EventsContent() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -12,7 +17,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6); // Should match server-side
+  const [, setItemsPerPage] = useState(6); // Should match server-side
 
   const handleOpenModal = (event: EventItem) => {
     setSelectedEvent(event);
@@ -72,25 +77,6 @@ import { EventItem } from '@/types/events';export default function EventsContent
     backgroundSize: '70px 40px',
   };
 
-  if (isLoading) {
-    return (
-      <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
-        <div className="mb-8 text-center">
-          <p className="text-gray-400">Đang tải sự kiện...</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {[...Array(itemsPerPage)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-700 h-48 rounded-lg mb-4"></div>
-              <div className="bg-gray-700 h-4 rounded mb-2"></div>
-              <div className="bg-gray-700 h-3 rounded w-3/4"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
@@ -114,6 +100,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
 
   return (
     <>
+      {isLoading && <LoadingOverlay darkened />}
       <div className="w-full flex flex-col flex-grow p-4 border-[3px] border-double border-[#e6ce63] shadow-lg text-white" style={pixelBackgroundStyle}>
         {/* {debugInfo && (
           <div className="bg-gray-800 border border-yellow-400 p-4 mb-6 rounded-lg shadow-inner">
@@ -124,7 +111,7 @@ import { EventItem } from '@/types/events';export default function EventsContent
           </div>
         )} */}
         
-        {events.length === 0 ? (
+        {events.length === 0 && !isLoading ? (
           <div className="text-center py-12">
             <p className="text-gray-400">Không có sự kiện nào được tìm thấy.</p>
           </div>
@@ -141,31 +128,48 @@ import { EventItem } from '@/types/events';export default function EventsContent
         )}
 
         {totalPages > 1 && (
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="flex justify-center items-center mt-8 space-x-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+              className="disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-125 transition-all duration-200"
             >
-              Trước
+              <Image
+                src="/image/arrow_button.webp"
+                alt="Previous"
+                width={45}
+                height={45}
+                className="pixelated"
+                draggable={false}
+                priority={true}
+                style={{ height: 'auto' }}
+              />
             </button>
             {[...Array(totalPages)].map((_, i) => (
-              <button
+              <LongButton
                 key={i + 1}
+                width={45}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-4 py-2 rounded ${
-                  currentPage === i + 1 ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'
-                } text-white transition-colors`}
+                isHighlighted={currentPage === i + 1}
               >
                 {i + 1}
-              </button>
+              </LongButton>
             ))}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+              className="disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-125 transition-all duration-200"
             >
-              Sau
+              <Image
+                src="/image/arrow_button.webp"
+                alt="Next"
+                width={45}
+                height={45}
+                className="pixelated scale-x-[-1]"
+                draggable={false}
+                priority={true}
+                style={{ height: 'auto' }}
+              />
             </button>
           </div>
         )}

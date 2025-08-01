@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LogIn, LogOut, LayoutDashboard } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AuthStatusButtons() {
   const [session, setSession] = useState<Session | null>(null);
@@ -40,7 +41,9 @@ export default function AuthStatusButtons() {
 
   if (loading) {
     return (
-      <div className="p-2 text-gray-400 text-sm">Loading auth...</div>
+      <div className="p-2">
+        <LoadingOverlay />
+      </div>
     );
   }
 

@@ -80,6 +80,7 @@ export type Database = {
           id: number
           image_url: string | null
           link: string | null
+          original_desc: string | null
           pub_date: string | null
           title: string | null
         }
@@ -91,6 +92,7 @@ export type Database = {
           id?: number
           image_url?: string | null
           link?: string | null
+          original_desc?: string | null
           pub_date?: string | null
           title?: string | null
         }
@@ -102,6 +104,7 @@ export type Database = {
           id?: number
           image_url?: string | null
           link?: string | null
+          original_desc?: string | null
           pub_date?: string | null
           title?: string | null
         }

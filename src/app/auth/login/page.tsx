@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/button';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 function LoginPageContent() {
   const [email, setEmail] = useState('');
@@ -111,29 +112,30 @@ function LoginPageContent() {
         )}
 
         <div>
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            className="w-full"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
+            Sign in
+          </Button>
         </div>
       </form>
       <div className="mt-4 text-center">
         <Link href="/" passHref>
-          <Button variant="outline" className="w-full text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+          <Button variant="outline" className="w-full">
             Back to Wiki
           </Button>
         </Link>
       </div>
+      {loading && <LoadingOverlay darkened />}
     </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<LoadingOverlay />}>
       <LoginPageContent />
     </Suspense>
   );

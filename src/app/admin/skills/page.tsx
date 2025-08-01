@@ -9,6 +9,7 @@ import SkillCard from '@/components/features/admin/skills/SkillCard';
 import BulkSkillImport from '@/components/features/admin/skills/BulkSkillImport';
 import ItemSelectorModal from '@/components/features/admin/items/ItemSelectorModal';
 import ClassHeader from '@/components/features/admin/skills/ClassHeader';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<SkillItem[]>([]);
@@ -327,9 +328,7 @@ export default function AdminSkillsPage() {
       )}
       
       {listLoading && (
-        <div className="text-center text-gray-600 dark:text-gray-400">
-          Loading skills...
-        </div>
+        <LoadingOverlay />
       )}
       
       {listError && (

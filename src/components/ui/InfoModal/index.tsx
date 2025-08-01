@@ -97,7 +97,7 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
                     altText={item.name ?? 'Relic Icon'}
                     styleType="yellow"
                   />
-                  <span className="mt-1 w-20 break-words" style={{ color: '#9dee05' }}>{item.name}</span>
+                  <span className="mt-1 w-20 break-words text-xs" style={{ color: '#9dee05' }}>{item.name}</span>
                 </div>
               ))}
             </div>

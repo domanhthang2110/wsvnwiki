@@ -6,6 +6,7 @@ import { TalentItem } from '@/types/talents';
 import TalentForm from '@/components/features/admin/talents/TalentForm';
 import TalentCard from '@/components/features/admin/talents/TalentCard';
 import BulkTalentImport from '@/components/features/admin/talents/BulkTalentImport';
+import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AdminTalentsPage() {
   const [talents, setTalents] = useState<TalentItem[]>([]);
@@ -129,9 +130,7 @@ export default function AdminTalentsPage() {
       </div>
       
       {listLoading && (
-        <div className="text-center text-gray-600 dark:text-gray-400">
-          Loading talents...
-        </div>
+        <LoadingOverlay />
       )}
       
       {listError && (

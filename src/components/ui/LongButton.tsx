@@ -8,6 +8,7 @@ interface LongButtonProps {
   onClick?: () => void;
   className?: string;
   hoverHighlightingEnabled?: boolean;
+  isHighlighted?: boolean;
   style?: React.CSSProperties; // Allow external styles, including transform
   children?: React.ReactNode;
 }
@@ -18,6 +19,7 @@ const LongButton: React.FC<LongButtonProps> = ({
   onClick,
   className = '',
   hoverHighlightingEnabled = true,
+  isHighlighted = false,
   style, // Destructure the style prop
   children,
 }) => {
@@ -28,7 +30,7 @@ const LongButton: React.FC<LongButtonProps> = ({
 
   const spriteUrl = '/long_button.webp';
 
-  const showHighlightedSprite = hoverHighlightingEnabled && isHovered;
+  const showHighlightedSprite = (hoverHighlightingEnabled && isHovered) || isHighlighted;
 
   const getSpritePosition = (part: 'cap' | 'middle') => {
     if (showHighlightedSprite) {

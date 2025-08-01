@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './HomePage.module.css';
 import EventModal from '../events/EventModal';
+import IconFrame from '@/components/shared/IconFrame';
 
 const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -28,7 +29,7 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
           const eventItems: EventItem[] = data.map(event => ({
             title: event.title || 'Untitled',
             description: event.description || '',
-            originalDescription: event.description || '',
+            originalDescription: event.original_desc || '', // Correctly map original_desc
             author: event.author || '',
             pubDate: event.pub_date || event.created_at,
             link: event.link || '',
@@ -50,7 +51,7 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
   if (isLoading) {
     return (
       <div className={styles.latestNews}>
-        <h2 className={styles.sectionTitle}>Latest News</h2>
+        <h2 className={styles.sectionTitle}>Tin tức mới nhất</h2>
         <div className={styles.newsCarousel}>
           <div className={styles.newsTrack}>
             {[...Array(4)].map((_, i) => (
@@ -72,7 +73,7 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
 
   return (
     <div className={styles.latestNews}>
-      <h2 className={styles.sectionTitle}>Latest News</h2>
+      <h2 className={styles.sectionTitle}>Tin tức mới nhất</h2>
       <div className={styles.newsCarousel}>
         <div className={styles.newsTrack}>
           {events.map((event) => (
@@ -104,42 +105,37 @@ const QuickLinks = () => {
   const links = [
     { 
       href: '/classes', 
-      label: 'Classes', 
-      description: 'Explore all character classes',
-      image: '/image/menu/classes.webp'
+      label: 'Lớp nhân vật', 
+      image: '/image/quicklinks/classes.webp'
     },
     { 
       href: '/guides', 
-      label: 'Guides', 
-      description: 'Learn strategies and tips',
-      image: '/image/menu/guides.webp'
+      label: 'Hướng dẫn', 
+      image: '/image/quicklinks/guides.webp'
     },
     { 
       href: '/events', 
-      label: 'Events', 
-      description: 'Current and upcoming events',
-      image: '/image/menu/events.webp'
+      label: 'Sự kiện', 
+      image: '/image/quicklinks/events.webp'
     },
     { 
-      href: '/calculator', 
-      label: 'Calculator', 
-      description: 'Plan your character build',
-      image: '/image/menu/calculator.webp'
+      href: '/lore', 
+      label: 'Biên niên sử', 
+      image: '/image/quicklinks/lore.webp'
     },
   ];
 
   return (
     <div className={styles.quickLinks}>
-      <h2 className={styles.sectionTitle}>Quick Links</h2>
+      <h2 className={styles.sectionTitle}>Truy cập nhanh</h2>
       <div className={styles.linksGrid}>
         {links.map(link => (
           <Link href={link.href} key={link.href} className={styles.quickLink}>
             <div className={styles.linkImageContainer}>
-              <Image src={link.image} alt={link.label} width={60} height={60} className={styles.linkImage} />
+              <Image src={link.image} alt={link.label} width={300} height={300} className={styles.linkImage} />
             </div>
             <div className={styles.linkContent}>
               <h3 className={styles.linkTitle}>{link.label}</h3>
-              <p className={styles.linkDescription}>{link.description}</p>
             </div>
           </Link>
         ))}
@@ -166,11 +162,50 @@ const HomePage = () => {
     <>
       <div className={styles.homePage}>
         <div className={styles.logoPlaceholder}>
-          <h1>BIG LOGO</h1>
+          <Image 
+            src="/image/ui/big_logo.webp" 
+            alt="Warspear Online Wiki Vietnam Logo" 
+            width={400} 
+            height={200} 
+            priority 
+            className={styles.bigLogoImage}
+          />
+        </div>
+        <div className={styles.introductionSection}>
+          <p className={styles.introduction}>
+            Chào mừng bạn đến với <strong>Warspear Online Wiki Việt Nam</strong>.
+            Một wiki không chính thức được phát triển và duy trì bởi <a href=""><strong><u>Yukami</u></strong></a>.
+          </p>
+          <p className={styles.introduction}>Gia nhập cộng đồng:</p>
+          <div className={styles.socialLinks}>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <IconFrame 
+                contentImageUrl="https://cdn1.iconfinder.com/data/icons/logotypes/32/square-facebook-512.png" 
+                altText="Facebook"
+                size={50}
+              />
+            </a>
+            <a href="https://discord.com" target="_blank" rel="noopener noreferrer">
+              <IconFrame 
+                contentImageUrl="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/91_Discord_logo_logos-64.png" 
+                altText="Discord"
+                size={50}
+              />
+            </a>
+            <a href="https://messenger.com" target="_blank" rel="noopener noreferrer">
+              <IconFrame 
+                contentImageUrl="https://cdn4.iconfinder.com/data/icons/social-media-2285/1024/logo-64.png" 
+                altText="Messenger"
+                size={50}
+              />
+            </a>
+          </div>
         </div>
         <div className={styles.clockContainer}>
-          <Clock timeZone="Europe/Berlin" label="Ingame Time" />
-          <Clock timeZone="Asia/Ho_Chi_Minh" label="Real Time" />
+          <div className={styles.clockGroup}>
+            <Clock timeZone="Europe/Berlin" label="Ingame Time" />
+            <Clock timeZone="Asia/Ho_Chi_Minh" label="Real Time" />
+          </div>
         </div>
         <QuickLinks />
         <LatestNews onOpenModal={handleOpenModal} />
