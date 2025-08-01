@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Clock from '@/components/ui/Clock/Clock';
 import { EventItem } from '@/types/events';
 import Link from 'next/link';
@@ -12,6 +12,34 @@ import IconFrame from '@/components/shared/IconFrame';
 const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const newsTrackRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (newsTrackRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      newsTrackRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (newsTrackRef.current) {
+        e.preventDefault();
+        newsTrackRef.current.scrollLeft += e.deltaY;
+      }
+    };
+
+    const newsTrackElement = newsTrackRef.current;
+    if (newsTrackElement) {
+      newsTrackElement.addEventListener('wheel', handleWheel);
+    }
+
+    return () => {
+      if (newsTrackElement) {
+        newsTrackElement.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -75,10 +103,10 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
     <div className={styles.latestNews}>
       <h2 className={styles.sectionTitle}>Tin tức mới nhất</h2>
       <div className={styles.newsCarousel}>
-        <div className={styles.newsTrack}>
+        <div className={styles.newsTrack} ref={newsTrackRef}>
           {events.map((event) => (
-            <div 
-              key={event.guid} 
+            <div
+              key={event.guid}
               className={styles.newsCard}
               onClick={() => onOpenModal(event)}
             >
@@ -97,6 +125,12 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
           ))}
         </div>
       </div>
+      <button className={`${styles.carouselButton} ${styles.carouselButtonLeft}`} onClick={() => scroll('left')}>
+        &#8249;
+      </button>
+      <button className={`${styles.carouselButton} ${styles.carouselButtonRight}`} onClick={() => scroll('right')}>
+        &#8250;
+      </button>
     </div>
   );
 };

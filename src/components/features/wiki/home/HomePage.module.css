@@ -129,6 +129,7 @@
 
 /* Latest News Section */
 .latestNews {
+  position: relative;
   padding: 1.5rem;
   background: linear-gradient(145deg, rgba(20, 25, 35, 0.9), rgba(35, 40, 50, 0.8));
   border: 2px solid #4a5568;
@@ -140,8 +141,38 @@
 }
 
 .newsCarousel {
-  position: relative;
   overflow: hidden;
+}
+
+.carouselButton {
+  position: absolute;
+  top: 50%;
+
+  background-color: rgba(26, 32, 44, 1);
+  color: white;
+  border: 2px solid #4a5568;
+  border-radius: 0;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 1.5rem;
+  line-height: 1;
+  height: 4rem;
+  width: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.carouselButton:hover {
+  background-color: rgba(45, 55, 72, 1);
+}
+
+.carouselButtonLeft {
+  left: 0;
+}
+
+.carouselButtonRight {
+  right: 0;
 }
 
 .newsTrack {

@@ -29,3 +29,7 @@
   font-size: 0.875rem;
   color: #ddd;
 }
+
+.gridContainer {
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
+}

@@ -116,8 +116,8 @@ const SkillsPage = () => {
           />
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto" style={{ backgroundColor: 'rgb(0,0,0, 0.5)' }}>
-        <div className="p-4 border-[3px] border-double border-[#e6ce63] h-full">
+      <div className={`flex-grow overflow-y-auto ${styles.gridContainer}`}>
+        <div className="p-4 border-[3px] border-double border-[#e6ce63]">
           {isLoading && <LoadingOverlay />}
           {error && <p>{error}</p>}
           {!isLoading && !error && (
