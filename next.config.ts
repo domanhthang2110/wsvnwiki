@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      // Allow any external HTTPS image for admin flexibility
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
 };

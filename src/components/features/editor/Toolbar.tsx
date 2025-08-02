@@ -6,7 +6,7 @@ import { type Editor } from '@tiptap/react';
 import {
   Bold, Strikethrough, Italic, List, ListOrdered, Underline, Quote,
   Image as ImageIcon, Link as LinkIcon, CornerUpLeft, CornerUpRight,
-  AlignCenter, AlignLeft, AlignRight, AlignJustify
+  AlignCenter, AlignLeft, AlignRight, AlignJustify, Frame, ExternalLink
 } from 'lucide-react';
 
 import { Toggle } from '@/components/ui/Toggle/toggle';
@@ -16,9 +16,10 @@ import { Button } from '@/components/ui/Button/button';
 type Props = {
   editor: Editor | null;
   onImagePickerOpen: () => void;
+  onImageUrlOpen?: () => void;
 };
 
-export function Toolbar({ editor, onImagePickerOpen }: Props) {
+export function Toolbar({ editor, onImagePickerOpen, onImageUrlOpen }: Props) {
   if (!editor) return null;
 
   // The link and image handlers remain the same...
@@ -46,6 +47,7 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
     const width = currentAttrs.width || 'auto';
     editor.chain().focus().updateAttributes('custom-image', { float: newFloat, display: newDisplay, width: width }).run();
   };
+
 
   const fontSizes = [
     { label: '12px', value: '12px' }, { label: '14px', value: '14px' }, { label: '16px', value: '16px' },
@@ -261,7 +263,30 @@ export function Toolbar({ editor, onImagePickerOpen }: Props) {
       {/* Actions Group */}
       <div className="flex items-center gap-1">
         <Button type="button" size="sm" variant="ghost" onClick={handleSetLink} title="Set Link"><LinkIcon className="h-4 w-4" /></Button>
-        <Button type="button" size="sm" variant="ghost" onClick={handleImagePickerOpen} title="Add Image"><ImageIcon className="h-4 w-4" /></Button>
+        <Button type="button" size="sm" variant="ghost" onClick={handleImagePickerOpen} title="Add Image from Files"><ImageIcon className="h-4 w-4" /></Button>
+        {onImageUrlOpen && (
+          <Button type="button" size="sm" variant="ghost" onClick={onImageUrlOpen} title="Add Image from URL"><ExternalLink className="h-4 w-4" /></Button>
+        )}
+        <Button 
+          type="button" 
+          size="sm" 
+          variant="ghost" 
+          onClick={() => {
+            editor.commands.insertContent({
+              type: 'iconFrame',
+              attrs: {
+                src: null,
+                alt: 'Icon',
+                size: 64,
+                styleType: 'yellow',
+                frameType: 'regular'
+              }
+            });
+          }} 
+          title="Add Icon Frame"
+        >
+          <Frame className="h-4 w-4" />
+        </Button>
       </div>
       {/* Float Controls for Images */}
       {editor.isActive('custom-image') && (

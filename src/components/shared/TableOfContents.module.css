@@ -53,6 +53,7 @@
   line-height: 1.4;
   border-left: 2px solid transparent;
   padding-left: 8px;
+  font-family: inherit; /* Use the same font as the rest of the page */
 }
 
 .tocListItem a:hover {
@@ -91,6 +92,7 @@
   .tocListItem a {
     font-size: 13px;
     padding: 4px 0;
+    font-family: inherit; /* Use the same font as the rest of the page */
   }
   
   .trackerBar {

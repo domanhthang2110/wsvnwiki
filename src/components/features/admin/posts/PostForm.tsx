@@ -9,6 +9,7 @@ import { CloseIcon } from '@/components/shared/icons'; // Update icons path
 import TiptapEditor from '@/components/features/editor/TiptapEditor'; // Update TiptapEditor path
 import { type Editor } from '@tiptap/react';
 import { slugify } from '@/lib/utils'; // Import slugify from utils
+import { GuideContentRenderer } from '@/components/features/wiki/guides/GuideContentRenderer';
 
 // Removed local PostTypeItem interface, using TypeRow from '@/types/posts'
 
@@ -33,7 +34,10 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showContentPreview, setShowContentPreview] = useState(false);
+  const [showWikiPreview, setShowWikiPreview] = useState(false);
   const [showMediaPickerModal, setShowMediaPickerModal] = useState(false);
+  const [showImageUrlModal, setShowImageUrlModal] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [imageTarget, setImageTarget] = useState<'featured' | 'tiptap' | null>(null);
   const editorRef = useRef<Editor | null>(null);
   // Removed autosave related state: isAutosaveEnabled, saveStatus, isDirty, autosaveTimeoutRef
@@ -178,6 +182,38 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     setShowMediaPickerModal(true);
   };
 
+  const openImageUrlInput = (target: 'featured' | 'tiptap', editor?: Editor) => {
+    setImageTarget(target);
+    if (editor) editorRef.current = editor;
+    setImageUrlInput('');
+    setShowImageUrlModal(true);
+  };
+
+  const handleImageUrlSubmit = () => {
+    if (!imageUrlInput.trim()) return;
+    
+    if (imageTarget === 'featured') {
+      handleFeaturedImageChange(imageUrlInput.trim());
+    } else if (imageTarget === 'tiptap' && editorRef.current) {
+      editorRef.current
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'image',
+          attrs: {
+            src: imageUrlInput.trim(),
+            alt: '',
+            class: 'inline-block align-bottom m-0',
+          }
+        })
+        .run();
+    }
+    setShowImageUrlModal(false);
+    setImageTarget(null);
+    setImageUrlInput('');
+    void editorRef.current?.commands.focus();
+  };
+
   const handleFileSelectedFromPicker = (publicUrl: string) => {
     if (imageTarget === 'featured') {
       handleFeaturedImageChange(publicUrl);
@@ -250,9 +286,14 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
                 <NextImage src={featuredImageUrl} alt="Featured" fill className="object-contain" />
               </div>
             )}
-            <button type="button" onClick={() => openImagePicker('featured')} className="py-2 px-3 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                {featuredImageUrl ? 'Change' : 'Select'} Featured Image
-            </button>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => openImagePicker('featured')} className="py-2 px-3 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  {featuredImageUrl ? 'Change from Files' : 'Select from Files'}
+              </button>
+              <button type="button" onClick={() => openImageUrlInput('featured')} className="py-2 px-3 text-sm rounded-md border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                  Enter Image URL
+              </button>
+            </div>
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags:</label>
@@ -269,6 +310,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             content={contentHtml}
             onChange={handleContentChange}
             onImagePickerOpen={(editor) => openImagePicker('tiptap', editor)}
+            onImageUrlOpen={(editor) => openImageUrlInput('tiptap', editor)}
           />
         </div>
             
@@ -285,10 +327,11 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             {isSubmitting ? 'Saving...' : (isEditing ? 'Save Changes' : `Create Post`)} 
           </button>
           <button type="button" onClick={() => setShowContentPreview(true)} className="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md">Preview Content</button>
+          <button type="button" onClick={() => setShowWikiPreview(true)} className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">Wiki Preview</button>
         </div>
       </form>
 
-      {/* Modals remain the same */}
+      {/* Content Preview Modal */}
       {showContentPreview && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
@@ -297,6 +340,30 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <button onClick={() => setShowContentPreview(false)} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
             </div>
             <div className="flex-grow overflow-y-auto prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          </div>
+        </div>
+      )}
+
+      {/* Wiki Preview Modal - Fullscreen */}
+      {showWikiPreview && (
+        <div className="fixed inset-0 z-50 bg-gray-900">
+          {/* Sticky Close Button */}
+          <button 
+            onClick={() => setShowWikiPreview(false)} 
+            className="fixed top-4 right-4 z-60 p-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-colors"
+            title="Close Wiki Preview"
+          >
+            <CloseIcon />
+          </button>
+          
+          {/* Fullscreen Wiki Content */}
+          <div className="h-full overflow-y-auto">
+            <GuideContentRenderer
+              content={contentHtml}
+              title={title || 'Untitled Post'}
+              featuredImageUrl={featuredImageUrl || undefined}
+              tags={availableTags.filter(tag => selectedTagIds.has(tag.id))}
+            />
           </div>
         </div>
       )}
@@ -311,6 +378,58 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             </div>
             <div className="flex-grow overflow-y-auto min-h-[300px]">
               <MediaFileExplorer bucketName="media" onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showImageUrlModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-2xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4 pb-3 border-b dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                {imageTarget === 'featured' ? 'Enter Featured Image URL' : 'Enter Image URL'}
+              </h3>
+              <button onClick={() => {setShowImageUrlModal(false); editorRef.current?.commands.focus();}} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Image URL:
+                </label>
+                <input
+                  type="url"
+                  id="imageUrl"
+                  value={imageUrlInput}
+                  onChange={(e) => setImageUrlInput(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full p-3 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleImageUrlSubmit();
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {setShowImageUrlModal(false); editorRef.current?.commands.focus();}}
+                  className="py-2 px-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleImageUrlSubmit}
+                  disabled={!imageUrlInput.trim()}
+                  className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add Image
+                </button>
+              </div>
             </div>
           </div>
         </div>

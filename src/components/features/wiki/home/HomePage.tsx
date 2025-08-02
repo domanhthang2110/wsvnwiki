@@ -214,31 +214,56 @@ const HomePage = () => {
           <div className={styles.socialLinks}>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
               <IconFrame 
-                contentImageUrl="https://cdn1.iconfinder.com/data/icons/logotypes/32/square-facebook-512.png" 
+                contentImageUrl="/image/ui/social/fb.webp" 
                 altText="Facebook"
                 size={50}
               />
             </a>
             <a href="https://discord.com" target="_blank" rel="noopener noreferrer">
               <IconFrame 
-                contentImageUrl="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/91_Discord_logo_logos-64.png" 
+                contentImageUrl="/image/ui/social/discord.webp" 
                 altText="Discord"
                 size={50}
               />
             </a>
             <a href="https://messenger.com" target="_blank" rel="noopener noreferrer">
               <IconFrame 
-                contentImageUrl="https://cdn4.iconfinder.com/data/icons/social-media-2285/1024/logo-64.png" 
+                contentImageUrl="/image/ui/social/messenger.webp" 
                 altText="Messenger"
                 size={50}
               />
             </a>
           </div>
         </div>
-        <div className={styles.clockContainer}>
-          <div className={styles.clockGroup}>
-            <Clock timeZone="Europe/Berlin" label="Ingame Time" />
-            <Clock timeZone="Asia/Ho_Chi_Minh" label="Real Time" />
+        <div className={styles.clockAndNewbieSection}>
+          <div className={styles.clockSection}>
+            <Clock 
+              primaryTimeZone="Europe/Berlin" 
+              primaryLabel="Ingame Time"
+              secondaryTimeZone="Asia/Ho_Chi_Minh" 
+              secondaryLabel="Real Time"
+            />
+          </div>
+          <div className={styles.newbieSection}>
+            <h2 className={styles.newbieSectionTitle}>Dành cho người mới</h2>
+            <div className={styles.newbieLinks}>
+              <a href="#" className={styles.newbieLink}>
+                <span>📚</span>
+                <span>Hướng dẫn cơ bản</span>
+              </a>
+              <a href="#" className={styles.newbieLink}>
+                <span>⚔️</span>
+                <span>Chọn lớp nhân vật</span>
+              </a>
+              <a href="#" className={styles.newbieLink}>
+                <span>🎯</span>
+                <span>Mẹo cho người mới</span>
+              </a>
+              <a href="#" className={styles.newbieLink}>
+                <span>🏆</span>
+                <span>Nhiệm vụ đầu tiên</span>
+              </a>
+            </div>
           </div>
         </div>
         <QuickLinks />

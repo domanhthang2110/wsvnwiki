@@ -3,12 +3,19 @@
 import { useState, useEffect } from 'react';
 import styles from './Clock.module.css';
 
-interface ClockProps {
-  timeZone: string;
-  label: string;
+interface DualClockProps {
+  primaryTimeZone: string;
+  primaryLabel: string;
+  secondaryTimeZone: string;
+  secondaryLabel: string;
 }
 
-const Clock: React.FC<ClockProps> = ({ timeZone, label }) => {
+const Clock: React.FC<DualClockProps> = ({ 
+  primaryTimeZone, 
+  primaryLabel, 
+  secondaryTimeZone, 
+  secondaryLabel 
+}) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -21,25 +28,47 @@ const Clock: React.FC<ClockProps> = ({ timeZone, label }) => {
     };
   }, []);
 
-  const timeString = time.toLocaleTimeString('en-US', {
-    timeZone,
+  const primaryTimeString = time.toLocaleTimeString('en-US', {
+    timeZone: primaryTimeZone,
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
   });
 
-  const dateString = time.toLocaleDateString('en-GB', {
-    timeZone,
+  const primaryDateString = time.toLocaleDateString('en-GB', {
+    timeZone: primaryTimeZone,
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  const secondaryTimeString = time.toLocaleTimeString('en-US', {
+    timeZone: secondaryTimeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  const secondaryDateString = time.toLocaleDateString('en-GB', {
+    timeZone: secondaryTimeZone,
     year: '2-digit',
     month: '2-digit',
     day: '2-digit',
   });
 
   return (
-    <div className={styles.clockWrapper}>
-      <h2 className={styles.title}>{label}</h2>
-      <div className={styles.time}>{timeString}</div>
-      <div className={styles.date}>{dateString}</div>
+    <div className={styles.dualClock}>
+      <div className={styles.timeZoneSection}>
+        <h3 className={styles.title}>{primaryLabel}</h3>
+        <div className={styles.time}>{primaryTimeString}</div>
+        <div className={styles.date}>{primaryDateString}</div>
+      </div>
+      <div className={styles.divider}></div>
+      <div className={styles.timeZoneSection}>
+        <h3 className={styles.title}>{secondaryLabel}</h3>
+        <div className={styles.time}>{secondaryTimeString}</div>
+        <div className={styles.date}>{secondaryDateString}</div>
+      </div>
     </div>
   );
 };

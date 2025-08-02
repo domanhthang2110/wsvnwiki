@@ -2,10 +2,10 @@
 
 import React, { useRef, useEffect } from 'react';
 import Image from 'next/image';
-import parse from 'html-react-parser';
 import { TagRow } from '@/types/posts';
 import TableOfContents from '@/components/shared/TableOfContents';
 import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
+import { CustomContentRenderer } from './CustomContentRenderer';
 
 interface GuideContentRendererProps {
   content: string;
@@ -21,17 +21,18 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
     if (!contentRef.current) return;
 
     const headingElements = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headingElements.forEach((headingEl: Element) => {
+    headingElements.forEach((headingEl) => {
       (headingEl as HTMLElement).style.border = ''; 
       (headingEl as HTMLElement).style.boxSizing = '';
     });
   },);
 
+
   return (
-    <div className={`${classContentStyles.pixelBackground} border-[#e6ce63] border-b-0 border-[7px] border-double flex flex-col flex-grow w-full text-white`}>
-      {/* Featured Image - Full Width Banner */}
+    <div className="border-[#e6ce63] border-b-0 border-[7px] border-double flex flex-col flex-grow w-full text-white bg-gray-900">
+      {/* Featured Image - Banner */}
       {featuredImageUrl && (
-        <div className="relative w-full h-80 flex-shrink-0">
+        <div className="relative w-full h-48 flex-shrink-0">
           <Image
             src={featuredImageUrl}
             alt={title || 'Featured image'}
@@ -43,48 +44,53 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
         </div>
       )}
 
+      {/* Title and Tags Section */}
+      <div className="p-4 lg:p-6 border-[3px] border-double border-[#e6ce63] shadow-lg bg-gray-800">
+        <h1 className="text-3xl lg:text-4xl font-bold mb-3 text-white">{title}</h1>
+        
+        {/* Tags */}
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag: TagRow) => (
+              <span
+                key={tag.id}
+                className="bg-blue-600 text-white text-xs lg:text-sm px-2 py-1 rounded"
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Table of Contents - Mobile/Tablet (shown on smaller screens) */}
+      <div className="lg:hidden p-4 border-[3px] border-double border-yellow-400 shadow-lg bg-gray-800">
+        <h2 className="text-lg font-bold mb-3 text-yellow-400 flex items-center gap-2">
+          📋 Table of Contents
+        </h2>
+        <TableOfContents contentRef={contentRef} />
+      </div>
+
       <div className="flex flex-col lg:flex-row flex-grow">
         {/* Main Content */}
         <div className="lg:w-3/4 flex flex-col flex-grow">
-          {/* Title and Tags Section - Dark Blue like classes page */}
-          <div className="p-6 border-[3px] border-double border-[#e6ce63] shadow-lg" style={{ backgroundColor: '#1e3a8a' }}>
-            <h1 className="text-4xl font-bold mb-4 text-white">{title}</h1>
-            
-            {/* Tags */}
-            {tags && tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag: TagRow) => (
-                  <span
-                    key={tag.id}
-                    className="text-white text-sm px-3 py-1 rounded"
-                    style={{ backgroundColor: '#cc7722' }}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Content with darker background - no gap, no padding around wrapper */}
-          <div className="flex-grow" style={{ backgroundColor: '#1a1a1a' }}>
+          {/* Content */}
+          <div className="flex-grow bg-gray-800">
             <div 
               ref={contentRef} 
               className="prose prose-lg prose-invert max-w-none text-white p-6"
-              style={{
-              } as React.CSSProperties}
             >
-              {content && parse(content)}
+              {content && <CustomContentRenderer content={content} />}
             </div>
           </div>
         </div>
 
-        {/* Table of Contents Sidebar */}
-        <div className="lg:w-1/4 p-4">
+        {/* Table of Contents Sidebar - Desktop Only */}
+        <div className="hidden lg:block lg:w-1/4 p-4 bg-gray-900">
           <div className="sticky top-6">
-            <div className="p-4 border-[3px] border-double border-yellow-400 shadow-lg" style={{ backgroundColor: '#3e2e2b' }}>
-              <h2 className="text-lg font-bold mb-4 text-yellow-300 flex items-center gap-2">
-                📋 Mục lục
+            <div className="p-4 border-[3px] border-double border-yellow-400 shadow-lg bg-gray-800">
+              <h2 className="text-lg font-bold mb-4 text-yellow-400 flex items-center gap-2">
+                📋 Table of Contents
               </h2>
               <TableOfContents contentRef={contentRef} />
             </div>

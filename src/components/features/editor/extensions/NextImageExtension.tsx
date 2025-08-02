@@ -1,7 +1,7 @@
 import { Node } from '@tiptap/core';
-import { ReactNodeViewRenderer } from '@tiptap/react';
+import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react';
 import NextImage from 'next/image';
-import React from 'react'; // Import React for JSX
+import React, { useState, useRef, useEffect } from 'react';
 
 
 const NextImageExtension = Node.create({

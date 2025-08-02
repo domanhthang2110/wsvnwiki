@@ -26,6 +26,7 @@ const MoveIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke
 const DeleteIcon = () => <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
 const UploadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
 const SelectIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>;
+const CreateFolderIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>;
 
 
 interface MediaFileExplorerProps {
@@ -78,6 +79,11 @@ export default function MediaFileExplorer({
   const [selectModeActive, setSelectModeActive] = useState(false); // Renamed for clarity with prop
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [previewFile, setPreviewFile] = useState<CombinedStorageItem | null>(null);
+  
+  // Create folder state
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [renamingItem, setRenamingItem] = useState<CombinedStorageItem | null>(null);
   const [newItemName, setNewItemName] = useState("");
   const [itemToMove, setItemToMove] = useState<{ item: CombinedStorageItem; fromPath: string } | null>(null);
@@ -401,6 +407,55 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     }
   };
 
+  // Create folder functionality
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim()) {
+      alert('Please enter a folder name.');
+      return;
+    }
+
+    // Validate folder name (no special characters, spaces, etc.)
+    const sanitizedName = newFolderName.trim().replace(/[^a-zA-Z0-9-_]/g, '');
+    if (sanitizedName !== newFolderName.trim()) {
+      alert('Folder name can only contain letters, numbers, hyphens, and underscores.');
+      return;
+    }
+
+    setIsCreatingFolder(true);
+    try {
+      // Create folder by uploading a placeholder file
+      const folderPath = supabasePath ? `${supabasePath}/${sanitizedName}` : sanitizedName;
+      const placeholderPath = `${folderPath}/.emptyFolderPlaceholder`;
+      
+      // Upload a small placeholder file to create the folder structure
+      const placeholderContent = new Blob([''], { type: 'text/plain' });
+      const { error } = await supabase.storage
+        .from(bucketName)
+        .upload(placeholderPath, placeholderContent, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        if (error.message.includes('already exists')) {
+          alert('A folder with this name already exists.');
+        } else {
+          throw error;
+        }
+      } else {
+        setNewFolderName('');
+        setShowCreateFolderModal(false);
+        fetchItems(); // Refresh the file list
+        alert(`Folder "${sanitizedName}" created successfully!`);
+      }
+    } catch (error) {
+      console.error('Error creating folder:', error);
+      alert('Failed to create folder. Please try again.');
+    } finally {
+      setIsCreatingFolder(false);
+    }
+  };
+
   return (
     <div 
       className="border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow relative"
@@ -456,6 +511,7 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
                 <>
                   <button onClick={triggerFileInput} disabled={isUploading || loadingItems} className="py-1.5 px-2 sm:px-3 text-white font-semibold rounded-md shadow-sm text-xs sm:text-sm disabled:opacity-50 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 flex items-center"><UploadIcon /> <span className="hidden sm:inline ml-1">Upload</span></button>
                   <input type="file" ref={fileInputRef} multiple accept={accept} onChange={handleFileInputChange} className="hidden" disabled={isUploading || loadingItems} />
+                  <button onClick={() => setShowCreateFolderModal(true)} disabled={isUploading || loadingItems} className="py-1.5 px-2 sm:px-3 text-white font-semibold rounded-md shadow-sm text-xs sm:text-sm disabled:opacity-50 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 flex items-center"><CreateFolderIcon /> <span className="hidden sm:inline ml-1">Folder</span></button>
                 </>
               )}
               {activeTab === 'supabase' && mode === 'manage' && !itemToMove && (
@@ -580,6 +636,45 @@ const handleDrop = (event: DragEvent<HTMLDivElement>) => {
           file={previewFile} 
           onClose={() => setPreviewFile(null)} 
         />
+      )}
+
+      {/* Create Folder Modal */}
+      {showCreateFolderModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowCreateFolderModal(false)}>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Create New Folder</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              Location: <code className="text-xs bg-gray-100 dark:bg-gray-700 p-1 rounded">/{bucketName}/{supabasePath || '(root)'}</code>
+            </p>
+            <input 
+              type="text" 
+              value={newFolderName} 
+              onChange={(e) => setNewFolderName(e.target.value)}
+              placeholder="Enter folder name"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 mb-4"
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+              Only letters, numbers, hyphens, and underscores are allowed.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button 
+                onClick={() => setShowCreateFolderModal(false)} 
+                className="py-2 px-4 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                disabled={isCreatingFolder}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleCreateFolder} 
+                className="py-2 px-4 text-sm rounded-md bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                disabled={isCreatingFolder || !newFolderName.trim()}
+              >
+                {isCreatingFolder ? 'Creating...' : 'Create Folder'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Rename Modal */}

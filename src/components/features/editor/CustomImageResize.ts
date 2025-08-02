@@ -153,6 +153,43 @@ export const CustomImageResize = ImageResize.extend({
         }
       });
 
+      // Handle scroll wheel on input field
+      $widthInput.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const currentValue = parseInt($widthInput.value, 10) || $container.offsetWidth;
+        const delta = e.deltaY > 0 ? -1 : 1; // Scroll down = decrease, scroll up = increase
+        const newWidth = Math.max(5, currentValue + delta); // Minimum width of 5px
+        
+        $widthInput.value = newWidth.toString();
+        $container.style.width = newWidth + 'px';
+        $img.style.width = newWidth + 'px';
+        dispatchNodeView(); // Save changes
+      });
+
+      // Handle keyboard input (Enter key and arrow keys)
+      $widthInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          $widthInput.blur(); // Trigger change event
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const currentValue = parseInt($widthInput.value, 10) || $container.offsetWidth;
+          const newWidth = currentValue + 1;
+          $widthInput.value = newWidth.toString();
+          $container.style.width = newWidth + 'px';
+          $img.style.width = newWidth + 'px';
+          dispatchNodeView();
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const currentValue = parseInt($widthInput.value, 10) || $container.offsetWidth;
+          const newWidth = Math.max(5, currentValue - 1);
+          $widthInput.value = newWidth.toString();
+          $container.style.width = newWidth + 'px';
+          $img.style.width = newWidth + 'px';
+          dispatchNodeView();
+        }
+      });
+
       // Show handles and input box when image is clicked
       $container.addEventListener('click', () => {
         $container.style.position = 'relative';
@@ -173,8 +210,8 @@ export const CustomImageResize = ImageResize.extend({
         clickOutsideTimeout = setTimeout(() => {
           const $target = e.target as HTMLElement;
           if (!$container.contains($target)) {
-            $container.style.border = 'none';
-            $container.style.position = '';
+            $container.style.removeProperty('border');
+            $container.style.removeProperty('position');
             $widthInputBox.style.display = 'none';
             $dots.forEach($dot => $dot.style.display = 'none');
           }

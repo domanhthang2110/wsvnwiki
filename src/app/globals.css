@@ -251,4 +251,68 @@
   .prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
     color: inherit;
   }
+  
+  /* TipTap paragraph spacing */
+  .ProseMirror p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+  
+  .ProseMirror p:first-child {
+    margin-top: 0;
+  }
+  
+  .ProseMirror p:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Hard break styling */
+  .ProseMirror br.my-hard-break {
+    display: block;
+    content: "";
+    margin-top: 0;
+  }
+  
+  /* Default vertical alignment for images and text */
+  .prose img {
+    vertical-align: middle !important;
+    border: none !important;
+  }
+  
+  /* Images in editor - keep inline-block for vertical alignment */
+  .ProseMirror img {
+    vertical-align: middle !important;
+    border: none !important;
+    display: inline-block !important;
+    margin: 0 !important;
+  }
+  
+  /* Remove prose styling from image containers - only for editor */
+  .ProseMirror :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border: none !important;
+  }
+  
+  /* For final post - preserve inline styles and don't override */
+  .prose :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+  .prose-lg :where(img):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    border: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    /* Let inline styles handle margin and display */
+  }
+  
+  /* Ensure image containers don't have leftover borders */
+  .ProseMirror div:has(img) {
+    border: none !important;
+  }
+  
+  /* Default vertical alignment for all inline elements */
+  .ProseMirror *,
+  .prose * {
+    vertical-align: middle;
+  }
 }
