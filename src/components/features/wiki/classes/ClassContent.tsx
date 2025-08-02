@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import ClassSimpleCard from './ClassSimpleCard';
 import { ClassItem } from '@/types/classes';
 import { CLASSES_DATA, FACTION_ORDER, SIDE_ORDER } from '@/lib/data/classesData';

@@ -4,7 +4,6 @@ import React, { useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { TagRow } from '@/types/posts';
 import TableOfContents from '@/components/shared/TableOfContents';
-import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
 import { CustomContentRenderer } from './CustomContentRenderer';
 
 interface GuideContentRendererProps {
