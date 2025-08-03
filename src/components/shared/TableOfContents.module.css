@@ -1,9 +1,7 @@
 .tableOfContentsContainer {
   position: relative;
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
-  padding-left: 12px; /* Space for the tracker bar */
   display: block;
+  width: 100%;
 }
 
 /* Custom scrollbar for medieval theme */
@@ -28,15 +26,35 @@
 .tocList {
   list-style: none;
   padding: 0;
-  margin: 0;
+  padding-top: 1rem;
   position: relative; /* For positioning the tracker bar */
+  padding-left: 1rem;
+  padding-bottom: 1rem;
 }
 
 .tocListItem {
-  margin-bottom: 8px;
   transition: all 0.2s ease-in-out;
-  border-radius: 4px;
-  padding: 2px 8px;
+  position: relative;
+  list-style-type: none;
+  padding-left: calc(var(--indent-level, 0) * 20px);
+}
+
+.tocListItem::before {
+  content: '❖';
+  position: absolute;
+  left: calc(var(--indent-level, 0) * 20px);
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e6ce63;
+  font-size: 1em;
+}
+
+.tocListItem[data-level='2']::before {
+  content: '▸';
+}
+
+.tocListItem[data-level='3']::before {
+  content: '-';
 }
 
 .tocListItem:hover {
@@ -49,25 +67,14 @@
   display: block;
   padding: 6px 0;
   transition: all 0.2s ease-in-out;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
-  border-left: 2px solid transparent;
-  padding-left: 8px;
+  padding-left: 20px;
   font-family: inherit; /* Use the same font as the rest of the page */
 }
 
 .tocListItem a:hover {
   color: #e6ce63; /* Medieval gold on hover */
-  border-left-color: #e6ce63;
-}
-
-.tocListItem.active {
-  background-color: rgba(230, 206, 99, 0.15);
-}
-
-.tocListItem.active a {
-  color: #e6ce63; /* Active link color - medieval gold */
-  font-weight: 600;
   border-left-color: #e6ce63;
 }
 
@@ -82,20 +89,25 @@
   box-shadow: 0 0 8px rgba(230, 206, 99, 0.3);
 }
 
-/* Mobile responsive adjustments */
-@media (max-width: 1023px) {
-  .tableOfContentsContainer {
-    max-height: 400px;
-    padding-left: 8px;
-  }
-  
-  .tocListItem a {
-    font-size: 13px;
-    padding: 4px 0;
-    font-family: inherit; /* Use the same font as the rest of the page */
-  }
-  
-  .trackerBar {
-    width: 3px;
-  }
+.toggleButton {
+  background: #3a2a1a;
+  color: #e6ce63;
+  border: 1px solid #e6ce63;
+  padding: 8px 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.arrow.collapsed {
+  transform: rotate(-90deg);
 }

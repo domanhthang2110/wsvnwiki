@@ -62,13 +62,8 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
         )}
       </div>
 
-      {/* Table of Contents - Mobile/Tablet (shown on smaller screens) */}
-      <div className="lg:hidden p-4 border-[3px] border-double border-yellow-400 shadow-lg bg-gray-800">
-        <h2 className="text-lg font-bold mb-3 text-yellow-400 flex items-center gap-2">
-          📋 Table of Contents
-        </h2>
+      {/* Table of Contents */}
         <TableOfContents contentRef={contentRef} />
-      </div>
 
       <div className="flex flex-col lg:flex-row flex-grow">
         {/* Main Content */}
@@ -77,18 +72,6 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
           className="flex-grow bg-gray-800 prose prose-base prose-invert max-w-none text-white p-6"
         >
           {content && <CustomContentRenderer content={content} />}
-        </div>
-
-        {/* Table of Contents Sidebar - Desktop Only */}
-        <div className="hidden lg:block lg:w-1/4 p-4 bg-gray-900">
-          <div className="sticky top-6">
-            <div className="p-4 border-[3px] border-double border-yellow-400 shadow-lg bg-gray-800">
-              <h2 className="text-lg font-bold mb-4 text-yellow-400 flex items-center gap-2">
-                📋 Table of Contents
-              </h2>
-              <TableOfContents contentRef={contentRef} />
-            </div>
-          </div>
         </div>
       </div>
     </div>
