@@ -141,22 +141,14 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ contentRef, onDebugIn
     }
   }, [activeId, headings]);
 
-  // Smooth Scrolling on Click with header offset
+  // Smooth Scrolling on Click
   const handleClick = useCallback((id: string) => {
     const heading = headings.find((h) => h.id === id);
     if (heading) {
       setIsClickScrolling(true);
       setActiveId(id); // Immediately set active for visual feedback
 
-      // Calculate position with 70px offset for header
-      const elementRect = heading.node.getBoundingClientRect();
-      const currentScrollY = window.scrollY || window.pageYOffset;
-      const targetPosition = currentScrollY + elementRect.top - 70;
-
-      window.scrollTo({
-        top: Math.max(0, targetPosition), // Ensure we don't scroll to negative position
-        behavior: 'smooth'
-      });
+      heading.node.scrollIntoView({ behavior: 'smooth' });
 
       if (scrollLockTimeoutRef.current) {
         clearTimeout(scrollLockTimeoutRef.current);

@@ -72,16 +72,11 @@ export function GuideContentRenderer({ content, title, featuredImageUrl, tags }:
 
       <div className="flex flex-col lg:flex-row flex-grow">
         {/* Main Content */}
-        <div className="lg:w-3/4 flex flex-col flex-grow">
-          {/* Content */}
-          <div className="flex-grow bg-gray-800">
-            <div 
-              ref={contentRef} 
-              className="prose prose-lg prose-invert max-w-none text-white p-6"
-            >
-              {content && <CustomContentRenderer content={content} />}
-            </div>
-          </div>
+        <div
+          ref={contentRef}
+          className="flex-grow bg-gray-800 prose prose-base prose-invert max-w-none text-white p-6"
+        >
+          {content && <CustomContentRenderer content={content} />}
         </div>
 
         {/* Table of Contents Sidebar - Desktop Only */}

@@ -67,6 +67,7 @@
   height: 100%;
   padding-top: calc(var(--header-height, 0px)); /* Adjusted top padding for mobile */
   overflow-y: auto; /* Add this line to enable vertical scrolling */
+  /*scroll-padding-top: 100px !important; /* Offset for all scrollIntoView */
 }
 
 

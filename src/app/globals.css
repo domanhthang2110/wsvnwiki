@@ -1,6 +1,6 @@
-@plugin "@tailwindcss/typography";
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -123,6 +123,9 @@
 }
 
 @layer base {
+  h1, h2, h3, h4, h5, h6 {
+    scroll-margin-top: 50px;
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -315,4 +318,5 @@
   .prose * {
     vertical-align: middle;
   }
+
 }
