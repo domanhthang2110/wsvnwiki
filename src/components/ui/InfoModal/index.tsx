@@ -67,7 +67,10 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
       <div
         ref={modalRef}
         className={`relative border-2 border-[color:var(--box-border-color)] bg-[color:var(--modal-background)] p-4 text-white ${width ? '' : sizeClasses[size]} max-h-[80vh] overflow-y-auto`}
-        style={{ width: width || '400px' }}
+        style={{ 
+          width: width || '400px',
+          backgroundColor: '#081822',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center">
@@ -118,6 +121,9 @@ const InfoModal = <T extends { name?: string | null; icon_url?: string | null; d
         <div className="absolute inset-0 z-60 flex items-center justify-center" onClick={(e) => { e.stopPropagation(); handleCloseRelicModal(); }}>
           <div
             className={`relative border-2 border-[color:var(--box-border-color)] bg-[color:var(--modal-background)] p-4 text-white ${sizeClasses[size]}`}
+            style={{ 
+              backgroundColor: '#081822',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center">
