@@ -58,16 +58,25 @@ const Clock: React.FC<DualClockProps> = ({
 
   return (
     <div className={styles.dualClock}>
-      <div className={styles.timeZoneSection}>
-        <h3 className={styles.title}>{primaryLabel}</h3>
-        <div className={styles.time}>{primaryTimeString}</div>
-        <div className={styles.date}>{primaryDateString}</div>
+      <div className={styles.clockDisplay}>
+        <div className={styles.timeZoneSection}>
+          <h3 className={styles.title}>{primaryLabel}</h3>
+          <div className={styles.time}>{primaryTimeString}</div>
+          <div className={styles.date}>{primaryDateString}</div>
+        </div>
+        <div className={styles.divider}></div>
+        <div className={styles.timeZoneSection}>
+          <h3 className={styles.title}>{secondaryLabel}</h3>
+          <div className={styles.time}>{secondaryTimeString}</div>
+          <div className={styles.date}>{secondaryDateString}</div>
+        </div>
       </div>
-      <div className={styles.divider}></div>
-      <div className={styles.timeZoneSection}>
-        <h3 className={styles.title}>{secondaryLabel}</h3>
-        <div className={styles.time}>{secondaryTimeString}</div>
-        <div className={styles.date}>{secondaryDateString}</div>
+      <div className={styles.resetSection}>
+        <h4 className={styles.resetTitle}>Lịch reset hàng ngày</h4>
+        <ul className={styles.resetList}>
+          <li className={styles.resetItem}>EU-Emerald - 7 giờ sáng</li>
+          <li className={styles.resetItem}>SEA-Pearl - 5 giờ sáng</li>
+        </ul>
       </div>
     </div>
   );

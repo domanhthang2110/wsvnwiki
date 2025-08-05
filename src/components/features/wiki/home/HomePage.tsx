@@ -8,6 +8,7 @@ import Image from 'next/image';
 import styles from './HomePage.module.css';
 import EventModal from '../events/EventModal';
 import IconFrame from '@/components/shared/IconFrame';
+import NewbiePostCard from './NewbiePostCard';
 
 const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -212,14 +213,14 @@ const HomePage = () => {
           </p>
           <p className={styles.introduction}>Gia nhập cộng đồng:</p>
           <div className={styles.socialLinks}>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.facebook.com/share/g/16Uqt62xr3/" target="_blank" rel="noopener noreferrer">
               <IconFrame 
                 contentImageUrl="/image/ui/social/fb.webp" 
                 altText="Facebook"
                 size={50}
               />
             </a>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://discord.gg/WnGT5YNEfS" target="_blank" rel="noopener noreferrer">
               <IconFrame 
                 contentImageUrl="/image/ui/social/discord.webp" 
                 altText="Discord"
@@ -239,30 +240,16 @@ const HomePage = () => {
           <div className={styles.clockSection}>
             <Clock 
               primaryTimeZone="Europe/Berlin" 
-              primaryLabel="Ingame Time"
+              primaryLabel="Ingame"
               secondaryTimeZone="Asia/Ho_Chi_Minh" 
-              secondaryLabel="Real Time"
+              secondaryLabel="Việt Nam"
             />
           </div>
           <div className={styles.newbieSection}>
-            <h2 className={styles.newbieSectionTitle}>Dành cho người mới</h2>
+            <h2 className={styles.newbieSectionTitle}>Dành cho chiến binh mới</h2>
             <div className={styles.newbieLinks}>
-              <a href="#" className={styles.newbieLink}>
-                <span>📚</span>
-                <span>Hướng dẫn cơ bản</span>
-              </a>
-              <a href="#" className={styles.newbieLink}>
-                <span>⚔️</span>
-                <span>Chọn lớp nhân vật</span>
-              </a>
-              <a href="#" className={styles.newbieLink}>
-                <span>🎯</span>
-                <span>Mẹo cho người mới</span>
-              </a>
-              <a href="#" className={styles.newbieLink}>
-                <span>🏆</span>
-                <span>Nhiệm vụ đầu tiên</span>
-              </a>
+              <NewbiePostCard postLink="/guides/huong-dan-chon-nhan-vat-cho-nguoi-moi" icon="🧙" />
+              <NewbiePostCard postLink="guides/cac-trang-thiet-bi-va-chi-so-trong-game" icon="⚔️" />
             </div>
           </div>
         </div>

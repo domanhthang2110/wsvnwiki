@@ -1,16 +1,22 @@
 .dualClock {
   display: flex;
-  align-items: center;
-  padding: 0.5rem;
+  flex-direction: column;
+  padding: 1rem;
   text-align: center;
-  min-width: 200px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
   background: linear-gradient(145deg, rgba(20, 25, 35, 0.9), rgba(35, 40, 50, 0.8));
-  border: 2px solid #4a5568;
-  border-left-color: #718096;
-  border-top-color: #718096;
+  border: 1px solid var(--box-border-color);
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.clockDisplay {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .timeZoneSection {
@@ -22,32 +28,31 @@
 
 .divider {
   width: 1px;
-  height: 40px;
+  height: 80px;
   background: linear-gradient(to bottom, transparent, #4a5568, transparent);
   margin: 0 0.5rem;
 }
 
 .title {
-  font-size: 0.6rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #a0aec0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.2rem;
+  letter-spacing: 1px;
 }
 
 .time {
-  font-size: 1rem;
+  font-size: 2.5rem;
   font-family: 'Micro 5', monospace;
   color: #e2e8f0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  margin: 0.1rem 0;
-  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0.2rem 0;
+  letter-spacing: 1px;
   font-weight: bold;
 }
 
 .date {
-  font-size: 0.5rem;
+  font-size: 0.9rem;
   color: #718096;
   font-weight: 500;
   margin-top: 0.1rem;
@@ -59,37 +64,58 @@
   margin-top: 10px;
 }
 
+.resetSection {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #4a5568;
+  width: 100%;
+}
+
+.resetTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a0aec0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.resetList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resetItem {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin-bottom: 0.25rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .dualClock {
     flex-direction: column;
-    min-width: 160px;
-    padding: 0.4rem;
+    padding: 0.8rem;
   }
 
-  .divider {
-    width: 40px;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #4a5568, transparent);
-    margin: 0.4rem 0;
-  }
 
   .timeZoneSection {
-    width: 100%;
+    /* width: 100%; /* This was causing vertical stacking, so it's removed. */
   }
 
   .title {
-    font-size: 0.5rem;
-    margin-bottom: 0.1rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
   }
 
   .time {
-    font-size: 0.8rem;
-    margin: 0.1rem 0;
+    font-size: 2rem;
+    margin: 0.2rem 0;
   }
 
   .date {
-    font-size: 0.4rem;
-    margin-top: 0.1rem;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
   }
 }
