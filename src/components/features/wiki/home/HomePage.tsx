@@ -227,7 +227,7 @@ const HomePage = () => {
                 size={50}
               />
             </a>
-            <a href="https://messenger.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://m.me/j/AbYQ3blgp6sSk01s/" target="_blank" rel="noopener noreferrer">
               <IconFrame 
                 contentImageUrl="/image/ui/social/messenger.webp" 
                 altText="Messenger"
