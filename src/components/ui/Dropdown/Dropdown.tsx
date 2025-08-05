@@ -53,10 +53,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div className="flex items-center justify-center">
       {showArrows && onPrevious && (
-        <button onClick={onNext} className="hover:brightness-125 transition-all duration-200">
+        <button onClick={onPrevious} className="hover:brightness-125 transition-all duration-200">
           <Image 
             src="/image/arrow_button.webp" 
-            alt="Next" 
+            alt="Previous" 
             width={45} 
             height={45} // placeholder height
             className={`${styles.pixelated}`} 

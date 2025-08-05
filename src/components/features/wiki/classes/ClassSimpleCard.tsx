@@ -24,6 +24,9 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
 
   const avatarUrl = (typeof classItem.image_assets?.avatar === 'string' ? classItem.image_assets.avatar : null) || defaultAvatarPath;
   const isVideoAvatar = avatarUrl.endsWith('.webm') || avatarUrl.endsWith('.mp4');
+  const slug = classItem.name.toLowerCase().replace(/\s+/g, '-');
+  const localImageUrl = `/image/classes/${slug}/attack.webp`;
+  const displayImageUrl = isVideoAvatar ? localImageUrl : avatarUrl;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -91,26 +94,34 @@ export default function ClassSimpleCard({ classItem, onOpenDetail }: ClassSimple
         overflowVisible={isVideoAvatar && isHovered}
       >
         {isVideoAvatar ? (
-          <video
-            draggable={false}
-            ref={videoRef}
-            src={avatarUrl}
-            width={cardWidth}
-            height={cardHeight}
-            className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${isHovered ? 'z-10' : ''}`}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
+          <>
+            <video
+              draggable={false}
+              ref={videoRef}
+              src={avatarUrl}
+              width={cardWidth}
+              height={cardHeight}
+              className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center ${isHovered ? 'block z-10' : 'hidden'}`}
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
+            <Image
+              draggable={false}
+              fill
+              src={displayImageUrl}
+              alt={classItem.name}
+              className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform scale-[1.5] origin-center ${isHovered ? 'hidden' : 'block'}`}
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatarPath; }}
+            />
+          </>
         ) : (
           <Image
             draggable={false}
             fill
-            src={avatarUrl}
+            src={displayImageUrl}
             alt={classItem.name}
-            width={cardWidth}
-            height={cardHeight}
             className={`absolute top-1/2 left-1/2 h-full w-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-[1.5] origin-center`}
             onError={(e) => { (e.currentTarget as HTMLImageElement).src = defaultAvatarPath; }}
           />
