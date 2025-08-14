@@ -20,6 +20,7 @@
   text-overflow: ellipsis;
 }
 .nameText {
+  line-height: 1.15;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Limit to 2 lines */
   -webkit-box-orient: vertical;

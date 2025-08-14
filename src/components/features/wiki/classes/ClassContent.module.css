@@ -4,6 +4,7 @@
   background-repeat: repeat;
   background-size: 70px 40px;
   image-rendering: pixelated;
+  border: 2px solid var(--box-border-color);
 }
 
 .pixelBackgroundDark {
@@ -11,3 +12,10 @@
   background: rgba(17, 24, 39, 0.2);
   image-rendering: pixelated;
 }
+
+/* Centered positioning */
+.centered {
+  top: 50%;
+  transform: translateY(-50%);
+}
+

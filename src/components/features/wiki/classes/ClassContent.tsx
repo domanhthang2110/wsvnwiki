@@ -7,9 +7,7 @@ import { ClassItem } from '@/types/classes';
 import { CLASSES_DATA, FACTION_ORDER, SIDE_ORDER } from '@/lib/data/classesData';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useMediaQuery } from 'react-responsive';
 import { useMounted } from '@/hooks/use-mounted';
-import { motion, AnimatePresence } from 'framer-motion';
 import SkillDisplay from './SkillDisplay';
 import headerStyles from './ClassDetailHeader.module.css';
 import TalentTreeView from './TalentTreeView';
@@ -59,14 +57,25 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const [currentFactionIndex, setCurrentFactionIndex] = useState(0);
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
   const [activeTab, setActiveTab] = useState<'Overview' | 'Skills' | 'Talents'>('Overview');
-  const displayTen = useMediaQuery({ query: '(min-width: 1024px)' });
   const mounted = useMounted();
-  const [direction, setDirection] = useState(0);
-  const [, setIsAnimating] = useState(false); // ✅
+  const [displayTen, setDisplayTen] = useState(false);
   const [isClassListCollapsed, setIsClassListCollapsed] = useState(false);
   const [fetchedTalents, setFetchedTalents] = useState<Record<number, TalentItem[]>>({});
   const classListContainerRef = useRef<HTMLDivElement>(null);
   const [showDiamondDot, setShowDiamondDot] = useState(false);
+
+  // CSS media query hook replacement
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    setDisplayTen(mediaQuery.matches);
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      setDisplayTen(e.matches);
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   const fetchTalentData = useCallback(async (classItem: ClassItem) => {
     if (!classItem.talent_tree) return;
@@ -245,13 +254,13 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
       });
 
       return (
-        <div ref={classListContainerRef} className="flex w-full justify-around items-start">
+        <div ref={classListContainerRef} className="flex w-full justify-center items-start gap-12 md:gap-16 lg:gap-24 xl:gap-32">
           {factionsInSide.map((faction) => (
             <div key={faction} className="flex flex-col items-center gap-y-2">
               <div className="flex flex-row items-center justify-center gap-2 md:gap-4">
-                {groupedClasses[faction].map((classItem: ClassItem) => (
+                {groupedClasses[faction].map((classItem: ClassItem, index: number) => (
                   <ClassSimpleCard
-                    key={classItem.id}
+                    key={`position-${index}`}
                     classItem={classItem}
                     onOpenDetail={() => handleOpenDetail(classItem)}
                   />
@@ -264,9 +273,9 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
     } else {
       const faction = FACTION_ORDER[currentFactionIndex];
       const classesToRender = groupedClasses[faction] || [];
-      return classesToRender.map((classItem: ClassItem) => (
+      return classesToRender.map((classItem: ClassItem, index: number) => (
         <ClassSimpleCard
-          key={classItem.id}
+          key={`mobile-position-${index}`}
           classItem={classItem}
           onOpenDetail={() => handleOpenDetail(classItem)}
         />
@@ -277,7 +286,6 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   const paginate = (newDirection: number) => {
     const scrollDirection = newDirection > 0 ? 'right' : 'left';
     handleScroll(scrollDirection);
-    setDirection(newDirection);
   };
 
   const getHeaderContent = () => {
@@ -370,22 +378,6 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
     return <p>No talent tree available for {selectedClass?.name}.</p>;
   }, [selectedClass, fetchedTalents]);
 
-  const variants = {
-    enter: (direction: number) => ({
-      y: direction > 0 ? 150 : -150,
-      opacity: 0,
-    }),
-    center: {
-      zIndex: 1,
-      y: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      y: direction < 0 ? 150 : -150,
-      opacity: 0,
-    }),
-  };
 
   if (!mounted) {
     return null;
@@ -408,26 +400,9 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
         </div>
         {!isClassListCollapsed && (
           <div className="relative h-[150px] md:h-[170px] overflow-hidden pt-2">
-            <AnimatePresence initial={false} custom={direction}>
-              <motion.div
-                key={displayTen ? currentSideIndex : currentFactionIndex}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  y: { type: "tween", ease: "easeInOut", duration: 0.4 },
-                  opacity: { duration: 0.4 },
-                }}
-                onAnimationStart={() => setIsAnimating(true)}
-                onAnimationComplete={() => setIsAnimating(false)}
-                className={`absolute w-full top-1/2 -translate-y-1/2 flex flex-row items-center justify-center gap-1 md:gap-4 pb-2 flex-nowrap flex-shrink-0`}
-                // onWheel={onWheel} // Disabled to prevent scrolling to scroll the class list
-              >
-                {classes.length > 0 ? classesToDisplay : <p>No classes found.</p>}
-              </motion.div>
-            </AnimatePresence>
+            <div className={`absolute w-full flex flex-row items-center justify-center gap-1 md:gap-4 pb-2 flex-nowrap flex-shrink-0 ${classContentStyles['centered']}`}>
+              {classes.length > 0 ? classesToDisplay : <p>No classes found.</p>}
+            </div>
             {displayTen && (
               <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
                 {showDiamondDot ? (
