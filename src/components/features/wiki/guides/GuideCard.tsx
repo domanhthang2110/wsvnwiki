@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { PostItem } from '@/types/posts';
+import { LoadingLink } from '@/components/shared/LoadingLink';
 
 interface GuideCardProps {
   guide: PostItem;
@@ -25,7 +25,7 @@ export function GuideCard({ guide, isCompact = false, isEssential = false, viewM
   // Compact Card View
   if (actualViewMode === 'compact') {
     return (
-      <Link href={`/guides/${guide.slug}`}>
+      <LoadingLink href={`/guides/${guide.slug}`}>
         <div className={`relative bg-gray-800 overflow-hidden cursor-pointer hover:bg-gray-700 transition-all duration-200 flex flex-row items-center p-3 min-h-[80px] ${
           isEssential ? 'border-[2px] border-yellow-400' : 'border-[2px] border-[#e6ce63]'
         }`}>
@@ -51,14 +51,14 @@ export function GuideCard({ guide, isCompact = false, isEssential = false, viewM
             <p className="text-xs text-gray-300 line-clamp-2">{contentPreview}</p>
           </div>
         </div>
-      </Link>
+      </LoadingLink>
     );
   }
 
 
   // Original Card View
   return (
-    <Link href={`/guides/${guide.slug}`}>
+    <LoadingLink href={`/guides/${guide.slug}`}>
       <div
         className={`relative bg-gray-800 overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-300 flex flex-col ${
           isEssential ? 'min-h-[240px] border-[3px] border-yellow-400' : 'min-h-[200px] border-[2px] border-[#e6ce63]'
@@ -91,6 +91,6 @@ export function GuideCard({ guide, isCompact = false, isEssential = false, viewM
           </p>
         </div>
       </div>
-    </Link>
+    </LoadingLink>
   );
 }

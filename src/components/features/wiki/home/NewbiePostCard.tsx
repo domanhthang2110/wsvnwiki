@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import styles from './HomePage.module.css';
+import { LoadingLink } from '@/components/shared/LoadingLink';
 
 interface NewbiePostCardProps {
   postLink: string;
@@ -54,10 +54,10 @@ const NewbiePostCard: React.FC<NewbiePostCardProps> = ({ postLink, icon }) => {
   }
 
   return (
-    <Link href={postLink} className={styles.newbieLink}>
+    <LoadingLink href={postLink} className={styles.newbieLink}>
       <span>{icon}</span>
       <span>{postTitle}</span>
-    </Link>
+    </LoadingLink>
   );
 };
 

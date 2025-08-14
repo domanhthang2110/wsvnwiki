@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import UIBox from '@/components/ui/Box/UIBox';
+import { NavigationLoadingProvider } from '@/components/features/wiki/layout/NavigationLoadingProvider';
 
 interface WikiLayoutProps {
   children: React.ReactNode;
@@ -50,18 +51,20 @@ export default function WikiLayout({ children }: WikiLayoutProps) {
   );
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <UIBox 
-        className="w-full h-full flex-grow bg-gray-900" 
-        headerEnabled={true} 
-        headerHeight={40}
-        headerContent={headerContent}
-        contentCenteredAndMaxWidth={true}
-        showClouds={true} // Enable clouds for this layout
-        showAltBurgerMenu={true}
-      >
-        {children}
-      </UIBox>
-    </div>
+    <NavigationLoadingProvider>
+      <div className="flex flex-col w-full h-full">
+        <UIBox 
+          className="w-full h-full flex-grow bg-gray-900" 
+          headerEnabled={true} 
+          headerHeight={40}
+          headerContent={headerContent}
+          contentCenteredAndMaxWidth={true}
+          showClouds={true} // Enable clouds for this layout
+          showAltBurgerMenu={true}
+        >
+          {children}
+        </UIBox>
+      </div>
+    </NavigationLoadingProvider>
   );
 }
