@@ -124,21 +124,9 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
       minX,
       minY
     };
-  }, [nodes, talentCellSize, arrowCellSize]);
+  }, [nodes, talentCellSize, arrowCellSize, compositeFrameSettings.rowHeightMultiplier]);
 
-
-
-  if (
-    !talentTree.talents_data ||
-    !Array.isArray(talentTree.talents_data.nodes)
-  ) {
-    return <p>Đang tải...</p>;
-  }
-
-  let initialScale = 1;
-  if (isMobile) {
-    initialScale = 0.7;
-  }
+  const initialScale = isMobile ? 0.7 : 1;
 
   const initialPositionX = useMemo(() => {
     if (typeof window !== "undefined") {
@@ -148,6 +136,13 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
     }
     return 0;
   }, [treeWidth, isMobile]);
+
+  if (
+    !talentTree.talents_data ||
+    !Array.isArray(talentTree.talents_data.nodes)
+  ) {
+    return <p>Đang tải...</p>;
+  }
 
   return (
     <div

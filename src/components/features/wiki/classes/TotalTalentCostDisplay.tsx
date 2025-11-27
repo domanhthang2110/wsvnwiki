@@ -4,11 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useTalentTreeInteractiveStore } from './talent-tree-store';
 
-interface CostBreakdownItem {
-  name: string;
-  level: number;
-  cost: number;
-}
+
 
 interface TotalTalentCostDisplayProps {
   onReset: () => void;
@@ -180,10 +176,10 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as 'summary' | 'breakdown' | 'stats' | 'builds')}
             className={`flex-1 px-3 py-2 text-sm font-medium transition-all duration-200 ${activeTab === tab.id
-                ? 'bg-amber-600/30 text-amber-100 border-b-2 border-amber-400'
-                : 'text-amber-300 hover:text-amber-100 hover:bg-amber-700/20'
+              ? 'bg-amber-600/30 text-amber-100 border-b-2 border-amber-400'
+              : 'text-amber-300 hover:text-amber-100 hover:bg-amber-700/20'
               }`}
           >
             <span className="mr-1">{tab.icon}</span>

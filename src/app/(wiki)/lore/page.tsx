@@ -85,11 +85,11 @@ const enhancedTimelineEvents = timelineEvents.map(event => ({
   era: event.year,
   atmosphere: event.type === 'battle' ? 'war' : event.type === 'major' ? 'divine' : event.type === 'discovery' ? 'mystery' : 'prosperity',
   quote: event.id === '1' ? '"In the beginning, there was only darkness..."' :
-         event.id === '2' ? '"Two paths diverged, and the world was forever changed."' :
-         event.id === '3' ? '"The fields ran red with the blood of heroes."' :
-         event.id === '4' ? '"Ancient powers stirred from their slumber."' :
-         event.id === '5' ? '"From stone and steel, civilizations rose."' :
-         '"The die was cast, and war became eternal."'
+    event.id === '2' ? '"Two paths diverged, and the world was forever changed."' :
+      event.id === '3' ? '"The fields ran red with the blood of heroes."' :
+        event.id === '4' ? '"Ancient powers stirred from their slumber."' :
+          event.id === '5' ? '"From stone and steel, civilizations rose."' :
+            '"The die was cast, and war became eternal."'
 }));
 
 export default function LorePage() {
@@ -154,34 +154,34 @@ export default function LorePage() {
       <div className={`transition-all duration-500 ease-in-out overflow-y-auto ${selectedEvent ? 'w-0 md:w-2/5' : 'w-full'}`}>
         <div className="p-6">
           <div className="max-w-5xl mx-auto">
-            
+
             {/* Page Header */}
             <div className="text-center mb-12 p-8 bg-gradient-to-r from-gray-900/80 via-gray-800/80 to-gray-900/80 rounded-xl border border-yellow-400/30">
               <h1 className="text-4xl font-bold text-yellow-400 mb-2">Chronicles of Arinar</h1>
-              <p className="text-gray-300 text-lg italic">"The eternal struggle between light and shadow"</p>
+              <p className="text-gray-300 text-lg italic">&ldquo;The eternal struggle between light and shadow&rdquo;</p>
             </div>
 
             {/* Timeline Layout */}
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6ce63] via-[#d4af37] to-[#e6ce63]"></div>
-              
+
               {enhancedTimelineEvents.map((event, index) => {
                 const atmosphereStyles = getAtmosphereStyles(event.atmosphere);
-                
+
                 return (
                   <div key={event.id} className="relative mb-12 ml-20">
                     {/* Timeline dot */}
-                    <div 
-                      className={`absolute top-6 w-12 h-12 rounded-full border-4 ${atmosphereStyles.border} ${atmosphereStyles.bg} flex items-center justify-center text-xl z-10 cursor-pointer transition-all duration-300 hover:scale-110`} 
+                    <div
+                      className={`absolute top-6 w-12 h-12 rounded-full border-4 ${atmosphereStyles.border} ${atmosphereStyles.bg} flex items-center justify-center text-xl z-10 cursor-pointer transition-all duration-300 hover:scale-110`}
                       style={{ left: '-70px', backgroundColor: '#1f2937' }}
                       onClick={() => setSelectedEvent(event)}
                     >
                       {getTypeIcon(event.type)}
                     </div>
-                    
+
                     {/* Event card */}
-                    <div 
+                    <div
                       className={`group cursor-pointer transition-all duration-300 hover:scale-[1.02] ${atmosphereStyles.glow}`}
                       onClick={() => setSelectedEvent(event)}
                     >
@@ -199,7 +199,7 @@ export default function LorePage() {
 
                       {/* Main Event Card */}
                       <div className={`${atmosphereStyles.bg} ${atmosphereStyles.border} border-2 rounded-xl p-6 relative overflow-hidden`}>
-                        
+
                         {/* Quote Section */}
                         <div className="mb-4">
                           <div className={`text-base italic ${atmosphereStyles.accent} font-medium`}>
@@ -209,13 +209,13 @@ export default function LorePage() {
 
                         {/* Content Layout */}
                         <div className="flex gap-4">
-                          
+
                           {/* Image Section */}
                           {event.image && (
                             <div className="flex-shrink-0">
                               <div className="relative">
-                                <Image 
-                                  src={event.image} 
+                                <Image
+                                  src={event.image}
                                   alt={event.title}
                                   width={120}
                                   height={80}
@@ -225,22 +225,21 @@ export default function LorePage() {
                               </div>
                             </div>
                           )}
-                          
+
                           {/* Description Section */}
                           <div className="flex-1">
                             <p className="text-gray-300 leading-relaxed mb-3">
                               {event.description}
                             </p>
-                            
+
                             {/* Faction Badge */}
                             {event.faction && event.faction !== 'Neutral' && (
                               <div className="flex items-center gap-2">
-                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium ${
-                                  event.faction === 'Sentinel' 
-                                    ? 'bg-blue-900/60 text-blue-200 border border-blue-400/50' 
+                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium ${event.faction === 'Sentinel'
+                                    ? 'bg-blue-900/60 text-blue-200 border border-blue-400/50'
                                     : 'bg-red-900/60 text-red-200 border border-red-400/50'
-                                }`}>
-                                  <Image 
+                                  }`}>
+                                  <Image
                                     src={event.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
                                     alt={event.faction}
                                     width={16}
@@ -298,11 +297,11 @@ export default function LorePage() {
                   </h1>
                 </div>
               </div>
-              
+
               {selectedEvent.image && (
                 <div className="mb-6">
-                  <Image 
-                    src={selectedEvent.image} 
+                  <Image
+                    src={selectedEvent.image}
                     alt={selectedEvent.title}
                     width={600}
                     height={300}
@@ -310,15 +309,15 @@ export default function LorePage() {
                   />
                 </div>
               )}
-              
+
               <div className="text-gray-300 leading-relaxed text-lg mb-6">
                 {selectedEvent.content}
               </div>
-              
+
               {selectedEvent.faction && selectedEvent.faction !== 'Neutral' && (
                 <div className="pt-6 border-t border-gray-600">
                   <div className="flex items-center gap-3">
-                    <Image 
+                    <Image
                       src={selectedEvent.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
                       alt={selectedEvent.faction}
                       width={32}

@@ -62,8 +62,8 @@ export default function ItemCardNew({
           <div className="flex items-start gap-3">
             {item.icon_url && (
               <div className="relative w-16 h-16 flex-shrink-0">
-                <Image 
-                  src={item.icon_url} 
+                <Image
+                  src={item.icon_url}
                   alt={item.name ?? ""}
                   fill
                   className="object-contain rounded-md border border-gray-300 dark:border-gray-600"
@@ -77,27 +77,13 @@ export default function ItemCardNew({
               </h3>
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span className="capitalize">Type: {item.type}</span>
-                {item.rarity && (
-                  <>
-                    <span>•</span>
-                    <span className={`capitalize font-medium ${
-                      item.rarity === 'legendary' ? 'text-orange-500' :
-                      item.rarity === 'epic' ? 'text-purple-500' :
-                      item.rarity === 'rare' ? 'text-blue-500' :
-                      item.rarity === 'uncommon' ? 'text-green-500' :
-                      'text-gray-500'
-                    }`}>
-                      {item.rarity}
-                    </span>
-                  </>
-                )}
               </div>
             </div>
           </div>
 
           {/* Formatted Description */}
           <div className="space-y-1">
-            <div 
+            <div
               className="text-sm text-gray-600 dark:text-gray-400 line-clamp-4"
               dangerouslySetInnerHTML={{ __html: formattedDescription }}
             />
@@ -116,8 +102,8 @@ export default function ItemCardNew({
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">Select Item Icon</h3>
-              <button 
-                onClick={() => setShowIconPickerModal(false)} 
+              <button
+                onClick={() => setShowIconPickerModal(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
                 title="Close"
               >
@@ -129,7 +115,7 @@ export default function ItemCardNew({
                 bucketName="media"
                 initialPath="items"
                 onFileSelect={handleIconSelectedFromPicker}
-                mode="select" 
+                mode="select"
                 accept="image/*"
               />
             </div>

@@ -19,7 +19,7 @@ interface TalentTreeState {
   setModalLevel: (level: number) => void;
   reset: () => void;
   saveBuild: (name: string) => void;
-  loadBuild: (buildData: any) => void;
+  loadBuild: (buildData: SavedBuildData) => void;
   getSavedBuilds: () => SavedBuild[];
   deleteBuild: (buildId: string) => void;
   generateBuildCode: () => string;
@@ -33,6 +33,10 @@ interface SavedBuild {
   selectedNodeLevels: Record<string, number>;
   totalCost: number;
   talentCount: number;
+}
+
+interface SavedBuildData {
+  selectedNodeLevels: Record<string, number>;
 }
 
 const unlockPrerequisites = (

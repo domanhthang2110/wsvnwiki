@@ -56,62 +56,61 @@ export default function TalentCardNew({
         onSelect={onSelect}
         onEdit={onEdit}
         onDelete={onDelete}
-        onDuplicate={onDuplicate}
         onIconChange={onIconChange ? handleIconChangeClick : undefined}
       >
-      <div className="space-y-3">
-        {/* Header with icon and title */}
-        <div className="flex items-start gap-3">
-          {talent.icon_url && (
-            <img 
-              src={talent.icon_url} 
-              alt={talent.name}
-              className="w-12 h-12 rounded-md object-cover flex-shrink-0"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-              {talent.name}
-            </h3>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <span>Max Level: {talent.max_level}</span>
-              <span>•</span>
+        <div className="space-y-3">
+          {/* Header with icon and title */}
+          <div className="flex items-start gap-3">
+            {talent.icon_url && (
+              <img
+                src={talent.icon_url}
+                alt={talent.name}
+                className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
+                {talent.name}
+              </h3>
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <span>Max Level: {talent.max_level}</span>
+                <span>•</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Formatted Description */}
-        <div className="space-y-1">
-          <div 
-            className="text-sm text-gray-600 dark:text-gray-400 line-clamp-4"
-            dangerouslySetInnerHTML={{ __html: formattedDescription }}
-          />
-        </div>
-
-        {/* Knowledge Costs Summary */}
-        {talent.knowledge_levels && Object.keys(talent.knowledge_levels).length > 0 && (
+          {/* Formatted Description */}
           <div className="space-y-1">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Knowledge Costs:
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              {Object.entries(talent.knowledge_levels).slice(0, 3).map(([level, cost]) => (
-                <span 
-                  key={level}
-                  className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs rounded-md"
-                >
-                  L{level}: {cost.toLocaleString()}
-                </span>
-              ))}
-              {Object.keys(talent.knowledge_levels).length > 3 && (
-                <span className="text-xs text-gray-500 dark:text-gray-500">
-                  +{Object.keys(talent.knowledge_levels).length - 3} more levels
-                </span>
-              )}
-            </div>
+            <div
+              className="text-sm text-gray-600 dark:text-gray-400 line-clamp-4"
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
+            />
           </div>
-        )}
-      </div>
+
+          {/* Knowledge Costs Summary */}
+          {talent.knowledge_levels && Object.keys(talent.knowledge_levels).length > 0 && (
+            <div className="space-y-1">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Knowledge Costs:
+              </h4>
+              <div className="flex flex-wrap gap-1">
+                {Object.entries(talent.knowledge_levels).slice(0, 3).map(([level, cost]) => (
+                  <span
+                    key={level}
+                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 text-xs rounded-md"
+                  >
+                    L{level}: {cost.toLocaleString()}
+                  </span>
+                ))}
+                {Object.keys(talent.knowledge_levels).length > 3 && (
+                  <span className="text-xs text-gray-500 dark:text-gray-500">
+                    +{Object.keys(talent.knowledge_levels).length - 3} more levels
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </AdminCard>
 
       {/* Icon Picker Modal */}
@@ -120,8 +119,8 @@ export default function TalentCardNew({
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">Select Talent Icon</h3>
-              <button 
-                onClick={() => setShowIconPickerModal(false)} 
+              <button
+                onClick={() => setShowIconPickerModal(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
                 title="Close"
               >
@@ -133,7 +132,7 @@ export default function TalentCardNew({
                 bucketName="media"
                 initialPath="talents"
                 onFileSelect={handleIconSelectedFromPicker}
-                mode="select" 
+                mode="select"
                 accept="image/*"
               />
             </div>

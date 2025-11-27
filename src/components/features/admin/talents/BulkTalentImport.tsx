@@ -45,7 +45,7 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
     } catch (e: unknown) {
       let errorMessage = 'An unexpected error occurred.';
       if (e instanceof Error) {
-        errorMessage = e.message; 
+        errorMessage = e.message;
       }
       setError(`Invalid JSON or data structure: ${errorMessage}`);
     }
@@ -75,14 +75,15 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
     try {
       // Update each talent's description based on matching ID
       for (const talent of validatedTalents) {
-        if (talent.id && talent.description) {
+        const talentWithId = talent as TalentFormData & { id?: number };
+        if (talentWithId.id && talent.description) {
           const { error: updateError } = await supabase
             .from('talents')
             .update({ description: talent.description })
-            .eq('id', talent.id);
+            .eq('id', talentWithId.id);
 
           if (updateError) {
-            throw new Error(`Failed to update talent ID ${talent.id}: ${updateError.message}`);
+            throw new Error(`Failed to update talent ID ${talentWithId.id}: ${updateError.message}`);
           }
         }
       }
@@ -135,7 +136,7 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
   return (
     <div className="my-6 p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-gray-200">Bulk Import Talents</h2>
-      
+
       {/* File Upload Section */}
       <div className="mb-4 p-4 border border-gray-600 rounded-md bg-gray-750">
         <h3 className="text-lg font-medium mb-2 text-gray-200">Upload JSON File</h3>
@@ -184,8 +185,8 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
               <TalentCard
                 key={index}
                 talent={talent as TalentItem}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={() => { }}
+                onDelete={() => { }}
                 isSelected={false}
               />
             ))}

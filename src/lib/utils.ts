@@ -14,6 +14,7 @@ export function slugify(text: string): string {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
