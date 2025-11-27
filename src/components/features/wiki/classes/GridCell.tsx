@@ -12,6 +12,11 @@ interface GridCellProps {
   talentCellSize: string;
   arrowCellSize: string;
   isArrowActive: boolean;
+  compositeFrameSettings?: {
+    scale: number;
+    offset: { x: number; y: number };
+    rowHeightMultiplier: number;
+  };
 }
 
 const GridCell: React.FC<GridCellProps> = ({
@@ -20,24 +25,51 @@ const GridCell: React.FC<GridCellProps> = ({
   talentCellSize,
   arrowCellSize,
   isArrowActive,
+  compositeFrameSettings,
 }) => {
-  const { talentInfoMap, selectedTalentLevels, setSelectedTalent } =
+  const { talentInfoMap, selectedNodeLevels, setSelectedTalent, edges, nodeMap } =
     useTalentTreeInteractiveStore();
 
   const talent = node?.talent_id ? talentInfoMap.get(node.talent_id) : undefined;
-  const level = talent ? selectedTalentLevels.get(talent.id) || 0 : 0;
+  const level = node ? selectedNodeLevels.get(node.id) || 0 : 0;
+
+  // Check if this talent is next to be unlocked (all parents unlocked and this is not unlocked itself)
+  const isNextToUnlock = node && level === 0 && node.node_type !== 'free_composite' ? (() => {
+    // Find parent edges (edges pointing to this node)
+    const parentEdges = edges.filter(edge => edge.target === node.id);
+    
+    // If no parents, it's a root talent and can be unlocked
+    if (parentEdges.length === 0) {
+      return true;
+    }
+    
+    // Check if ALL parents are unlocked
+    return parentEdges.every(edge => {
+      const parentNode = nodeMap.get(edge.source);
+      if (!parentNode) return false;
+      
+      const parentLevel = selectedNodeLevels.get(parentNode.id) || 0;
+      return parentLevel > 0;
+    });
+  })() : false;
 
   const onSelect = () => {
-    if (talent) {
-      setSelectedTalent(talent);
+    if (talent && node) {
+      setSelectedTalent(talent, node);
     }
   };
-  // --- KEY TALENT POSITIONING ---
-  const keyTalentOffset = { x: -3, y: -4 };
-  // ----------------------------
+  // --- KEY/LESSER TALENT POSITIONING ---
+  const keyTalentOffset = { x: -6, y: -6 };
+  const lesserTalentOffset = { x: -5, y: -6 }; // Add separate offset for lesser talents
+  // ------------------------------------
 
   // --- COMPOSITE FRAME POSITIONING ---
-  const compositeFrameOffset = { x: -101, y: -51 };
+  const defaultCompositeSettings = {
+    scale: 1.0,
+    offset: { x: -101, y: -51 },
+    rowHeightMultiplier: 2.5,
+  };
+  const frameSettings = compositeFrameSettings || defaultCompositeSettings;
   // ---------------------------------
 
   const frameType = node?.node_type === "key"
@@ -77,6 +109,8 @@ const GridCell: React.FC<GridCellProps> = ({
 
   if (frameType === 'key') {
     talentStyle.transform = `translate(${keyTalentOffset.x}px, ${keyTalentOffset.y}px)`;
+  } else if (frameType === 'lesser') {
+    talentStyle.transform = `translate(${lesserTalentOffset.x}px, ${lesserTalentOffset.y}px)`;
   }
 
   return (
@@ -89,9 +123,11 @@ const GridCell: React.FC<GridCellProps> = ({
             height: "150px",
             zIndex: 0,
             pointerEvents: "none",
-            left: `${compositeFrameOffset.x}px`,
-            top: `${compositeFrameOffset.y}px`,
+            left: `${frameSettings.offset.x}px`,
+            top: `${frameSettings.offset.y}px`,
             overflow: "visible",
+            transform: `scale(${frameSettings.scale})`,
+            transformOrigin: "center center",
           }}
         >
           <Image
@@ -110,10 +146,11 @@ const GridCell: React.FC<GridCellProps> = ({
         <div
           style={talentStyle}
           onClick={onSelect}
+          title={talent.name || "Talent"}
         >
           <IconFrame
             size={parseInt(talentCellSize, 10)}
-            styleType={level === 0 ? "red" : "yellow"}
+            styleType={level === 0 ? (isNextToUnlock ? "green" : "red") : "yellow"}
             altText={talent.name || "Talent"}
             contentImageUrl={node.icon_url || talent.icon_url || null}
             frameType={frameType}
@@ -133,25 +170,36 @@ const GridCell: React.FC<GridCellProps> = ({
         </div>
       )}
       {arrow && (
-        <Image
-          src="/image/talent_arrow.webp"
-          alt={`Arrow pointing ${arrow.direction}`}
-          className="object-contain"
-          width={parseInt(arrowCellSize) * 0.7}
-          height={parseInt(arrowCellSize) * 0.7}
+        <div
           style={{
-            transform:
-              arrow.direction === "down"
-                ? "rotate(90deg)"
-                : arrow.direction === "left"
-                ? "rotate(180deg)"
-                : arrow.direction === "up"
-                ? "rotate(270deg)"
-                : "none",
-            filter: isArrowActive ? "saturate(1)" : "saturate(0)",
-            transition: "filter 0.3s ease-in-out",
+            width: parseInt(arrowCellSize),
+            height: parseInt(arrowCellSize),
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <Image
+            src="/image/talent_arrow.webp"
+            alt={`Arrow pointing ${arrow.direction}`}
+            className="object-contain"
+            width={parseInt(arrowCellSize) * 0.65} // Adjust this multiplier
+            height={parseInt(arrowCellSize) * 0.65} // Adjust this multiplier
+            style={{
+              transform:
+                arrow.direction === "down"
+                  ? "rotate(90deg)"
+                  : arrow.direction === "left"
+                  ? "rotate(180deg)"
+                  : arrow.direction === "up"
+                  ? "rotate(270deg)"
+                  : "none",
+              filter: isArrowActive ? "saturate(1)" : "saturate(0)",
+              transition: "filter 0.3s ease-in-out",
+            }}
+          />
+        </div>
       )}
     </div>
   );

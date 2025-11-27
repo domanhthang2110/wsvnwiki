@@ -1,0 +1,465 @@
+[
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Hate Fuse",
+    "description": "Tăng {value}% lượng thù địch mà nhân vật tạo ra khi gây sát thương.",
+    "icon_url": "",
+    "max_level": 2,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "5"
+      },
+      {
+        "level": 2,
+        "value": "10"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 7500,
+      "2": 15000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Predatory Delirium: Rank I",
+    "description": "Tăng {value}% sát thương chống lại Quái cấp thường, Quái cấp mạnh và Quái cấp tinh anh.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4500,
+      "2": 9000,
+      "3": 13500
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Predatory Delirium: Rank II",
+    "description": "Tăng {value}% sát thương chống lại Mini-Boss, Boss và Boss thế giới.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4750,
+      "2": 9500,
+      "3": 14250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Incessant Penetration",
+    "description": "Tăng {value}% xuyên giáp của kỹ năng sát thương theo thời gian.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Instant Penetration",
+    "description": "Tăng {value}% xuyên giáp của kỹ năng sát thương tức thời.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Critical Damage: Rank I",
+    "description": "Tăng {value}% sát thương chí mạng của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      },
+      {
+        "level": 5,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Critical Damage: Rank II",
+    "description": "Tăng {value}% sát thương chí mạng của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      },
+      {
+        "level": 4,
+        "value": "1.5"
+      },
+      {
+        "level": 5,
+        "value": "1.75"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Controlled Weakening",
+    "description": "Tăng {value}% thời gian duy trì của hiệu ứng có hại không kiểm soát của nhân vật lên quái vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Controlled Subjugation",
+    "description": "Tăng {value}% thời gian duy trì của hiệu ứng kiểm soát của nhân vật lên quái vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Broken Fortification",
+    "description": "Áp dụng Phá Vỡ Phòng Thủ lên quái vật trong 7 giây với mỗi đòn đánh thường thành công, giảm {value}% sức mạnh vật lý và sức mạnh phép thuật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Increased Penetration",
+    "description": "Tăng {value}% xuyên giáp tối đa.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Increased Ferocity",
+    "description": "Tăng {value}% hung dữ tối đa.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Strength Test",
+    "description": "Tăng {value}% sát thương chống lại quái vật có 70% máu trở lên.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Killing Blow",
+    "description": "Tăng {value}% sát thương chống lại quái vật có 30% máu trở xuống.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  }
+]

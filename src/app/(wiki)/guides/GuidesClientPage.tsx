@@ -45,7 +45,6 @@ const CATEGORY_TAGS = {
   'world': ['the-gioi', 'lore', 'dungeons', 'exploration', 'events', 'world', 'quests']
 };
 
-const ESSENTIAL_TAGS = ['thiet-yeu', 'essential', 'quan-trong', 'must-read'];
 
 interface GuidesClientPageProps {
   initialGuides: PostItem[];
@@ -58,7 +57,6 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'card' | 'compact'>('compact');
-  const [isEssentialCollapsed, setIsEssentialCollapsed] = useState(false);
   const [searchWidth, setSearchWidth] = useState(400);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -73,15 +71,6 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
     ) || false;
   };
 
-  const isEssentialGuide = (guide: PostItem): boolean => {
-    return guide.tags?.some(tag => 
-      ESSENTIAL_TAGS.includes(tag.slug) || ESSENTIAL_TAGS.includes(tag.name.toLowerCase())
-    ) || false;
-  };
-
-  const getEssentialGuides = (): PostItem[] => {
-    return allGuides.filter(isEssentialGuide).slice(0, 6); // Limit to 6 essential guides
-  };
 
   const getFilteredGuides = useCallback((): PostItem[] => {
     let guides = allGuides;
@@ -139,8 +128,6 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
     return () => window.removeEventListener('resize', calculateSearchWidth);
   }, []);
 
-  const essentialGuides = getEssentialGuides();
-
   return (
     <>
       <style jsx>{scrollbarStyles}</style>
@@ -148,31 +135,6 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
         
         {/* Fixed Header Section */}
         <div className="flex-shrink-0">
-          {/* Essential Guides Section - Collapsible (Top) */}
-          <div className="shadow-lg border-[3px] border-double border-yellow-400" style={{ backgroundColor: '#2d1810' }}>
-            <div className="p-4 flex items-center justify-between">
-              <h2 className="text-base font-bold text-yellow-300 flex items-center gap-2">
-                ⭐ Hướng dẫn thiết yếu - Bắt đầu tại đây!
-              </h2>
-              <button
-                onClick={() => setIsEssentialCollapsed(!isEssentialCollapsed)}
-                className="p-1 text-yellow-300 hover:text-yellow-100 transition-colors"
-              >
-                {isEssentialCollapsed ? <ChevronRight className="rotate-90" /> : <ChevronLeft className="-rotate-90" />}
-              </button>
-            </div>
-            {!isEssentialCollapsed && (
-              <div className="px-4 pb-4">
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-700">
-                  {essentialGuides.map(guide => (
-                    <div key={guide.id} className="flex-shrink-0 w-80">
-                      <GuideCard guide={guide} isEssential={true} viewMode="compact" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* Navigation & Search Bar */}
           <div className="p-4 shadow-lg border-[3px] border-double border-[#e6ce63]" style={{ backgroundColor: '#3e2e2b' }}>
@@ -201,15 +163,15 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
                   }}
                 >
                   {categories.map((category) => (
-                    <button
+                    <a
                       key={category.id}
-                      type="button"
+                      href="#"
                       className={`flex items-center gap-2 w-full text-left ${activeCategory === category.id ? 'selected' : ''}`}
                       onClick={() => setActiveCategory(category.id)}
                     >
                       <span>{category.icon}</span>
                       <span>{category.label}</span>
-                    </button>
+                    </a>
                   ))}
                 </Dropdown>
               </div>
@@ -293,15 +255,15 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
                     }}
                   >
                     {categories.map((category) => (
-                      <button
+                      <a
                         key={category.id}
-                        type="button"
+                        href="#"
                         className={`flex items-center gap-2 w-full text-left ${activeCategory === category.id ? 'selected' : ''}`}
                         onClick={() => setActiveCategory(category.id)}
                       >
                         <span>{category.icon}</span>
                         <span>{category.label}</span>
-                      </button>
+                      </a>
                     ))}
                   </Dropdown>
                 </div>
@@ -380,8 +342,13 @@ export default function GuidesClientPage({ initialGuides }: GuidesClientPageProp
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="flex-grow overflow-y-auto">
-          <div className="p-4 border-[3px] border-double border-[#e6ce63] h-full" style={{ backgroundColor: '#3e2e2b' }}>
+        <div className="flex-grow overflow-y-auto" style={{ 
+          backgroundImage: 'url("/background.webp")', 
+          backgroundRepeat: 'repeat', 
+          backgroundSize: '70px 40px', 
+          imageRendering: 'pixelated' 
+        }}>
+          <div className="p-4 border-[3px] border-double border-[#e6ce63] h-full">
             
             {filteredGuides.length > 0 ? (
               <div className={

@@ -87,9 +87,15 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
 
   // Calculate effective dimensions based on provided size or original dimensions
   let calculatedSize = size ?? currentFrameConfig.originalWidth;
-  if (['key', 'lesser'].includes(frameType)) {
-    calculatedSize += 8; // Add 8px for key and lesser frames
-  }
+  
+  // Frame size adjustments - customize these values
+  const frameSizeAdjustments = {
+    key: 12,     // Add 8px for key frames
+    lesser: 12,  // Add 8px for lesser frames  
+    regular: 0  // No adjustment for regular frames
+  };
+  
+  calculatedSize += frameSizeAdjustments[frameType];
   const effectiveWidth = calculatedSize;
   const effectiveHeight = (effectiveWidth / currentFrameConfig.originalWidth) * currentFrameConfig.originalHeight;
 

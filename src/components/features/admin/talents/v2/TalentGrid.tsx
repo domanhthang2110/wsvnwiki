@@ -109,6 +109,7 @@ const DraggableTalent: React.FC<DraggableTalentProps> = ({ node, itemSize, onCli
         flexShrink: node.node_type === 'free_composite' ? 0 : 1,
       }}
       onClick={() => onClick(node)}
+      title={talent?.name || "Talent"}
     >
       {node.node_type === 'free_composite' ? (
         <FreeCompositeFrame isUnlocked={true} imageUrl={talent?.icon_url || undefined} />

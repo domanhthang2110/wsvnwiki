@@ -46,7 +46,7 @@ const Toolbar: React.FC = () => {
   const talentCellSize = '48px';
 
   return (
-    <div className="bg-gray-800 p-4 border-b border-gray-700">
+    <div className="sticky top-0 z-10 bg-gray-800 p-4 border-b border-gray-700">
       <h3 className="text-lg font-semibold mb-4 text-gray-200">Items</h3>
       <div className="flex space-x-4">
         <div className="mb-4">

@@ -158,5 +158,41 @@
   {
     "english_term": "Permanent",
     "vietnamese_term": "Duy trì"
+  },
+  {
+    "english_term": "Common monsters",
+    "vietnamese_term": "Quái cấp thường"
+  },
+  {
+    "english_term": "Strong monsters",
+    "vietnamese_term": "Quái cấp mạnh"
+  },
+  {
+    "english_term": "Permanent",
+    "vietnamese_term": "Quái cấp tinh anh"
+  },
+  {
+    "english_term": "Mini-Boss",
+    "vietnamese_term": "Mini-Boss"
+  },
+  {
+    "english_term": "Boss",
+    "vietnamese_term": "Boss"
+  },
+  {
+    "english_term": "Raid Boss",
+    "vietnamese_term": "Boss thế giới"
+  },
+  {
+    "english_term": "maximum health",
+    "vietnamese_term": "máu tối đa"
+  },
+  {
+    "english_term": "maximum energy",
+    "vietnamese_term": "Năng lượng tối đa"
+  },
+  {
+    "english_term": "skill damage",
+    "vietnamese_term": "sát thương kỹ năng"
   }
 ]

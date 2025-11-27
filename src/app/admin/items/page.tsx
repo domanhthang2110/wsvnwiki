@@ -4,18 +4,16 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Item } from '@/types/items';
 import ItemForm from '@/components/features/admin/items/ItemForm';
-import ItemCard from '@/components/features/admin/items/ItemCard';
+import ItemCardNew from '@/components/features/admin/items/ItemCardNew';
 import BulkItemImport from '@/components/features/admin/items/BulkItemImport';
+import AdminDataTable from '@/components/features/admin/shared/AdminDataTable';
 import LongButton from '@/components/ui/LongButton';
-import LoadingOverlay from '@/components/ui/LoadingOverlay';
 
 export default function AdminItemsPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [listLoading, setListLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('name-asc');
 
   const fetchItems = useCallback(async () => {
     setListLoading(true);
@@ -128,19 +126,47 @@ export default function AdminItemsPage() {
     }
   };
 
-  const handleIconChange = async (itemId: number, newIconUrl: string) => {
+  const handleBulkDelete = async (itemsToDelete: Item[]) => {
+    if (!window.confirm(`Are you sure you want to delete ${itemsToDelete.length} item(s)?`)) {
+      return;
+    }
+
+    try {
+      const { error: deleteError } = await supabase
+        .from('items')
+        .delete()
+        .in('id', itemsToDelete.map(i => i.id));
+
+      if (deleteError) throw deleteError;
+      await fetchItems();
+
+      // Clear selection if any selected item was deleted
+      if (selectedItem && itemsToDelete.some(i => i.id === selectedItem.id)) {
+        setSelectedItem(null);
+      }
+    } catch (error: unknown) {
+      let errorMessage = 'An unexpected error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error('Error bulk deleting items:', errorMessage);
+      alert(`Failed to delete items: ${errorMessage}`);
+    }
+  };
+
+  const handleIconChange = async (item: Item, newIconUrl: string) => {
     try {
       const { error: updateError } = await supabase
         .from('items')
         .update({ icon_url: newIconUrl })
-        .eq('id', itemId);
+        .eq('id', item.id);
 
-      if (updateError) {
-        throw updateError;
-      }
-      setItems(prevItems => 
-        prevItems.map(item => 
-          item.id === itemId ? { ...item, icon_url: newIconUrl } : item
+      if (updateError) throw updateError;
+      
+      // Update local state immediately without reloading
+      setItems(prevItems =>
+        prevItems.map(i =>
+          i.id === item.id ? { ...i, icon_url: newIconUrl } : i
         )
       );
     } catch (error: unknown) {
@@ -153,24 +179,59 @@ export default function AdminItemsPage() {
     }
   };
 
-  const sortedAndFilteredItems = items
-    .filter(item =>
-      item.name?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      switch (sortOrder) {
-        case 'name-asc':
-          return a.name?.localeCompare(b.name || '') || 0;
-        case 'name-desc':
-          return b.name?.localeCompare(a.name || '') || 0;
-        case 'date-asc':
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        case 'date-desc':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        default:
-          return 0;
-      }
-    });
+
+  const sortOptions = [
+    {
+      label: 'Name (A-Z)',
+      value: 'name-asc',
+      sortFn: (a: Item, b: Item) => (a.name || '').localeCompare(b.name || '')
+    },
+    {
+      label: 'Name (Z-A)',
+      value: 'name-desc',
+      sortFn: (a: Item, b: Item) => (b.name || '').localeCompare(a.name || '')
+    },
+    {
+      label: 'Type (A-Z)',
+      value: 'type-asc',
+      sortFn: (a: Item, b: Item) => (a.type || '').localeCompare(b.type || '')
+    },
+    {
+      label: 'Newest',
+      value: 'date-desc',
+      sortFn: (a: Item, b: Item) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    },
+    {
+      label: 'Oldest',
+      value: 'date-asc',
+      sortFn: (a: Item, b: Item) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    }
+  ];
+
+  const renderItemStats = (items: Item[]) => (
+    <div>
+      <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Item Overview</h3>
+      <div className="flex flex-wrap gap-4">
+        <div className="flex items-center space-x-1">
+          <span className="text-gray-700 dark:text-gray-300">Total:</span>
+          <span className="font-bold text-blue-600 dark:text-blue-400">{items.length}</span>
+        </div>
+        {/* Type breakdown */}
+        {Object.entries(
+          items.reduce((acc, item) => {
+            const type = item.type || 'Unknown';
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)
+        ).map(([type, count]) => (
+          <div key={type} className="flex items-center space-x-1">
+            <span className="text-gray-700 dark:text-gray-300 capitalize">{type}:</span>
+            <span className="font-bold text-green-600 dark:text-green-400">{count}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -180,12 +241,6 @@ export default function AdminItemsPage() {
 
       <div className="flex justify-center mb-4">
         <BulkItemImport onImportSuccess={fetchItems} />
-        <LongButton
-            width={200}
-            text="Export All Items (JSON)"
-            onClick={handleExportJson}
-            className="ml-4"
-        />
       </div>
 
       <div id="itemForm">
@@ -196,61 +251,28 @@ export default function AdminItemsPage() {
         />
       </div>
 
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
-          Existing Items
-        </h2>
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
+      <AdminDataTable
+        data={items}
+        loading={listLoading}
+        error={listError}
+        title="Existing Items"
+        searchFields={['name', 'type', 'description']}
+        sortOptions={sortOptions}
+        showStats={true}
+        statsRenderer={renderItemStats}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onBulkDelete={handleBulkDelete}
+        onIconChange={handleIconChange}
+        onExport={handleExportJson}
+        renderCard={(item, cardProps) => (
+          <ItemCardNew
+            key={item.id}
+            item={item}
+            {...cardProps}
           />
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-          >
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="date-desc">Newest</option>
-            <option value="date-asc">Oldest</option>
-          </select>
-        </div>
-      </div>
-      
-      {listLoading && (
-        <LoadingOverlay />
-      )}
-      
-      {listError && (
-        <div className="text-red-500 dark:text-red-400">
-          Error: {listError}
-        </div>
-      )}
-      
-      {!listLoading && !listError && items.length === 0 && (
-        <p className="text-center text-gray-600 dark:text-gray-400">
-          No items found. Add your first item using the form above!
-        </p>
-      )}
-
-      {!listLoading && !listError && sortedAndFilteredItems.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedAndFilteredItems.map((item) => (
-            <ItemCard 
-              key={item.id} 
-              item={item} 
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onIconChange={handleIconChange}
-              isSelected={selectedItem?.id === item.id}
-            />
-          ))}
-        </div>
-      )}
+        )}
+      />
     </>
   );
 }

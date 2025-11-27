@@ -447,7 +447,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
               </button>
               <div className={headerStyles.spacer}></div>
             </div>
-            <div id="tab-content-container" className="w-full flex-1  shadow-lg text-white flex flex-col relative flex-grow">
+            <div id="tab-content-container" className="w-full flex-1  shadow-lg text-white flex flex-col relative flex-grow min-h-0">
               {activeTab === 'Overview' && (
                 <>
                   <ClassOverviewTab classItem={selectedClass} />

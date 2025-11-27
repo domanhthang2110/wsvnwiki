@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useState, useEffect, useMemo } from 'react';
-import { TalentItem, TalentParameterDefinitionInForm, TalentLevelValue, TALENT_TYPE_OPTIONS } from '@/types/talents';
+import { TalentItem, TalentParameterDefinitionInForm, TalentLevelValue } from '@/types/talents';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
@@ -18,7 +18,6 @@ export interface TalentFormProps {
 export default function TalentForm({ onSubmit, isEditing, initialData }: TalentFormProps) {
   const [formName, setFormName] = useState('');
   const [formIconUrl, setFormIconUrl] = useState('');
-  const [formType, setFormType] = useState<TalentItem['type']>(TALENT_TYPE_OPTIONS[0]);
   const [formMaxLevel, setFormMaxLevel] = useState(1);
   const [formDescription, setFormDescription] = useState('');
   // Removed formCostLevels
@@ -36,7 +35,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     const baseData: Omit<TalentItem, 'id' | 'created_at'> = {
       name: formName.trim(),
       icon_url: formIconUrl.trim() || null,
-      type: formType,
       max_level: formMaxLevel,
       description: formDescription.trim() || null,
       knowledge_levels: null,
@@ -78,7 +76,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     }
 
     return baseData;
-  }, [formName, formIconUrl, formType, formMaxLevel, formDescription, knowledgeCosts, formParamDefs, formLevelValues]);
+  }, [formName, formIconUrl, formMaxLevel, formDescription, knowledgeCosts, formParamDefs, formLevelValues]);
 
   const [liveFormData, setLiveFormData] = useState<Omit<TalentItem, 'id' | 'created_at'>>(talentDataToSubmit);
 
@@ -90,7 +88,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     if (initialData) {
       setFormName(initialData.name || '');
       setFormIconUrl(initialData.icon_url || '');
-      setFormType(initialData.type || TALENT_TYPE_OPTIONS[0]);
       setFormMaxLevel(initialData.max_level || 1);
       setFormDescription(initialData.description || '');
       // Removed setFormCostLevels
@@ -116,7 +113,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     } else {
       setFormName('');
       setFormIconUrl('');
-      setFormType(TALENT_TYPE_OPTIONS[0]);
       setFormMaxLevel(1);
       setFormDescription('');
       // Removed setFormCostLevels
@@ -230,7 +226,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       const talentDataToSubmit: Omit<TalentItem, 'id' | 'created_at'> = {
         name: formName.trim(),
         icon_url: formIconUrl.trim() || null,
-        type: formType,
         max_level: formMaxLevel,
         description: formDescription.trim() || null,
         // Removed cost_levels
@@ -244,7 +239,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       if (!isEditing) {
         setFormName('');
         setFormIconUrl('');
-        setFormType(TALENT_TYPE_OPTIONS[0]);
         setFormMaxLevel(1);
         setFormDescription('');
         // Removed setFormCostLevels
@@ -292,7 +286,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           </label>
           {formIconUrl && (
             <div className="mb-2">
-              <Image src={formIconUrl} fill alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" draggable={false} />
+              <img src={formIconUrl} alt="Selected talent icon" className="w-16 h-16 object-contain rounded border p-1 border-gray-600 bg-gray-700" draggable={false} />
             </div>
           )}
           <button
@@ -305,17 +299,6 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="formType" className="block mb-1 text-sm font-medium text-gray-300">Type:</label>
-            <select 
-              id="formType" 
-              value={formType || ''} 
-              onChange={(e) => setFormType(e.target.value as TalentItem['type'])}
-              className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 h-[42px]"
-            >
-              {TALENT_TYPE_OPTIONS.map(type => <option key={type} value={type!}>{type}</option>)}
-            </select>
-          </div>
           <div>
             <label htmlFor="formMaxLevel" className="block mb-1 text-sm font-medium text-gray-300">Max Level:</label>
             <input

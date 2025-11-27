@@ -15,6 +15,7 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
   const [validatedTalents, setValidatedTalents] = useState<TalentFormData[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleValidate = () => {
     setError(null);
@@ -48,6 +49,52 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
       }
       setError(`Invalid JSON or data structure: ${errorMessage}`);
     }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setJsonInput(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleUpdateTranslations = async () => {
+    if (validatedTalents.length === 0) {
+      setError('No valid talents to update.');
+      return;
+    }
+
+    setIsUpdating(true);
+    setError(null);
+
+    try {
+      // Update each talent's description based on matching ID
+      for (const talent of validatedTalents) {
+        if (talent.id && talent.description) {
+          const { error: updateError } = await supabase
+            .from('talents')
+            .update({ description: talent.description })
+            .eq('id', talent.id);
+
+          if (updateError) {
+            throw new Error(`Failed to update talent ID ${talent.id}: ${updateError.message}`);
+          }
+        }
+      }
+
+      setJsonInput('');
+      setValidatedTalents([]);
+      setShowImporter(false);
+      onImportSuccess();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update translations');
+    }
+    setIsUpdating(false);
   };
 
   const handleSubmit = async () => {
@@ -88,12 +135,30 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
   return (
     <div className="my-6 p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-gray-200">Bulk Import Talents</h2>
-      <textarea
-        value={jsonInput}
-        onChange={(e) => setJsonInput(e.target.value)}
-        placeholder="Paste your JSON array of talents here..."
-        className="w-full h-48 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
-      />
+      
+      {/* File Upload Section */}
+      <div className="mb-4 p-4 border border-gray-600 rounded-md bg-gray-750">
+        <h3 className="text-lg font-medium mb-2 text-gray-200">Upload JSON File</h3>
+        <input
+          type="file"
+          accept=".json"
+          onChange={handleFileUpload}
+          className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+        />
+        <p className="text-sm text-gray-400 mt-1">Upload a JSON file containing talent data</p>
+      </div>
+
+      {/* Manual Input Section */}
+      <div className="mb-4">
+        <h3 className="text-lg font-medium mb-2 text-gray-200">Or Paste JSON Manually</h3>
+        <textarea
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          placeholder="Paste your JSON array of talents here..."
+          className="w-full h-48 p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
+        />
+      </div>
+
       <div className="flex items-center gap-4 mt-4">
         <button
           onClick={handleValidate}
@@ -125,13 +190,22 @@ export default function BulkTalentImport({ onImportSuccess }: BulkTalentImportPr
               />
             ))}
           </div>
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="mt-6 py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
-          >
-            {isSubmitting ? 'Submitting...' : `Submit ${validatedTalents.length} Talents`}
-          </button>
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
+            >
+              {isSubmitting ? 'Submitting...' : `Submit ${validatedTalents.length} New Talents`}
+            </button>
+            <button
+              onClick={handleUpdateTranslations}
+              disabled={isUpdating}
+              className="py-2 px-6 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
+            >
+              {isUpdating ? 'Updating...' : `Update ${validatedTalents.length} Descriptions`}
+            </button>
+          </div>
         </div>
       )}
     </div>

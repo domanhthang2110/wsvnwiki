@@ -42,7 +42,6 @@ export type TalentFormData = Omit<TalentItem, 'id' | 'created_at'> & {
   knowledge_levels?: TalentKnowledgeCost | null;
 };
 
-export const TALENT_TYPE_OPTIONS: Array<NonNullable<TalentItem['type']>> = ["normal", "key", "lesser"];
 
 // Talent Tree Types
 export interface TalentNode {

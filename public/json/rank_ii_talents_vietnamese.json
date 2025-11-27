@@ -1,0 +1,818 @@
+[
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Rage: Rank I",
+    "description": "Tăng {value}% sát thương chí mạng của kỹ năng nhân vật chống lại Quái cấp thường.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3000,
+      "2": 6000,
+      "3": 9000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Accuracy: Rank II",
+    "description": "Tăng {value}% độ chính xác của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Power Attack: Rank II",
+    "description": "Tăng {value}% sức mạnh vật lý và sức mạnh phép thuật của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Rage: Rank II",
+    "description": "Tăng {value}% sát thương chí mạng của kỹ năng nhân vật chống lại Quái cấp mạnh.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Critical Hit: Rank II",
+    "description": "Tăng {value}% tỷ lệ chí mạng của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Increased Critical Hit",
+    "description": "Tăng {value}% tỷ lệ chí mạng tối đa.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 6500,
+      "2": 13000,
+      "3": 19500
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Rage: Rank III",
+    "description": "Tăng {value}% sát thương chí mạng của kỹ năng nhân vật chống lại Quái cấp tinh anh.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4000,
+      "2": 8000,
+      "3": 12000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Connoisseur of Offensive Relics",
+    "description": "Tăng {value}% khả năng kích hoạt di vật tấn công.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 6500,
+      "2": 13000,
+      "3": 19500
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Attack Speed: Rank II",
+    "description": "Tăng {value}% tốc đánh của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      },
+      {
+        "level": 5,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Skill Cooldown: Rank II",
+    "description": "Tăng {value}% hồi chiêu của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      },
+      {
+        "level": 5,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Rage: Rank IV",
+    "description": "Tăng {value}% sát thương chí mạng của kỹ năng nhân vật chống lại Mini-Boss, Boss và Boss thế giới.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4250,
+      "2": 8500,
+      "3": 12750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Penetration: Rank II",
+    "description": "Tăng {value}% xuyên giáp của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Fortitude: Rank I",
+    "description": "Giảm {value}% sát thương chí mạng nhận từ Quái cấp thường.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3000,
+      "2": 6000,
+      "3": 9000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Dodge: Rank II",
+    "description": "Tăng {value}% khả năng né tránh của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Fortitude: Rank II",
+    "description": "Giảm {value}% sát thương chí mạng nhận từ Quái cấp mạnh.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Stamina: Rank II",
+    "description": "Tăng {value}% máu tối đa của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      },
+      {
+        "level": 4,
+        "value": "1.25"
+      },
+      {
+        "level": 5,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Health Regeneration: Rank I",
+    "description": "Tăng {value} hồi phục máu của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "3"
+      },
+      {
+        "level": 2,
+        "value": "6"
+      },
+      {
+        "level": 3,
+        "value": "9"
+      },
+      {
+        "level": 4,
+        "value": "12"
+      },
+      {
+        "level": 5,
+        "value": "15"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Fortitude: Rank III",
+    "description": "Giảm {value}% sát thương chí mạng nhận từ Quái cấp tinh anh.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4000,
+      "2": 8000,
+      "3": 12000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Connoisseur of Defensive Relics",
+    "description": "Tăng {value}% khả năng kích hoạt di vật phòng thủ.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 6500,
+      "2": 13000,
+      "3": 19500
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Wisdom: Rank II",
+    "description": "Tăng {value}% Năng lượng tối đa của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "1.5"
+      },
+      {
+        "level": 3,
+        "value": "2"
+      },
+      {
+        "level": 4,
+        "value": "2.5"
+      },
+      {
+        "level": 5,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Energy Regeneration: Rank I",
+    "description": "Tăng {value} hồi phục năng lượng của nhân vật.",
+    "icon_url": "",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      },
+      {
+        "level": 4,
+        "value": "4"
+      },
+      {
+        "level": 5,
+        "value": "5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 3375,
+      "3": 4500,
+      "4": 5625,
+      "5": 6750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Animal Fortitude: Rank IV",
+    "description": "Giảm {value}% sát thương chí mạng nhận từ Mini-Boss, Boss và Boss thế giới.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 4250,
+      "2": 8500,
+      "3": 12750
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Solidity: Rank II",
+    "description": "Tăng {value}% vững chãi của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "0.75"
+      },
+      {
+        "level": 3,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  }
+]

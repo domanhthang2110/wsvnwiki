@@ -1,0 +1,438 @@
+[
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Critical Hit: Rank III",
+    "description": "Tăng {value}% tỷ lệ chí mạng của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Accuracy: Rank III",
+    "description": "Tăng {value}% độ chính xác của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Attack Speed: Rank III",
+    "description": "Tăng {value}% tốc đánh của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      },
+      {
+        "level": 4,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Penetration: Rank III",
+    "description": "Tăng {value}% xuyên giáp của nhân vật.",
+    "icon_url": "",
+    "max_level": 2,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 7500,
+      "2": 15000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Skill Cooldown: Rank III",
+    "description": "Tăng {value}% hồi chiêu của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      },
+      {
+        "level": 4,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Power Attack: Rank III",
+    "description": "Tăng {value}% sức mạnh vật lý và sức mạnh phép thuật của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Healing Power",
+    "description": "Tăng {value}% sức mạnh hồi máu của kỹ năng nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Stamina: Rank III",
+    "description": "Tăng {value}% máu tối đa của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      },
+      {
+        "level": 4,
+        "value": "1.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Dodge: Rank III",
+    "description": "Tăng {value}% khả năng né tránh của nhân vật.",
+    "icon_url": "",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 3750,
+      "2": 7500,
+      "3": 11250
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Solidity: Rank III",
+    "description": "Tăng {value}% vững chãi của nhân vật.",
+    "icon_url": "",
+    "max_level": 2,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.75"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 7500,
+      "2": 15000
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Wisdom: Rank III",
+    "description": "Tăng {value}% Năng lượng tối đa của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1.5"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "2.5"
+      },
+      {
+        "level": 4,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Energy Regeneration: Rank II",
+    "description": "Tăng {value} hồi phục năng lượng của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "2"
+      },
+      {
+        "level": 2,
+        "value": "3"
+      },
+      {
+        "level": 3,
+        "value": "4"
+      },
+      {
+        "level": 4,
+        "value": "5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  },
+  {
+    "created_at": "2025-01-20T00:00:00.000000+00:00",
+    "name": "Health Regeneration: Rank II",
+    "description": "Tăng {value} hồi phục máu của nhân vật.",
+    "icon_url": "",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "6"
+      },
+      {
+        "level": 2,
+        "value": "9"
+      },
+      {
+        "level": 3,
+        "value": "12"
+      },
+      {
+        "level": 4,
+        "value": "15"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2810,
+      "2": 4780,
+      "3": 6470,
+      "4": 8440
+    }
+  }
+]

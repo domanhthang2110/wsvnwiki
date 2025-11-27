@@ -1,0 +1,801 @@
+[
+  {
+    "id": 12,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Accuracy: Rank I",
+    "description": "Tăng {value}% độ chính xác của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627618959-3hkmgh8h.png",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1875,
+      "2": 3185,
+      "3": 4315,
+      "4": 5625
+    }
+  },
+  {
+    "id": 34,
+    "created_at": "2025-07-13T15:55:46.573526+00:00",
+    "name": "Arcane Magic",
+    "description": "lmao",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/branch/1752418095606-tqqipvt7.webp",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": ""
+      }
+    ],
+    "knowledge_levels": {
+      "1": 128000
+    }
+  },
+  {
+    "id": 17,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Attack Speed: Rank I",
+    "description": "Tăng {value}% tốc đánh của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627619298-9jin29sm.png",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      },
+      {
+        "level": 5,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 2250,
+      "3": 3000,
+      "4": 3750,
+      "5": 4500
+    }
+  },
+  {
+    "id": 21,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Bestial Meekness: Rank I",
+    "description": "Giảm {value}% sát thương nhận từ Quái cấp thường",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628033666-tkf21bji.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 3000,
+      "3": 4500
+    }
+  },
+  {
+    "id": 23,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Bestial Meekness: Rank II",
+    "description": "Giảm {value}% sát thương nhận từ Quái cấp mạnh",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628034762-quc17b2a.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 4500,
+      "3": 6750
+    }
+  },
+  {
+    "id": 25,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Bestial Meekness: Rank III",
+    "description": "Giảm {value}% sát thương nhận từ Quái cấp tinh anh",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628035010-cy4b601v.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2500,
+      "2": 5000,
+      "3": 7500
+    }
+  },
+  {
+    "id": 27,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Bestial Meekness: Rank IV",
+    "description": "Giảm {value}% sát thương nhận từ Mini-Boss, Boss và Boss thế giới",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627624018-0dmw6v05.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2750,
+      "2": 5500,
+      "3": 8250
+    }
+  },
+  {
+    "id": 29,
+    "created_at": "2025-06-25T10:01:57.979471+00:00",
+    "name": "Bestial Rage: Rank I",
+    "description": "Tăng {value}% sát thương kỹ năng chống lại Quái cấp thường",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628035443-yyyr2euz.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 3000,
+      "3": 4500
+    }
+  },
+  {
+    "id": 14,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Bestial Rage: Rank II",
+    "description": "Tăng {value}% sát thương kỹ năng chống lại Quái cấp mạnh",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628033918-v8nynzbs.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2250,
+      "2": 4500,
+      "3": 6750
+    }
+  },
+  {
+    "id": 16,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Bestial Rage: Rank III",
+    "description": "Tăng {value}% sát thương kỹ năng chống lại Quái cấp tinh anh",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748628034427-38wluejk.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2500,
+      "2": 5000,
+      "3": 7500
+    }
+  },
+  {
+    "id": 19,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Bestial Rage: Rank IV",
+    "description": "Tăng {value}% sát thương kỹ năng chống lại Mini-Boss, Boss và Boss thế giới",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627618544-mivhon3f.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "1"
+      },
+      {
+        "level": 2,
+        "value": "2"
+      },
+      {
+        "level": 3,
+        "value": "3"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2750,
+      "2": 5500,
+      "3": 8250
+    }
+  },
+  {
+    "id": 15,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Critical Hit: Rank I",
+    "description": "Tăng {value}% tỷ lệ chí mạng của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627636941-sltxprvp.png",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1875,
+      "2": 3185,
+      "3": 4315,
+      "4": 5625
+    }
+  },
+  {
+    "id": 22,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Dodge: Rank I",
+    "description": "Tăng {value}% khả năng né tránh của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627623764-qaw9xicm.png",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1875,
+      "2": 3185,
+      "3": 4315,
+      "4": 5625
+    }
+  },
+  {
+    "id": 30,
+    "created_at": "2025-06-25T17:44:18.552293+00:00",
+    "name": "Excess Energy",
+    "description": "Mắt Rồng tăng {damage_boost}% sát thương của kỹ năng nhân vật hoặc đồng minh, nhưng không còn hồi phục năng lượng nữa.",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/classes/mage/1748628311602-lptbbgg1.png",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "damage_boost"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "damage_boost": "12"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 63000
+    }
+  },
+  {
+    "id": 35,
+    "created_at": "2025-07-13T15:56:05.01393+00:00",
+    "name": "Geomancy",
+    "description": "adwadawdawd",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/branch/1752418095834-2rz87913.webp",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": ""
+      }
+    ],
+    "knowledge_levels": {
+      "1": 128000
+    }
+  },
+  {
+    "id": 20,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Penetration: Rank I",
+    "description": "Tăng {value}% xuyên giáp của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627619623-4seu2hpq.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2500,
+      "2": 5000,
+      "3": 7500
+    }
+  },
+  {
+    "id": 13,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Power Attack: Rank I",
+    "description": "Tăng {value}% sức mạnh vật lý và sức mạnh phép thuật của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627620759-3c1lc11y.png",
+    "max_level": 4,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1875,
+      "2": 3185,
+      "3": 4315,
+      "4": 5625
+    }
+  },
+  {
+    "id": 33,
+    "created_at": "2025-07-13T15:55:23.704864+00:00",
+    "name": "Pyromancy",
+    "description": "test compos",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/branch/1752418095373-pk7rxunv.webp",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": null,
+    "level_values": [
+      {
+        "level": 1
+      }
+    ],
+    "knowledge_levels": {
+      "1": 128000
+    }
+  },
+  {
+    "id": 31,
+    "created_at": "2025-06-25T17:44:18.552293+00:00",
+    "name": "Sheaf of Lightning",
+    "description": "Quá tải bổ sung hồi máu cho nhân vật bằng {heal_percent}% sát thương gây ra. Giảm {overload_reduction} số hiệu ứng cần thiết để kích hoạt Quá tải.",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/classes/mage/1748628311898-s23z32oq.png",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "heal_percent"
+      },
+      {
+        "key": "overload_reduction"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "heal_percent": "65",
+        "overload_reduction": "1"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 63000
+    }
+  },
+  {
+    "id": 18,
+    "created_at": "2025-06-25T09:50:03.238638+00:00",
+    "name": "Skill Cooldown: Rank I",
+    "description": "Tăng {value}% hồi chiêu của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627625208-ym7u6j8h.png",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      },
+      {
+        "level": 5,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 2250,
+      "3": 3000,
+      "4": 3750,
+      "5": 4500
+    }
+  },
+  {
+    "id": 28,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Solidity: Rank I",
+    "description": "Tăng {value}% vững chãi của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627624269-wehujvni.png",
+    "max_level": 3,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 2500,
+      "2": 5000,
+      "3": 7500
+    }
+  },
+  {
+    "id": 24,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Stamina: Rank I",
+    "description": "Tăng {value}% máu tối đa của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627623439-s21wt4ho.png",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.25"
+      },
+      {
+        "level": 2,
+        "value": "0.5"
+      },
+      {
+        "level": 3,
+        "value": "0.75"
+      },
+      {
+        "level": 4,
+        "value": "1"
+      },
+      {
+        "level": 5,
+        "value": "1.25"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 2250,
+      "3": 3000,
+      "4": 3750,
+      "5": 4500
+    }
+  },
+  {
+    "id": 26,
+    "created_at": "2025-06-25T09:56:29.759647+00:00",
+    "name": "Wisdom: Rank I",
+    "description": "Tăng {value}% Năng lượng tối đa của nhân vật",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/talents/1748627624687-fbfeisgd.png",
+    "max_level": 5,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "value"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "value": "0.5"
+      },
+      {
+        "level": 2,
+        "value": "1"
+      },
+      {
+        "level": 3,
+        "value": "1.5"
+      },
+      {
+        "level": 4,
+        "value": "2"
+      },
+      {
+        "level": 5,
+        "value": "2.5"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 1500,
+      "2": 2250,
+      "3": 3000,
+      "4": 3750,
+      "5": 4500
+    }
+  },
+  {
+    "id": 32,
+    "created_at": "2025-06-25T17:44:18.552293+00:00",
+    "name": "Witchcraft Flow",
+    "description": "Tăng {duration} giây thời gian duy trì cho Ennobling. Hiệu ứng giảm {decay_rate}% (xuống còn {min_percent}%) mỗi 1 giây.",
+    "icon_url": "https://faharuolmxxbavrpaktv.supabase.co/storage/v1/object/public/media/classes/mage/1748628312137-ixg3r9m0.png",
+    "max_level": 1,
+    "type": "normal",
+    "parameters_definition": [
+      {
+        "key": "duration"
+      },
+      {
+        "key": "decay_rate"
+      },
+      {
+        "key": "min_percent"
+      }
+    ],
+    "level_values": [
+      {
+        "level": 1,
+        "duration": "4",
+        "decay_rate": "10",
+        "min_percent": "20"
+      }
+    ],
+    "knowledge_levels": {
+      "1": 63000
+    }
+  }
+]
