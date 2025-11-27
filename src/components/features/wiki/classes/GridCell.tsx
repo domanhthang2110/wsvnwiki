@@ -6,12 +6,12 @@ import IconFrame from "@/components/shared/IconFrame";
 import FreeCompositeFrame from "@/components/ui/FreeCompositeFrame";
 import { useTalentTreeInteractiveStore } from "./talent-tree-store";
 import Image from "next/image";
+
 interface GridCellProps {
   node: TalentNode | undefined;
   arrow: { direction: string; targetNodeId: string } | undefined;
   talentCellSize: string;
   arrowCellSize: string;
-  isArrowActive: boolean;
   compositeFrameSettings?: {
     scale: number;
     offset: { x: number; y: number };
@@ -24,34 +24,45 @@ const GridCell: React.FC<GridCellProps> = ({
   arrow,
   talentCellSize,
   arrowCellSize,
-  isArrowActive,
   compositeFrameSettings,
 }) => {
-  const { talentInfoMap, selectedNodeLevels, setSelectedTalent, edges, nodeMap } =
-    useTalentTreeInteractiveStore();
+  const setSelectedTalent = useTalentTreeInteractiveStore(
+    (state) => state.setSelectedTalent
+  );
 
-  const talent = node?.talent_id ? talentInfoMap.get(node.talent_id) : undefined;
-  const level = node ? selectedNodeLevels.get(node.id) || 0 : 0;
+  const talent = useTalentTreeInteractiveStore((state) =>
+    node?.talent_id ? state.talentInfoMap.get(node.talent_id) : undefined
+  );
 
-  // Check if this talent is next to be unlocked (all parents unlocked and this is not unlocked itself)
-  const isNextToUnlock = node && level === 0 && node.node_type !== 'free_composite' ? (() => {
-    // Find parent edges (edges pointing to this node)
-    const parentEdges = edges.filter(edge => edge.target === node.id);
-    
+  const level = useTalentTreeInteractiveStore((state) =>
+    node ? state.selectedNodeLevels.get(node.id) || 0 : 0
+  );
+
+  const isArrowActive = useTalentTreeInteractiveStore((state) => {
+    if (!arrow) return false;
+    return (state.selectedNodeLevels.get(arrow.targetNodeId) || 0) > 0;
+  });
+
+  const isNextToUnlock = useTalentTreeInteractiveStore((state) => {
+    if (!node) return false;
+    const currentLevel = state.selectedNodeLevels.get(node.id) || 0;
+
+    if (currentLevel > 0 || node.node_type === "free_composite") return false;
+
+    // Find parent edges using the pre-calculated map (O(1) lookup)
+    const parentNodeIds = state.incomingEdgesMap.get(node.id);
+
     // If no parents, it's a root talent and can be unlocked
-    if (parentEdges.length === 0) {
+    if (!parentNodeIds || parentNodeIds.length === 0) {
       return true;
     }
-    
+
     // Check if ALL parents are unlocked
-    return parentEdges.every(edge => {
-      const parentNode = nodeMap.get(edge.source);
-      if (!parentNode) return false;
-      
-      const parentLevel = selectedNodeLevels.get(parentNode.id) || 0;
+    return parentNodeIds.every((parentId) => {
+      const parentLevel = state.selectedNodeLevels.get(parentId) || 0;
       return parentLevel > 0;
     });
-  })() : false;
+  });
 
   const onSelect = () => {
     if (talent && node) {
@@ -72,25 +83,26 @@ const GridCell: React.FC<GridCellProps> = ({
   const frameSettings = compositeFrameSettings || defaultCompositeSettings;
   // ---------------------------------
 
-  const frameType = node?.node_type === "key"
-    ? "key"
-    : node?.node_type === "lesser"
-    ? "lesser"
-    : "regular";
+  const frameType =
+    node?.node_type === "key"
+      ? "key"
+      : node?.node_type === "lesser"
+        ? "lesser"
+        : "regular";
 
-  if (node?.node_type === 'free_composite') {
+  if (node?.node_type === "free_composite") {
     return (
       <div
         onClick={onSelect}
         style={{
-          position: 'relative',
-          cursor: 'pointer',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          position: "relative",
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           left: `-22%`,
-          width: '100%', // Ensure it takes full width of the cell
-          height: '100%', // Ensure it takes full height of the cell
+          width: "100%", // Ensure it takes full width of the cell
+          height: "100%", // Ensure it takes full height of the cell
         }}
       >
         <FreeCompositeFrame
@@ -104,12 +116,12 @@ const GridCell: React.FC<GridCellProps> = ({
   const talentStyle: React.CSSProperties = {
     zIndex: 1,
     cursor: "pointer",
-    position: 'relative',
+    position: "relative",
   };
 
-  if (frameType === 'key') {
+  if (frameType === "key") {
     talentStyle.transform = `translate(${keyTalentOffset.x}px, ${keyTalentOffset.y}px)`;
-  } else if (frameType === 'lesser') {
+  } else if (frameType === "lesser") {
     talentStyle.transform = `translate(${lesserTalentOffset.x}px, ${lesserTalentOffset.y}px)`;
   }
 
@@ -150,7 +162,9 @@ const GridCell: React.FC<GridCellProps> = ({
         >
           <IconFrame
             size={parseInt(talentCellSize, 10)}
-            styleType={level === 0 ? (isNextToUnlock ? "green" : "red") : "yellow"}
+            styleType={
+              level === 0 ? (isNextToUnlock ? "green" : "red") : "yellow"
+            }
             altText={talent.name || "Talent"}
             contentImageUrl={node.icon_url || talent.icon_url || null}
             frameType={frameType}
@@ -174,10 +188,10 @@ const GridCell: React.FC<GridCellProps> = ({
           style={{
             width: parseInt(arrowCellSize),
             height: parseInt(arrowCellSize),
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Image
@@ -191,10 +205,10 @@ const GridCell: React.FC<GridCellProps> = ({
                 arrow.direction === "down"
                   ? "rotate(90deg)"
                   : arrow.direction === "left"
-                  ? "rotate(180deg)"
-                  : arrow.direction === "up"
-                  ? "rotate(270deg)"
-                  : "none",
+                    ? "rotate(180deg)"
+                    : arrow.direction === "up"
+                      ? "rotate(270deg)"
+                      : "none",
               filter: isArrowActive ? "saturate(1)" : "saturate(0)",
               transition: "filter 0.3s ease-in-out",
             }}

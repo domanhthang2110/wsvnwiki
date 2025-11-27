@@ -68,11 +68,11 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
     setDisplayTen(mediaQuery.matches);
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setDisplayTen(e.matches);
     };
-    
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
@@ -95,7 +95,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
         .select('id, name, talents_data')
         .eq('id', tree.id)
         .single();
-      
+
       if (error || !data) {
         console.error("Failed to fetch talent tree data", error);
         return;
@@ -118,7 +118,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
           console.error("Failed to fetch talent details", talentError);
           return;
         }
-        
+
         setFetchedTalents(prev => ({ ...prev, [treeData.id]: talentDetails as TalentItem[] }));
       }
     }
@@ -151,7 +151,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
         }
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialClassSlug, classes]);
 
   // Smart gap detection for FactionSwitcher
@@ -222,7 +222,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
     return groups;
   }, [classes]);
 
-  
+
 
   const handleTabClick = (tab: 'Overview' | 'Skills' | 'Talents') => {
     setActiveTab(tab);
@@ -342,27 +342,27 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
       );
 
       return (
-          <Dropdown
-            title={titleContent}
-            width="210px"
-            showArrows={true}
-            onPrevious={() => paginate(-1)}
-            onNext={() => paginate(1)}
-          >
-            {FACTION_ORDER.map((faction, index) => (
-              <a
-                key={faction}
-                href="#"
-                className={`flex items-center justify-center gap-x-2 ${currentFactionIndex === index ? 'selected' : ''}`}
-                onClick={() => {
-                  setCurrentFactionIndex(index);
-                }}
-              >
-                <Image draggable={false} src={`/image/factions/${faction.toLowerCase().replace(' ', '-')}/icon.webp`} alt={`${faction} icon`} width={22} height={22} />
-                <span>{faction}</span>
-              </a>
-            ))}
-          </Dropdown>
+        <Dropdown
+          title={titleContent}
+          width="210px"
+          showArrows={true}
+          onPrevious={() => paginate(-1)}
+          onNext={() => paginate(1)}
+        >
+          {FACTION_ORDER.map((faction, index) => (
+            <a
+              key={faction}
+              href="#"
+              className={`flex items-center justify-center gap-x-2 ${currentFactionIndex === index ? 'selected' : ''}`}
+              onClick={() => {
+                setCurrentFactionIndex(index);
+              }}
+            >
+              <Image draggable={false} src={`/image/factions/${faction.toLowerCase().replace(' ', '-')}/icon.webp`} alt={`${faction} icon`} width={22} height={22} />
+              <span>{faction}</span>
+            </a>
+          ))}
+        </Dropdown>
       );
     }
   };
@@ -411,7 +411,7 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
                 ) : (
                   <FactionSwitcher
                     faction={currentSideIndex === 0 ? 'elf' : 'mc'}
-                    onToggle={() => {}}
+                    onToggle={() => { }}
                     size={100}
                   />
                 )}
@@ -456,7 +456,9 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
               {activeTab === 'Skills' && selectedClass.skills && (
                 <SkillDisplay skills={selectedClass.skills} />
               )}
-              {activeTab === 'Talents' && memoizedTalentTreeView}
+              <div style={{ display: activeTab === 'Talents' ? 'block' : 'none', height: '100%' }}>
+                {memoizedTalentTreeView}
+              </div>
             </div>
           </>
         ) : (

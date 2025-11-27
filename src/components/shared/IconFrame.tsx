@@ -47,8 +47,8 @@ const frameConfigs: Record<FrameType, FrameConfig> = {
 
 const frameStyleIndices: Record<FrameStyleType, { default: number; hover: number }> = {
   yellow: { default: 3, hover: 0 },
-  red:    { default: 4, hover: 1 },
-  green:  { default: 5, hover: 2 },
+  red: { default: 4, hover: 1 },
+  green: { default: 5, hover: 2 },
 };
 
 interface IconFrameProps {
@@ -87,14 +87,14 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
 
   // Calculate effective dimensions based on provided size or original dimensions
   let calculatedSize = size ?? currentFrameConfig.originalWidth;
-  
+
   // Frame size adjustments - customize these values
   const frameSizeAdjustments = {
     key: 12,     // Add 8px for key frames
     lesser: 12,  // Add 8px for lesser frames  
     regular: 0  // No adjustment for regular frames
   };
-  
+
   calculatedSize += frameSizeAdjustments[frameType];
   const effectiveWidth = calculatedSize;
   const effectiveHeight = (effectiveWidth / currentFrameConfig.originalWidth) * currentFrameConfig.originalHeight;
@@ -118,8 +118,8 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
 
   const currentFrameIndices = frameStyleIndices[styleType];
   const showActiveState = isActive || (isHovered && !disableHover);
-  const currentFrameIndex = showActiveState 
-    ? currentFrameIndices.hover 
+  const currentFrameIndex = showActiveState
+    ? currentFrameIndices.hover
     : currentFrameIndices.default;
 
   const { backgroundPosition, backgroundSize } = useMemo(() => {
@@ -201,19 +201,23 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
     >
       {contentImageUrl && ( // Conditionally render img tag only if contentImageUrl exists
         <div style={contentImageWrapperStyle}>
-          <Image
+          <img
             draggable={false}
             src={contentImageUrl}
             alt={altText || ""}
-            fill
-            style={{ objectFit: 'cover', imageRendering: 'pixelated' }}
-            priority={priority} // Pass the priority prop
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              imageRendering: 'pixelated',
+              display: 'block'
+            }}
           />
         </div>
-  )}
-  <div style={frameOverlayStyle} />
-</div>
-);
+      )}
+      <div style={frameOverlayStyle} />
+    </div>
+  );
 });
 
 IconFrame.displayName = 'IconFrame';

@@ -11,23 +11,98 @@ interface CostBreakdownItem {
 }
 
 interface TotalTalentCostDisplayProps {
-  totalCost: number;
-  costBreakdown: CostBreakdownItem[];
   onReset: () => void;
 }
 
-const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCost, costBreakdown, onReset }) => {
+const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'breakdown' | 'stats' | 'builds'>('summary');
-  const [targetKnowledge, setTargetKnowledge] = useState<number>(totalCost);
+  const [targetKnowledge, setTargetKnowledge] = useState<number>(0); // Initialize with 0, will update in effect
   const [isMinimized, setIsMinimized] = useState(false);
   const [buildName, setBuildName] = useState('');
   const [showSaveInput, setShowSaveInput] = useState(false);
 
-  // Get store functions
-  const { saveBuild, loadBuild, getSavedBuilds, deleteBuild, generateBuildCode, loadFromBuildCode, selectedNodeLevels, nodes } = useTalentTreeInteractiveStore();
+  // Get store functions and data
+  const {
+    saveBuild,
+    loadBuild,
+    getSavedBuilds,
+    deleteBuild,
+    generateBuildCode,
+    loadFromBuildCode,
+    selectedNodeLevels,
+    nodes,
+    talentInfoMap,
+    nodeMap
+  } = useTalentTreeInteractiveStore();
+
   const [savedBuilds, setSavedBuilds] = useState(() => getSavedBuilds());
   const [shareCode, setShareCode] = useState('');
   const [importCode, setImportCode] = useState('');
+
+  // Calculate total cost and breakdown
+  const { totalCost, costBreakdown } = useMemo(() => {
+    const breakdown: { name: string; level: number; cost: number }[] = [];
+    let total = 0;
+    const processedGroupIds = new Set<string>();
+
+    for (const [nodeId, level] of selectedNodeLevels.entries()) {
+      if (level > 0) {
+        const node = nodeMap.get(nodeId);
+        const talent = node?.talent_id ? talentInfoMap.get(node.talent_id) : undefined;
+
+        if (talent?.knowledge_levels && node) {
+          if (node.group_id) {
+            if (!processedGroupIds.has(node.group_id)) {
+              const groupNodes = nodes.filter(
+                (n) => n.group_id === node.group_id
+              );
+              const mainNode =
+                groupNodes.find((n) => n.is_group_main) || groupNodes[0];
+              const mainTalent = talentInfoMap.get(mainNode.talent_id);
+
+              if (mainTalent?.knowledge_levels) {
+                let talentCost = 0;
+                const mainNodeLevel = selectedNodeLevels.get(mainNode.id) || 0;
+                for (let i = 1; i <= mainNodeLevel; i++) {
+                  talentCost += mainTalent.knowledge_levels[i] || 0;
+                }
+                if (talentCost > 0) {
+                  breakdown.push({
+                    name: "Talent cluster",
+                    level: mainNodeLevel,
+                    cost: talentCost,
+                  });
+                  total += talentCost;
+                }
+              }
+              processedGroupIds.add(node.group_id);
+            }
+          } else {
+            let talentCost = 0;
+            for (let i = 1; i <= level; i++) {
+              talentCost += talent.knowledge_levels[i] || 0;
+            }
+            if (talentCost > 0) {
+              breakdown.push({
+                name: talent.name,
+                level: level,
+                cost: talentCost,
+              });
+              total += talentCost;
+            }
+          }
+        }
+      }
+    }
+    return { totalCost: total, costBreakdown: breakdown };
+  }, [selectedNodeLevels, talentInfoMap, nodes, nodeMap]);
+
+  // Update target knowledge when total cost changes if it's 0 (initial load)
+  React.useEffect(() => {
+    if (targetKnowledge === 0 && totalCost > 0) {
+      setTargetKnowledge(totalCost);
+    }
+  }, [totalCost, targetKnowledge]);
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -35,7 +110,7 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCo
     const avgCostPerTalent = talentCount > 0 ? Math.round(totalCost / talentCount) : 0;
     const maxCostTalent = costBreakdown.reduce((max, item) => item.cost > max.cost ? item : max, { cost: 0, name: '', level: 0 });
     const totalLevels = costBreakdown.reduce((sum, item) => sum + item.level, 0);
-    
+
     return {
       talentCount,
       avgCostPerTalent,
@@ -106,11 +181,10 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCo
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex-1 px-3 py-2 text-sm font-medium transition-all duration-200 ${
-              activeTab === tab.id
+            className={`flex-1 px-3 py-2 text-sm font-medium transition-all duration-200 ${activeTab === tab.id
                 ? 'bg-amber-600/30 text-amber-100 border-b-2 border-amber-400'
                 : 'text-amber-300 hover:text-amber-100 hover:bg-amber-700/20'
-            }`}
+              }`}
           >
             <span className="mr-1">{tab.icon}</span>
             {tab.label}
@@ -155,7 +229,7 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCo
                 />
               </div>
               <div className="w-full bg-amber-900/50 rounded-full h-2 border border-amber-600/30">
-                <div 
+                <div
                   className="bg-gradient-to-r from-amber-500 to-amber-400 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${knowledgeProgress}%` }}
                 />
@@ -407,13 +481,13 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCo
                           onClick={() => {
                             // Generate v2 code from saved build data
                             const classId = nodes[0]?.id.split('-')[0] || 'unknown';
-                            
+
                             // Create node ID to index mapping
                             const nodeIdMap = new Map<string, number>();
                             nodes.forEach((node, index) => {
                               nodeIdMap.set(node.id, index);
                             });
-                            
+
                             const compactPairs: string[] = [];
                             for (const [nodeId, level] of Object.entries(build.selectedNodeLevels)) {
                               if (Number(level) > 0) {
@@ -423,7 +497,7 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ totalCo
                                 }
                               }
                             }
-                            
+
                             const dataString = compactPairs.join(';');
                             const encoded = btoa(dataString);
                             const code = `${classId}_${encoded}`;
