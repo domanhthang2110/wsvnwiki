@@ -9,6 +9,7 @@ import styles from './HomePage.module.css';
 import EventModal from '../events/EventModal';
 import IconFrame from '@/components/shared/IconFrame';
 import NewbiePostCard from './NewbiePostCard';
+import wsrvLoader from '@/lib/utils/imageLoader';
 
 const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }) => {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -46,13 +47,13 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
     const fetchEvents = async () => {
       try {
         const { supabase } = await import('@/lib/supabase/client');
-        
+
         const { data } = await supabase
           .from('events')
           .select('*')
           .order('pub_date', { ascending: false })
           .limit(4);
-        
+
         if (data) {
           // Convert to EventItem format
           const eventItems: EventItem[] = data.map(event => ({
@@ -113,7 +114,15 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
             >
               {event.imageUrl && (
                 <div className={styles.newsImageContainer}>
-                  <Image src={event.imageUrl} alt={event.title} width={300} height={200} className={styles.newsImage} />
+                  <Image
+                    loader={wsrvLoader}
+                    src={event.imageUrl}
+                    alt={event.title}
+                    width={300}
+                    height={200}
+                    className={styles.newsImage}
+                    sizes="(max-width: 768px) 100vw, 300px"
+                  />
                 </div>
               )}
               <div className={styles.newsContent}>
@@ -138,24 +147,24 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
 
 const QuickLinks = () => {
   const links = [
-    { 
-      href: '/classes', 
-      label: 'Lớp nhân vật', 
+    {
+      href: '/classes',
+      label: 'Lớp nhân vật',
       image: '/image/quicklinks/classes.webp'
     },
-    { 
-      href: '/guides', 
-      label: 'Hướng dẫn', 
+    {
+      href: '/guides',
+      label: 'Hướng dẫn',
       image: '/image/quicklinks/guides.webp'
     },
-    { 
-      href: '/events', 
-      label: 'Sự kiện', 
+    {
+      href: '/events',
+      label: 'Sự kiện',
       image: '/image/quicklinks/events.webp'
     },
-    { 
-      href: '/lore', 
-      label: 'Biên niên sử', 
+    {
+      href: '/lore',
+      label: 'Biên niên sử',
       image: '/image/quicklinks/lore.webp'
     },
   ];
@@ -167,7 +176,15 @@ const QuickLinks = () => {
         {links.map(link => (
           <Link href={link.href} key={link.href} className={styles.quickLink}>
             <div className={styles.linkImageContainer}>
-              <Image src={link.image} alt={link.label} width={300} height={300} className={styles.linkImage} />
+              <Image
+                loader={wsrvLoader}
+                src={link.image}
+                alt={link.label}
+                width={300}
+                height={300}
+                className={styles.linkImage}
+                sizes="(max-width: 768px) 50vw, 300px"
+              />
             </div>
             <div className={styles.linkContent}>
               <h3 className={styles.linkTitle}>{link.label}</h3>
@@ -197,12 +214,12 @@ const HomePage = () => {
     <>
       <div className={styles.homePage}>
         <div className={styles.logoPlaceholder}>
-          <Image 
-            src="/image/ui/big_logo.webp" 
-            alt="Warspear Online Wiki Vietnam Logo" 
-            width={400} 
-            height={200} 
-            priority 
+          <Image
+            src="/image/ui/big_logo.webp"
+            alt="Warspear Online Wiki Vietnam Logo"
+            width={400}
+            height={200}
+            priority
             className={styles.bigLogoImage}
           />
         </div>
@@ -214,22 +231,22 @@ const HomePage = () => {
           <p className={styles.introduction}>Gia nhập cộng đồng:</p>
           <div className={styles.socialLinks}>
             <a href="https://www.facebook.com/share/g/16Uqt62xr3/" target="_blank" rel="noopener noreferrer">
-              <IconFrame 
-                contentImageUrl="/image/ui/social/fb.webp" 
+              <IconFrame
+                contentImageUrl="/image/ui/social/fb.webp"
                 altText="Facebook"
                 size={50}
               />
             </a>
             <a href="https://discord.gg/WnGT5YNEfS" target="_blank" rel="noopener noreferrer">
-              <IconFrame 
-                contentImageUrl="/image/ui/social/discord.webp" 
+              <IconFrame
+                contentImageUrl="/image/ui/social/discord.webp"
                 altText="Discord"
                 size={50}
               />
             </a>
             <a href="https://m.me/j/AbYQ3blgp6sSk01s/" target="_blank" rel="noopener noreferrer">
-              <IconFrame 
-                contentImageUrl="/image/ui/social/messenger.webp" 
+              <IconFrame
+                contentImageUrl="/image/ui/social/messenger.webp"
                 altText="Messenger"
                 size={50}
               />
@@ -238,10 +255,10 @@ const HomePage = () => {
         </div>
         <div className={styles.clockAndNewbieSection}>
           <div className={styles.clockSection}>
-            <Clock 
-              primaryTimeZone="Europe/Berlin" 
+            <Clock
+              primaryTimeZone="Europe/Berlin"
               primaryLabel="Ingame"
-              secondaryTimeZone="Asia/Ho_Chi_Minh" 
+              secondaryTimeZone="Asia/Ho_Chi_Minh"
               secondaryLabel="Việt Nam"
             />
           </div>
@@ -258,10 +275,10 @@ const HomePage = () => {
       </div>
 
       {isModalOpen && selectedEvent && (
-        <EventModal 
-          event={selectedEvent} 
+        <EventModal
+          event={selectedEvent}
           isOpen={isModalOpen}
-          onClose={handleCloseModal} 
+          onClose={handleCloseModal}
         />
       )}
     </>

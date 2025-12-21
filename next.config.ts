@@ -2,40 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true,
-    // Commented out remotePatterns to completely disable external image optimization
-    // and prevent Vercel image optimization token usage
-    // remotePatterns: [
-    //   {
-    //     protocol: 'https',
-    //     hostname: 'faharuolmxxbavrpaktv.supabase.co',
-    //     port: '',
-    //     pathname: '/storage/v1/object/public/**',
-    //   },
-    //   {
-    //     protocol: 'https',
-    //     hostname: 'forum.warspear-online.com',
-    //     port: '',
-    //     pathname: '/**',
-    //   },
-    //   {
-    //     protocol: 'https',
-    //     hostname: 'cdn1.iconfinder.com',
-    //     port: '',
-    //     pathname: '/**',
-    //   },
-    //   {
-    //     protocol: 'https',
-    //     hostname: 'cdn4.iconfinder.com',
-    //     port: '',
-    //     pathname: '/**',
-    //   },
-    //   // Allow any external HTTPS image for admin flexibility
-    //   {
-    //     protocol: 'https',
-    //     hostname: '**',
-    //   },
-    // ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'faharuolmxxbavrpaktv.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'forum.warspear-online.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 };
 

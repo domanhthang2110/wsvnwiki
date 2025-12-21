@@ -1,9 +1,9 @@
-
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
+import wsrvLoader from '@/lib/utils/imageLoader';
 
 interface TimelineEvent {
   id: string;
@@ -79,260 +79,188 @@ const timelineEvents: TimelineEvent[] = [
   }
 ];
 
-// Enhanced timeline events with richer storytelling data
-const enhancedTimelineEvents = timelineEvents.map(event => ({
-  ...event,
-  era: event.year,
-  atmosphere: event.type === 'battle' ? 'war' : event.type === 'major' ? 'divine' : event.type === 'discovery' ? 'mystery' : 'prosperity',
-  quote: event.id === '1' ? '"In the beginning, there was only darkness..."' :
-    event.id === '2' ? '"Two paths diverged, and the world was forever changed."' :
-      event.id === '3' ? '"The fields ran red with the blood of heroes."' :
-        event.id === '4' ? '"Ancient powers stirred from their slumber."' :
-          event.id === '5' ? '"From stone and steel, civilizations rose."' :
-            '"The die was cast, and war became eternal."'
-}));
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case 'major': return '⭐';
+    case 'battle': return '⚔️';
+    case 'discovery': return '🔍';
+    case 'founding': return '🏰';
+    default: return '📜';
+  }
+};
 
-export default function LorePage() {
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-
-  const getAtmosphereStyles = (atmosphere: string) => {
-    switch (atmosphere) {
-      case 'war': return {
-        bg: 'bg-gradient-to-br from-red-950/40 via-gray-900/60 to-red-950/40',
-        border: 'border-red-500/30',
-        accent: 'text-red-300',
-        glow: 'shadow-red-900/50'
-      };
-      case 'divine': return {
-        bg: 'bg-gradient-to-br from-yellow-950/40 via-gray-900/60 to-yellow-950/40',
-        border: 'border-yellow-500/30',
-        accent: 'text-yellow-300',
-        glow: 'shadow-yellow-900/50'
-      };
-      case 'mystery': return {
-        bg: 'bg-gradient-to-br from-purple-950/40 via-gray-900/60 to-purple-950/40',
-        border: 'border-purple-500/30',
-        accent: 'text-purple-300',
-        glow: 'shadow-purple-900/50'
-      };
-      case 'prosperity': return {
-        bg: 'bg-gradient-to-br from-green-950/40 via-gray-900/60 to-green-950/40',
-        border: 'border-green-500/30',
-        accent: 'text-green-300',
-        glow: 'shadow-green-900/50'
-      };
-      default: return {
-        bg: 'bg-gradient-to-br from-gray-950/40 via-gray-900/60 to-gray-950/40',
-        border: 'border-gray-500/30',
-        accent: 'text-gray-300',
-        glow: 'shadow-gray-900/50'
-      };
-    }
-  };
-
-  const getFactionColor = (faction?: string) => {
-    switch (faction) {
-      case 'Sentinel': return 'border-blue-400 bg-blue-900/20';
-      case 'Legion': return 'border-red-400 bg-red-900/20';
-      default: return 'border-yellow-400 bg-yellow-900/20';
-    }
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'major': return '⭐';
-      case 'battle': return '⚔️';
-      case 'discovery': return '🔍';
-      case 'founding': return '🏰';
-      default: return '📜';
-    }
-  };
+const TimelineCard = ({ event, index }: { event: TimelineEvent, index: number }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const isLeft = index % 2 === 0;
 
   return (
-    <div className={`${classContentStyles.pixelBackground} flex h-screen overflow-hidden`}>
-      {/* Timeline Section */}
-      <div className={`transition-all duration-500 ease-in-out overflow-y-auto ${selectedEvent ? 'w-0 md:w-2/5' : 'w-full'}`}>
-        <div className="p-6">
-          <div className="max-w-5xl mx-auto">
+    <div className={`relative flex flex-col md:flex-row w-full mb-12 md:mb-24 ${isLeft ? 'md:flex-row-reverse' : ''}`}>
+      {/* Central Timeline Point (Desktop) */}
+      <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 justify-center">
+        <div className="absolute top-8 w-10 h-10 rounded-full border-4 border-[#e6ce63] bg-gray-950 flex items-center justify-center z-20 shadow-[0_0_20px_rgba(230,206,99,0.5)] transition-all duration-300 group-hover:scale-110">
+          <span className="text-lg">{getTypeIcon(event.type)}</span>
+        </div>
+      </div>
 
-            {/* Page Header */}
-            <div className="text-center mb-12 p-8 bg-gradient-to-r from-gray-900/80 via-gray-800/80 to-gray-900/80 rounded-xl border border-yellow-400/30">
-              <h1 className="text-4xl font-bold text-yellow-400 mb-2">Chronicles of Arinar</h1>
-              <p className="text-gray-300 text-lg italic">&ldquo;The eternal struggle between light and shadow&rdquo;</p>
+      {/* Spacing for the other side on desktop */}
+      <div className="hidden md:block w-1/2" />
+
+      {/* Content Container */}
+      <div className={`w-full md:w-1/2 px-4 md:px-12 relative ${isLeft ? 'md:text-right' : 'md:text-left'}`}>
+        {/* Mobile Dot (Hidden on Desktop) */}
+        <div className="md:hidden absolute left-0 top-1.5 w-6 h-6 rounded-full border-2 border-[#e6ce63] bg-gray-950 flex items-center justify-center z-10 shadow-[0_0_10px_rgba(230,206,99,0.3)]">
+          <span className="text-[10px]">{getTypeIcon(event.type)}</span>
+        </div>
+
+        {/* The Card */}
+        <div
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`group relative p-[1px] rounded-lg transition-all duration-500 cursor-pointer overflow-hidden
+            ${isExpanded ? 'scale-100 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'scale-[0.98] hover:scale-100 shadow-xl shadow-black/20'}
+          `}
+        >
+          {/* Animated Gold Border Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#e6ce63] via-[#a18a2d] to-[#e6ce63] opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Internal Card Content */}
+          <div className="relative bg-[#0b0f16] p-6 rounded-[7px] h-full flex flex-col gap-4">
+            {/* Header Content */}
+            <div className={`flex flex-col ${isLeft ? 'md:items-end' : 'md:items-start'}`}>
+              <span className="text-[#e6ce63] font-serif text-sm tracking-[0.2em] uppercase mb-1">
+                {event.year}
+              </span>
+              <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-2 group-hover:text-[#e6ce63] transition-colors duration-300" style={{ fontFamily: "'Cinzel', serif" }}>
+                {event.title}
+              </h3>
+              <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#e6ce63]/50 to-transparent" />
             </div>
 
-            {/* Timeline Layout */}
-            <div className="relative">
-              {/* Timeline line */}
-              <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6ce63] via-[#d4af37] to-[#e6ce63]"></div>
+            {/* Description (Preview) */}
+            <p className={`text-gray-400 text-sm md:text-base leading-relaxed transition-all duration-500 ${isExpanded ? 'opacity-0 h-0 hidden' : 'opacity-100'}`}>
+              {event.description}
+            </p>
 
-              {enhancedTimelineEvents.map((event, index) => {
-                const atmosphereStyles = getAtmosphereStyles(event.atmosphere);
+            {/* Expanded Content View */}
+            <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+              {event.image && (
+                <div className="relative w-full aspect-video mb-6 rounded-lg overflow-hidden border-2 border-[#e6ce63]/20 group-hover:border-[#e6ce63]/40 transition-colors">
+                  <Image
+                    loader={wsrvLoader}
+                    src={event.image}
+                    alt={event.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 90vw, (max-width: 1200px) 45vw, 600px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+              )}
 
-                return (
-                  <div key={event.id} className="relative mb-12 ml-20">
-                    {/* Timeline dot */}
-                    <div
-                      className={`absolute top-6 w-12 h-12 rounded-full border-4 ${atmosphereStyles.border} ${atmosphereStyles.bg} flex items-center justify-center text-xl z-10 cursor-pointer transition-all duration-300 hover:scale-110`}
-                      style={{ left: '-70px', backgroundColor: '#1f2937' }}
-                      onClick={() => setSelectedEvent(event)}
-                    >
-                      {getTypeIcon(event.type)}
-                    </div>
+              <div className="relative">
+                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-[#e6ce63]/20 rounded-full" />
+                <p className="pl-6 text-gray-200 text-lg italic leading-relaxed font-light">
+                  &ldquo;{event.content}&rdquo;
+                </p>
+              </div>
 
-                    {/* Event card */}
-                    <div
-                      className={`group cursor-pointer transition-all duration-300 hover:scale-[1.02] ${atmosphereStyles.glow}`}
-                      onClick={() => setSelectedEvent(event)}
-                    >
-                      {/* Era Header */}
-                      <div className="flex items-center gap-4 mb-4">
-                        <div>
-                          <div className={`text-sm font-bold tracking-wider ${atmosphereStyles.accent}`}>
-                            {event.era}
-                          </div>
-                          <h2 className="text-2xl font-bold text-white group-hover:text-yellow-300 transition-colors">
-                            {event.title}
-                          </h2>
-                        </div>
-                      </div>
-
-                      {/* Main Event Card */}
-                      <div className={`${atmosphereStyles.bg} ${atmosphereStyles.border} border-2 rounded-xl p-6 relative overflow-hidden`}>
-
-                        {/* Quote Section */}
-                        <div className="mb-4">
-                          <div className={`text-base italic ${atmosphereStyles.accent} font-medium`}>
-                            {event.quote}
-                          </div>
-                        </div>
-
-                        {/* Content Layout */}
-                        <div className="flex gap-4">
-
-                          {/* Image Section */}
-                          {event.image && (
-                            <div className="flex-shrink-0">
-                              <div className="relative">
-                                <Image
-                                  src={event.image}
-                                  alt={event.title}
-                                  width={120}
-                                  height={80}
-                                  className={`w-30 h-20 object-cover rounded-lg ${atmosphereStyles.border} border-2`}
-                                />
-                                <div className={`absolute inset-0 ${atmosphereStyles.bg} opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-lg`}></div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Description Section */}
-                          <div className="flex-1">
-                            <p className="text-gray-300 leading-relaxed mb-3">
-                              {event.description}
-                            </p>
-
-                            {/* Faction Badge */}
-                            {event.faction && event.faction !== 'Neutral' && (
-                              <div className="flex items-center gap-2">
-                                <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium ${event.faction === 'Sentinel'
-                                    ? 'bg-blue-900/60 text-blue-200 border border-blue-400/50'
-                                    : 'bg-red-900/60 text-red-200 border border-red-400/50'
-                                  }`}>
-                                  <Image
-                                    src={event.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
-                                    alt={event.faction}
-                                    width={16}
-                                    height={16}
-                                    className="mr-1"
-                                  />
-                                  {event.faction}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Hover Indicator */}
-                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <div className={`px-2 py-1 ${atmosphereStyles.bg} ${atmosphereStyles.border} border rounded-full text-xs ${atmosphereStyles.accent}`}>
-                            Click to explore →
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              {event.faction && event.faction !== 'Neutral' && (
+                <div className={`mt-8 flex items-center gap-4 p-4 rounded-lg border-l-4 ${event.faction === 'Sentinel'
+                    ? 'bg-blue-900/10 border-blue-500/50'
+                    : 'bg-red-900/10 border-red-500/50'
+                  }`}>
+                  <Image
+                    loader={wsrvLoader}
+                    src={event.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
+                    alt={event.faction}
+                    width={32}
+                    height={32}
+                    className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                  />
+                  <div>
+                    <span className="text-[10px] uppercase tracking-widest text-[#e6ce63] block mb-0.5">Historical Record</span>
+                    <span className="text-white font-bold">{event.faction} Involvement</span>
                   </div>
-                );
-              })}
+                </div>
+              )}
+            </div>
+
+            {/* Toggle Indicator */}
+            <div className={`mt-2 flex items-center justify-center text-[#e6ce63] transition-transform duration-500 ${isExpanded ? 'rotate-180' : ''}`}>
+              <span className="text-xs tracking-widest uppercase font-bold mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                {isExpanded ? 'Consolidate' : 'Explore'}
+              </span>
+              <span className="text-2xl animate-bounce-slow">▼</span>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
 
-      {/* Detail Panel - Slides in from right */}
-      <div className={`transition-all duration-500 ease-in-out overflow-y-auto border-l-2 border-[#e6ce63] bg-gray-900/90 backdrop-blur-sm ${selectedEvent ? 'w-full md:w-3/5 translate-x-0' : 'w-0 translate-x-full'}`}>
-        {selectedEvent && (
-          <div className="p-8">
-            {/* Close button */}
-            <div className="flex justify-end mb-6">
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 flex items-center gap-2"
-              >
-                <span>✕</span>
-                <span>Close</span>
-              </button>
-            </div>
+export default function LorePage() {
+  return (
+    <div className={`${classContentStyles.pixelBackground} min-h-screen relative overflow-x-hidden pb-32`}>
+      {/* Google Fonts Injection */}
+      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet" />
 
-            {/* Content */}
-            <div className={`rounded-lg border-2 ${getFactionColor(selectedEvent.faction)} p-6`}>
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl">{getTypeIcon(selectedEvent.type)}</span>
-                <div>
-                  <div className="text-sm text-[#e6ce63] font-semibold">
-                    {selectedEvent.year}
-                  </div>
-                  <h1 className="text-3xl font-bold text-white">
-                    {selectedEvent.title}
-                  </h1>
-                </div>
-              </div>
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[url('https://www.transparenttextures.com/patterns/parchment.png')] mix-blend-overlay" />
+      <div className="fixed top-0 left-0 w-full h-64 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-10" />
 
-              {selectedEvent.image && (
-                <div className="mb-6">
-                  <Image
-                    src={selectedEvent.image}
-                    alt={selectedEvent.title}
-                    width={600}
-                    height={300}
-                    className="w-full rounded-lg border border-[#e6ce63]"
-                  />
-                </div>
-              )}
-
-              <div className="text-gray-300 leading-relaxed text-lg mb-6">
-                {selectedEvent.content}
-              </div>
-
-              {selectedEvent.faction && selectedEvent.faction !== 'Neutral' && (
-                <div className="pt-6 border-t border-gray-600">
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={selectedEvent.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
-                      alt={selectedEvent.faction}
-                      width={32}
-                      height={32}
-                    />
-                    <span className="text-[#e6ce63] font-semibold text-lg">
-                      {selectedEvent.faction} Involvement
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+      {/* Hero Header */}
+      <div className="relative z-20 max-w-6xl mx-auto px-6 pt-24 pb-16 md:pt-40 md:pb-32 text-center">
+        <div className="inline-block relative">
+          <div className="absolute inset-0 blur-3xl bg-[#e6ce63]/20 rounded-full" />
+          <h1 className="relative text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#e6ce63] to-[#a18a2d] tracking-[.15em] mb-4" style={{ fontFamily: "'Cinzel', serif" }}>
+            LORE
+          </h1>
+          <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#e6ce63] to-transparent opacity-50" />
+        </div>
+        <p className="mt-8 text-gray-400 text-lg md:text-xl font-light tracking-widest uppercase max-w-2xl mx-auto italic">
+          The Chronicles of Arinar
+        </p>
+        <p className="mt-4 text-[#e6ce63]/60 font-serif italic text-sm md:text-base">
+          &ldquo;Behold the tapestry of existence, woven from thread of blood and light.&rdquo;
+        </p>
       </div>
+
+      {/* Timeline Section */}
+      <div className="relative max-w-7xl mx-auto px-6">
+        {/* Central Vertical Line (Desktop) */}
+        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#e6ce63] via-[#a18a2d]/30 to-[#e6ce63] opacity-20" />
+
+        {/* Mobile Sidebar Line */}
+        <div className="md:hidden absolute left-[11px] top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#e6ce63]/50 to-transparent" />
+
+        <div className="flex flex-col w-full">
+          {timelineEvents.map((event, index) => (
+            <TimelineCard key={event.id} event={event} index={index} />
+          ))}
+        </div>
+      </div>
+
+      {/* Footer Decoration */}
+      <div className="mt-20 text-center relative z-20">
+        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#e6ce63] to-transparent mx-auto mb-8" />
+        <p className="text-[#e6ce63] font-serif text-sm tracking-widest uppercase opacity-40 italic">
+          More to be unraveled...
+        </p>
+      </div>
+
+      {/* Animations Helper */}
+      <style jsx global>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(5px); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 2s infinite ease-in-out;
+        }
+        body {
+          background-color: #05070a;
+        }
+      `}</style>
     </div>
   );
 }

@@ -22,12 +22,12 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   const [formDescription, setFormDescription] = useState('');
   // Removed formCostLevels
   const [knowledgeCosts, setKnowledgeCosts] = useState<Record<number, string>>({}); // Changed to Record<number, string>
-  
+
   const [formParamDefs, setFormParamDefs] = useState<TalentParameterDefinitionInForm[]>(
     () => [{ id: crypto.randomUUID(), key: 'value' }]
   );
   const [formLevelValues, setFormLevelValues] = useState<TalentLevelValue[]>([]);
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [showIconPickerModal, setShowIconPickerModal] = useState(false);
@@ -103,10 +103,10 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       }
       setFormParamDefs(
         initialData.parameters_definition && initialData.parameters_definition.length > 0
-          ? initialData.parameters_definition.map(pd => ({ 
-              id: crypto.randomUUID(), 
-              key: pd.key
-            }))
+          ? initialData.parameters_definition.map(pd => ({
+            id: crypto.randomUUID(),
+            key: pd.key
+          }))
           : [{ id: crypto.randomUUID(), key: 'value' }]
       );
       setFormLevelValues(initialData.level_values || []);
@@ -124,15 +124,15 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
   useEffect(() => {
     const currentMaxLevel = formMaxLevel;
-    const baseValuesSource = (isEditing && initialData && initialData.max_level === currentMaxLevel && initialData.level_values) 
-                            ? initialData.level_values 
-                            : formLevelValues;
+    const baseValuesSource = (isEditing && initialData && initialData.max_level === currentMaxLevel && initialData.level_values)
+      ? initialData.level_values
+      : formLevelValues;
 
     const newLevels: TalentLevelValue[] = [];
     for (let i = 1; i <= currentMaxLevel; i++) {
       const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
       const levelEntry: TalentLevelValue = { level: i };
-      
+
       formParamDefs.forEach(def => {
         const trimmedKey = def.key.trim();
         if (trimmedKey) {
@@ -144,21 +144,37 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     setFormLevelValues(newLevels);
   }, [formMaxLevel, formParamDefs, initialData, isEditing]);
 
-  const handleParamDefChange = (index: number, field: 'key', value: string) => {
-    const newParamDefs = [...formParamDefs];
-    if (field === 'key') {
-      value = value.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
-    }
-    newParamDefs[index][field] = value;
-    setFormParamDefs(newParamDefs);
-  };
-
   const handleAddParamDef = () => {
     setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '' }]);
   };
 
-  const handleRemoveParamDef = (idToRemove: string) => {
+  const handleRemoveParamDef = (idToRemove: string, keyToRemove: string) => {
     setFormParamDefs(formParamDefs.filter(param => param.id !== idToRemove));
+    // Also remove values for this param from levelValues to keep it clean (optional but good)
+  };
+
+  const handleRenameParam = (id: string, oldKey: string, newKey: string) => {
+    setFormParamDefs(prev => prev.map(p =>
+      p.id === id ? { ...p, key: newKey.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '') } : p
+    ));
+
+    // Update level values to preserve data during rename
+    setFormLevelValues(prevLevels => {
+      return prevLevels.map(level => {
+        const val = level[oldKey];
+        if (val !== undefined) {
+          // Create new object without old key, with new key, preserving 'level'
+          const { [oldKey]: _, ...rest } = level;
+          return { ...rest, [newKey]: val } as TalentLevelValue;
+        }
+        return level;
+      });
+    });
+  };
+
+  const handleTogglePvp = (id: string, hasPvp: boolean) => {
+    // Talents don't use Pvp for now, so this is no-op
+    console.log("Toggle Pvp not supported for talents");
   };
 
   const handleLevelValueChange = (levelNumber: number, paramKey: string, value: string) => {
@@ -168,6 +184,18 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           return { ...level, [paramKey]: value };
         }
         return level;
+      });
+    });
+  };
+
+  const handleBulkLevelValueChange = (paramKey: string, valuesByLevel: Record<number, string>) => {
+    setFormLevelValues(prevLevels => {
+      return prevLevels.map(levelItem => {
+        const newValue = valuesByLevel[levelItem.level];
+        if (newValue !== undefined) {
+          return { ...levelItem, [paramKey]: newValue };
+        }
+        return levelItem;
       });
     });
   };
@@ -194,7 +222,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
       const finalParamDefs = formParamDefs
         .filter(p => p.key.trim())
-        .map(({key }) => ({ key: key.trim() }));
+        .map(({ key }) => ({ key: key.trim() }));
 
       const paramKeysFromDefs = finalParamDefs.map(p => p.key);
       if (finalParamDefs.some(p => !p.key)) {
@@ -210,7 +238,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         .map(lv => {
           const filteredLevel: TalentLevelValue = { level: lv.level };
           finalParamDefs.forEach(pd => {
-            filteredLevel[pd.key] = lv[pd.key] ?? ''; 
+            filteredLevel[pd.key] = lv[pd.key] ?? '';
           });
           return filteredLevel;
         });
@@ -244,6 +272,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         // Removed setFormCostLevels
         setKnowledgeCosts({}); // Reset knowledge costs
         setFormParamDefs([{ id: crypto.randomUUID(), key: 'value' }]);
+        setFormLevelValues([]);
       }
       setFormError(null);
 
@@ -321,30 +350,27 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
 
         <div>
           <label htmlFor="formDescription" className="block mb-1 text-sm font-medium text-gray-300">Description (use {'{key}'} for params):</label>
-          <textarea 
-            id="formDescription" 
-            value={formDescription} 
-            onChange={(e) => setFormDescription(e.target.value)} 
+          <textarea
+            id="formDescription"
+            value={formDescription}
+            onChange={(e) => setFormDescription(e.target.value)}
             rows={3}
             className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
           />
         </div>
 
-        <ParameterDefinitions
+        <LevelValuesTable
+          maxLevel={formMaxLevel}
           paramDefs={formParamDefs}
-          onAdd={handleAddParamDef}
-          onChange={handleParamDefChange}
-          onRemove={handleRemoveParamDef}
+          levelValues={formLevelValues}
+          onChange={handleLevelValueChange}
+          onBulkChange={handleBulkLevelValueChange}
+          onAddParam={handleAddParamDef}
+          onRemoveParam={handleRemoveParamDef}
+          onRenameParam={handleRenameParam}
+          onTogglePvp={handleTogglePvp}
+          isTalent={true}
         />
-
-        {formParamDefs.filter(p => p.key.trim()).length > 0 && (
-          <LevelValuesTable
-            maxLevel={formMaxLevel}
-            paramDefs={formParamDefs.filter(p => p.key.trim())}
-            levelValues={formLevelValues}
-            onChange={handleLevelValueChange}
-          />
-        )}
 
         {formError && (
           <p className="text-red-400 mt-2">{formError}</p>
@@ -356,8 +382,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
             disabled={isSubmitting}
             className="py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
           >
-            {isSubmitting 
-              ? (isEditing ? 'Saving Changes...' : 'Creating Talent...') 
+            {isSubmitting
+              ? (isEditing ? 'Saving Changes...' : 'Creating Talent...')
               : (isEditing ? 'Save Changes' : 'Create Talent')}
           </button>
           {isEditing && (
@@ -384,8 +410,8 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">Select Talent Icon</h3>
-              <button 
-                onClick={() => setShowIconPickerModal(false)} 
+              <button
+                onClick={() => setShowIconPickerModal(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
                 title="Close"
               >
@@ -397,7 +423,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
                 bucketName="media"
                 initialPath="talents"
                 onFileSelect={handleIconSelectedFromPicker}
-                mode="select" 
+                mode="select"
                 accept="image/*"
               />
             </div>

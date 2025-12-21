@@ -3,7 +3,7 @@ import RSSParser from 'rss-parser';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
 import * as cheerio from 'cheerio';
-import { Translate } from '@google-cloud/translate/build/src/v2';
+import { translate } from 'google-translate-api-x';
 import { createClient } from '@/lib/supabase/server';
 
 // --- Constants ---
@@ -11,11 +11,39 @@ const RSS_URL = 'https://forum.warspear-online.com/index.php?/forum/23-news-anno
 const MAX_ITEMS_TO_PROCESS = 20; // Limit the number of items to process from the RSS feed
 
 // --- Helper Functions ---
-function getTranslateClient(): Translate {
-  if (!process.env.GOOGLE_CLOUD_API_KEY) {
-    throw new Error('GOOGLE_CLOUD_API_KEY is not set in environment variables.');
+// function getTranslateClient() is no longer needed with google-translate-api-x
+
+async function translateLargeHTML(html: string, targetLanguage: string): Promise<string> {
+  const MAX_CHUNK_SIZE = 4000;
+  if (html.length <= MAX_CHUNK_SIZE) {
+    const res = await translate(html, { to: targetLanguage, forceBatch: false, client: 'gtx' });
+    return res.text;
   }
-  return new Translate({ key: process.env.GOOGLE_CLOUD_API_KEY });
+
+  console.log(`Splitting large HTML (length: ${html.length})...`);
+
+  // Try to find a good split point (end of a tag or a space)
+  let splitIndex = html.lastIndexOf('</', MAX_CHUNK_SIZE);
+  if (splitIndex <= 1000) { // If no closing tag found near the end of chunk
+    splitIndex = html.lastIndexOf('>', MAX_CHUNK_SIZE);
+  }
+  if (splitIndex <= 1000) {
+    splitIndex = html.lastIndexOf(' ', MAX_CHUNK_SIZE);
+  }
+  if (splitIndex <= 1000) {
+    splitIndex = MAX_CHUNK_SIZE;
+  } else {
+    splitIndex += 1; // Include the closing bracket or space
+  }
+
+  const part1 = html.substring(0, splitIndex);
+  const part2 = html.substring(splitIndex);
+
+  // We use sequential processing to avoid overwhelming the free service IP
+  const t1 = await translateLargeHTML(part1, targetLanguage);
+  const t2 = await translateLargeHTML(part2, targetLanguage);
+
+  return t1 + t2;
 }
 
 function cleanHtmlContent(html: string): string {
@@ -38,9 +66,8 @@ function cleanHtmlContent(html: string): string {
 async function translateText(text: string, targetLanguage: string = 'vi'): Promise<string> {
   if (!text || text.trim() === '') return text;
   try {
-    const translate = getTranslateClient();
-    const [translation] = await translate.translate(text, targetLanguage);
-    return translation;
+    const res = await translate(text, { to: targetLanguage, forceBatch: false, client: 'gtx' });
+    return res.text;
   } catch (error) {
     console.error('Translation error:', error);
     return text;
@@ -50,21 +77,16 @@ async function translateText(text: string, targetLanguage: string = 'vi'): Promi
 async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: string = 'vi'): Promise<string> {
   if (!htmlContent || htmlContent.trim() === '') return htmlContent;
   try {
-    console.log("--- Before Sanitization ---");
-    console.log(htmlContent);
     const { window } = new JSDOM('');
     const purify = DOMPurify(window);
     const sanitizedHtml = purify.sanitize(htmlContent, {
       USE_PROFILES: { html: true },
       ADD_ATTR: ['style']
     });
-    console.log("--- After Sanitization, Before Translation ---");
-    console.log(sanitizedHtml);
-    const translate = getTranslateClient();
-    const [translation] = await translate.translate(sanitizedHtml, targetLanguage);
-    console.log("--- After Translation ---");
-    console.log(translation);
-    return translation;
+
+    console.log(`Translating HTML content (length: ${sanitizedHtml.length})`);
+
+    return await translateLargeHTML(sanitizedHtml, targetLanguage);
   } catch (error) {
     console.error('HTML translation and sanitization error:', error);
     return htmlContent;
@@ -75,18 +97,18 @@ async function translateAndSanitizeHTML(htmlContent: string, targetLanguage: str
 export async function GET(request: NextRequest) {
   // Ensure this route is only accessible via a secure cron job or authenticated request
   // For Vercel Cron Jobs, you might check a secret header or IP whitelist
-const authHeader = request.headers.get('Authorization');
-const cronSecret = process.env.CRON_SECRET;
+  const authHeader = request.headers.get('Authorization');
+  const cronSecret = process.env.CRON_SECRET;
 
-if (!authHeader || !cronSecret || !authHeader.startsWith('Bearer ')) {
-  return NextResponse.json({ message: 'Unauthorized: Missing or malformed Authorization header' }, { status: 401 });
-}
+  if (!authHeader || !cronSecret || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ message: 'Unauthorized: Missing or malformed Authorization header' }, { status: 401 });
+  }
 
-const token = authHeader.split(' ')[1];
+  const token = authHeader.split(' ')[1];
 
-if (token !== cronSecret) {
-  return NextResponse.json({ message: 'Unauthorized: Invalid token' }, { status: 401 });
-}
+  if (token !== cronSecret) {
+    return NextResponse.json({ message: 'Unauthorized: Invalid token' }, { status: 401 });
+  }
 
   try {
     const supabase = await createClient({ serviceRole: true }); // Use service role key
