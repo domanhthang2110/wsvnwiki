@@ -32,9 +32,8 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
 
   return (
     <div
-      className={`bg-gray-800 rounded-lg shadow-md p-4 flex flex-col max-w-sm cursor-pointer ${
-        isSelected ? 'border-2 border-blue-500' : 'border border-gray-700'
-      }`}
+      className={`bg-gray-800 rounded-lg shadow-md p-4 flex flex-col max-w-sm cursor-pointer ${isSelected ? 'border-2 border-blue-500' : 'border border-gray-700'
+        }`}
       onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
     >
       <div className="flex items-center">
@@ -59,7 +58,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
 
       {isDetailsExpanded && (
         <div className="mt-4">
-          <p className="text-gray-300 text-sm mb-2 break-words">Description: {formattedDescription}</p>
+          <p className="text-gray-300 text-sm mb-2 break-words">Description: <span dangerouslySetInnerHTML={{ __html: formattedDescription }} /></p>
           <p className="text-gray-300 text-sm mb-2">Max Level: {skill.max_level || 'N/A'}</p>
           <p className="text-gray-300 text-sm mb-2">Skill Type: {skill.skill_type || 'N/A'}</p>
           <p className="text-gray-300 text-sm mb-2">Activation Type: {skill.activation_type || 'N/A'}</p>
@@ -68,7 +67,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
 
           {skill.items && skill.items.length > 0 && (
             <div className="mt-2">
-              <div 
+              <div
                 className="flex items-center cursor-pointer text-gray-200 hover:text-gray-100"
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent skill card from collapsing
@@ -150,8 +149,8 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">Select Skill Icon</h3>
-              <button 
-                onClick={() => setShowIconPickerModal(false)} 
+              <button
+                onClick={() => setShowIconPickerModal(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
                 title="Close"
               >
@@ -163,7 +162,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
                 bucketName="media"
                 initialPath="classes"
                 onFileSelect={handleIconSelectedFromPicker}
-                mode="select" 
+                mode="select"
                 accept="image/*"
               />
             </div>

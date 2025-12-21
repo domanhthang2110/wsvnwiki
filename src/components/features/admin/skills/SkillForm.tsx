@@ -5,9 +5,12 @@ import { FormEvent, useState, useEffect } from 'react';
 import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue } from '@/types/skills'; // Assuming types are here
 import { Item } from '@/types/items';
 import { SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
-import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
+import { SkillInfoModal } from '@/components/features/wiki/classes/SkillDisplay';
+import LongButton from '@/components/ui/LongButton';
+import DescriptionEditor from './DescriptionEditor';
+
 import EnergyCostRow from './EnergyCostRow';
 import ReducedEnergyRegenRow from './ReducedEnergyRegenRow';
 
@@ -27,27 +30,29 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
   const [formIconUrl, setFormIconUrl] = useState('');
   const [formSkillTier, setFormSkillTier] = useState<SkillItem['skill_type']>(SKILL_TIER_OPTIONS[0]);
   const [formActivationType, setFormActivationType] = useState<SkillItem['activation_type']>(ACTIVATION_TYPE_OPTIONS[0]);
-  const [formMaxLevel, setFormMaxLevel] = useState<number>(5); 
+  const [formMaxLevel, setFormMaxLevel] = useState<number>(5);
   const [formCooldown, setFormCooldown] = useState('');
   // Remove formEnergyCost state as it will be handled in formLevelValues
   const [formRange, setFormRange] = useState('');
   const [formDescriptionTemplate, setFormDescriptionTemplate] = useState('');
-  
+
   const [formParamDefs, setFormParamDefs] = useState<SkillParameterDefinitionInForm[]>(
-    () => [{ id: crypto.randomUUID(), key: 'damage' }]
+    () => [{ id: crypto.randomUUID(), key: 'damage', hasPvp: false }]
   );
   const [formLevelValues, setFormLevelValues] = useState<SkillLevelValue[]>([]);
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  
+
   // Renamed from showMediaGallery for clarity
-  const [showIconPickerModal, setShowIconPickerModal] = useState(false); 
+  const [showIconPickerModal, setShowIconPickerModal] = useState(false);
 
   // NEW state for energy costs
   const [energyCosts, setEnergyCosts] = useState<Record<number, string>>({});
   const [reducedEnergyRegenValues, setReducedEnergyRegenValues] = useState<Record<number, string>>({});
-  // const [energyCostValues, setEnergyCostValues] = useState<string[]>(Array.from({ length: 5 }, () => '')); // Default to 5 empty strings
+
+  const [previewSkill, setPreviewSkill] = useState<SkillItem | null>(null);
+  const [previewLevel, setPreviewLevel] = useState(0);
 
   const [liveFormData, setLiveFormData] = useState<Omit<SkillItem, 'id' | 'created_at'>>({
     name: '',
@@ -78,11 +83,12 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
       setFormDescriptionTemplate(initialData.description || '');
       setFormParamDefs(
         initialData.parameters_definition && initialData.parameters_definition.length > 0
-          ? initialData.parameters_definition.map(pd => ({ 
-              id: crypto.randomUUID(), 
-              key: pd.key
-            }))
-          : [{ id: crypto.randomUUID(), key: 'damage' }]
+          ? initialData.parameters_definition.map(pd => ({
+            id: crypto.randomUUID(),
+            key: pd.key,
+            hasPvp: !!pd.hasPvp
+          }))
+          : [{ id: crypto.randomUUID(), key: 'damage', hasPvp: false }]
       );
       // Level values will be set by the next useEffect based on initialData.level_values
       // and current paramDefs & maxLevel. This simplifies logic.
@@ -142,7 +148,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
       // Remove energy cost reset
       setFormRange('');
       setFormDescriptionTemplate('');
-      setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage' }]);
+      setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage', hasPvp: false }]);
       setFormLevelValues([]); // Will be populated by the effect below
       setEnergyCosts({});
       setReducedEnergyRegenValues({});
@@ -150,84 +156,81 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
   }, [initialData]);
 
   // NEW useEffect to automatically set maxLevel based on skillTier
-useEffect(() => {
-  let newMaxLevel = 1; // Default for "Equipment", "Race", or any other type
-  switch (formSkillTier) {
-    case 'Basic':
-      newMaxLevel = 5;
-      break;
-    case 'Expert':
-      newMaxLevel = 4;
-      break;
-    // Add other cases if "Equipment" or "Race" have different max levels than 1
-    // default: newMaxLevel = 1; // Already handled by initialization
-  }
-  setFormMaxLevel(newMaxLevel);
-}, [formSkillTier]); // Re-run ONLY when formSkillTier changes
-
-// Effect to update formLevelValues based on maxLevel and paramDefs
-useEffect(() => {
-  const currentMaxLevel = formMaxLevel;
-
-  setFormLevelValues(prevLevels => {
-    const newLevels: SkillLevelValue[] = [];
-    for (let i = 1; i <= currentMaxLevel; i++) {
-      // Find existing data for this level from the previous state
-      const existingDataForThisLevel = prevLevels.find(l => l.level === i) ?? { level: i };
-      const levelEntry: SkillLevelValue = { level: i };
-
-      formParamDefs.forEach(def => {
-        const trimmedKey = def.key.trim();
-        if (trimmedKey) {
-          // Preserve existing value if it exists, otherwise default to empty string
-          levelEntry[trimmedKey] = existingDataForThisLevel[trimmedKey] ?? '';
-        }
-      });
-      newLevels.push(levelEntry);
-    }
-    return newLevels;
-  });
-}, [formMaxLevel, formParamDefs]); // Removed initialData and isEditing from dependencies
-
-  // Effect to update liveFormData
   useEffect(() => {
-    const skillDataToSubmit: Omit<SkillItem, 'id' | 'created_at'> = {
-      name: formName.trim(),
-      icon_url: formIconUrl.trim() || null,
-      skill_type: formSkillTier,
-      activation_type: formActivationType,
-      max_level: formMaxLevel,
-      description: formDescriptionTemplate.trim() || null,
-      parameters_definition: null,
-      level_values: null,
-      cooldown: formCooldown.trim() ? parseInt(formCooldown, 10) : null,
-      range: formRange.trim() ? parseInt(formRange, 10) : null,
-      reduced_energy_regen: null,
-      energy_cost: null,
-    };
+    let newMaxLevel = 1; // Default for "Equipment", "Race", or any other type
+    switch (formSkillTier) {
+      case 'Basic':
+        newMaxLevel = 5;
+        break;
+      case 'Expert':
+        newMaxLevel = 4;
+        break;
+      // Add other cases if "Equipment" or "Race" have different max levels than 1
+      // default: newMaxLevel = 1; // Already handled by initialization
+    }
+    setFormMaxLevel(newMaxLevel);
+  }, [formSkillTier]); // Re-run ONLY when formSkillTier changes
+
+  // Effect to update formLevelValues based on maxLevel and paramDefs
+  useEffect(() => {
+    const currentMaxLevel = formMaxLevel;
+
+    setFormLevelValues(prevLevels => {
+      const newLevels: SkillLevelValue[] = [];
+      for (let i = 1; i <= currentMaxLevel; i++) {
+        // Find existing data for this level from the previous state
+        const existingDataForThisLevel = prevLevels.find(l => l.level === i) ?? { level: i };
+        const levelEntry: SkillLevelValue = { level: i };
+
+        formParamDefs.forEach(def => {
+          const trimmedKey = def.key.trim();
+          if (trimmedKey) {
+            // Preserve existing normal value
+            levelEntry[trimmedKey] = existingDataForThisLevel[trimmedKey] ?? '';
+
+            // Preserve existing PvP value if applicable
+            // Note: We preserve it even if hasPvp is toggled off momentarily, 
+            // but usually we might want to clean it up. For safety in form, we keep it.
+            const pvpKey = `${trimmedKey}_pvp`;
+            if (existingDataForThisLevel[pvpKey] !== undefined) {
+              levelEntry[pvpKey] = existingDataForThisLevel[pvpKey];
+            }
+          }
+        });
+        newLevels.push(levelEntry);
+      }
+      return newLevels;
+    });
+  }, [formMaxLevel, formParamDefs]); // Removed initialData and isEditing from dependencies
+
+  const prepareSkillData = (): Omit<SkillItem, 'id' | 'created_at'> => {
+    const currentMaxLevel = formMaxLevel;
 
     const finalParamDefs = formParamDefs
       .filter(p => p.key.trim())
-      .map(({key}) => ({ key: key.trim() }));
-
-    if (finalParamDefs.length > 0) {
-      skillDataToSubmit.parameters_definition = finalParamDefs;
-    }
+      .map(({ key, hasPvp }) => ({ key: key.trim(), hasPvp }));
 
     const finalLevelValues = formLevelValues
-      .filter(lv => lv.level <= formMaxLevel)
+      .filter(lv => lv.level <= currentMaxLevel)
       .map(lv => {
         const filteredLevel: SkillLevelValue = { level: lv.level };
         finalParamDefs.forEach(pd => {
-          filteredLevel[pd.key] = lv[pd.key] ?? '';
+          // Normal Value
+          const rawValue = lv[pd.key];
+          filteredLevel[pd.key] = (rawValue && !isNaN(Number(rawValue))) ? Number(rawValue) : (rawValue ?? '');
+
+          // PvP Value
+          if (pd.hasPvp) {
+            const pvpKey = `${pd.key}_pvp`;
+            const rawPvpValue = lv[pvpKey];
+            filteredLevel[pvpKey] = (rawPvpValue && !isNaN(Number(rawPvpValue))) ? Number(rawPvpValue) : (rawPvpValue ?? '');
+          }
         });
         return filteredLevel;
       });
 
-    if (finalLevelValues.length > 0) {
-      skillDataToSubmit.level_values = finalLevelValues;
-    }
-
+    // Process Energy Costs
+    let finalEnergyCost: Record<number, number> | null = null;
     if (formActivationType === 'Active' || formActivationType === 'Permanent') {
       const parsedEnergyCosts: Record<number, number> = {};
       Object.entries(energyCosts).forEach(([level, value]) => {
@@ -235,9 +238,11 @@ useEffect(() => {
           parsedEnergyCosts[parseInt(level)] = parseInt(value);
         }
       });
-      skillDataToSubmit.energy_cost = Object.keys(parsedEnergyCosts).length > 0 ? parsedEnergyCosts : null;
+      if (Object.keys(parsedEnergyCosts).length > 0) finalEnergyCost = parsedEnergyCosts;
     }
 
+    // Process Reduced Regen
+    let finalReducedRegen: Record<number, number> | null = null;
     if (formActivationType === 'Permanent') {
       const parsedReducedEnergyRegen: Record<number, number> = {};
       Object.entries(reducedEnergyRegenValues).forEach(([level, value]) => {
@@ -245,30 +250,95 @@ useEffect(() => {
           parsedReducedEnergyRegen[parseInt(level)] = parseInt(value);
         }
       });
-      skillDataToSubmit.reduced_energy_regen = Object.keys(parsedReducedEnergyRegen).length > 0 ? parsedReducedEnergyRegen : null;
+      if (Object.keys(parsedReducedEnergyRegen).length > 0) finalReducedRegen = parsedReducedEnergyRegen;
     }
 
-    setLiveFormData(skillDataToSubmit);
+    return {
+      name: formName.trim() || null,
+      icon_url: formIconUrl.trim() || null,
+      skill_type: formSkillTier || SKILL_TIER_OPTIONS[0],
+      activation_type: formActivationType || ACTIVATION_TYPE_OPTIONS[0],
+      max_level: currentMaxLevel,
+      description: formDescriptionTemplate.trim() || null,
+      parameters_definition: finalParamDefs.length > 0 ? finalParamDefs : null,
+      level_values: finalLevelValues.length > 0 ? finalLevelValues : null,
+      cooldown: formCooldown.trim() ? parseInt(formCooldown, 10) : null,
+      range: formRange.trim() ? parseInt(formRange, 10) : null,
+      reduced_energy_regen: finalReducedRegen,
+      energy_cost: finalEnergyCost,
+    };
+  };
+
+  // Effect to update liveFormData
+  useEffect(() => {
+    setLiveFormData(prepareSkillData());
   }, [formName, formIconUrl, formSkillTier, formActivationType, formMaxLevel, formCooldown, formRange, formDescriptionTemplate, formParamDefs, formLevelValues, energyCosts, reducedEnergyRegenValues]);
 
 
-  const handleParamDefChange = (index: number, field: 'key', value: string) => {
-    const newParamDefs = [...formParamDefs];
-    if (field === 'key') {
-      value = value.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+  const handleRenameParam = (id: string, oldKey: string, newKey: string) => {
+    // 1. Update Definition
+    const cleanNewKey = newKey.replace(/\s+/g, '').replace(/[^a-zA-Z0-9_]/g, '');
+
+    setFormParamDefs(prev => prev.map(p =>
+      p.id === id ? { ...p, key: cleanNewKey } : p
+    ));
+
+    // 2. Migrate Values in Level Data if key actually changed
+    // We do this by updating formLevelValues directly
+    if (oldKey && cleanNewKey && oldKey !== cleanNewKey) {
+      setFormLevelValues(prev => prev.map(lv => {
+        const newVal = { ...lv };
+        // Migrate normal value
+        if (newVal[oldKey] !== undefined) {
+          newVal[cleanNewKey] = newVal[oldKey];
+          delete newVal[oldKey];
+        }
+        // Migrate PvP value
+        const oldPvpKey = `${oldKey}_pvp`;
+        const newPvpKey = `${cleanNewKey}_pvp`;
+        if (newVal[oldPvpKey] !== undefined) {
+          newVal[newPvpKey] = newVal[oldPvpKey];
+          delete newVal[oldPvpKey];
+        }
+        return newVal;
+      }));
     }
-    newParamDefs[index][field] = value;
-    setFormParamDefs(newParamDefs);
   };
 
   const handleAddParamDef = () => {
-    setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '' }]);
+    setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '', hasPvp: false }]);
   };
 
-  const handleRemoveParamDef = (idToRemove: string) => {
+  const handleRemoveParamDef = (idToRemove: string, keyToRemove: string) => {
     setFormParamDefs(formParamDefs.filter(param => param.id !== idToRemove));
-    // Note: The useEffect for level_values will automatically clean up keys from formLevelValues
+    // Optional: Clean up level values immediately, though useEffect will likely handle re-shaping
   };
+
+  const handleTogglePvp = (id: string, hasPvp: boolean) => {
+    setFormParamDefs(prev => prev.map(p =>
+      p.id === id ? { ...p, hasPvp } : p
+    ));
+
+    if (hasPvp) {
+      const param = formParamDefs.find(p => p.id === id);
+      if (param) {
+        setFormLevelValues(prev => prev.map(lv => {
+          const pveValue = lv[param.key];
+          const pvpKey = `${param.key}_pvp`;
+
+          // Copy PvE value if PvP value is empty/undefined
+          if (lv[pvpKey] === undefined || lv[pvpKey] === '') {
+            return {
+              ...lv,
+              [pvpKey]: pveValue
+            };
+          }
+          return lv;
+        }));
+      }
+    }
+  };
+
 
   const handleLevelValueChange = (levelNumber: number, paramKey: string, value: string) => {
     setFormLevelValues(prevLevels => {
@@ -277,6 +347,18 @@ useEffect(() => {
           return { ...level, [paramKey]: value };
         }
         return level;
+      });
+    });
+  };
+
+  const handleBulkLevelValueChange = (paramKey: string, valuesByLevel: Record<number, string>) => {
+    setFormLevelValues(prevLevels => {
+      return prevLevels.map(levelItem => {
+        const newValue = valuesByLevel[levelItem.level];
+        if (newValue !== undefined) {
+          return { ...levelItem, [paramKey]: newValue };
+        }
+        return levelItem;
       });
     });
   };
@@ -301,23 +383,31 @@ useEffect(() => {
     }));
   };
 
+  const handleShowPreview = () => {
+    const data = prepareSkillData();
+    // Mock full SkillItem with ID/Date for display purposes
+    const mockSkill: SkillItem = {
+      ...data,
+      id: initialData?.id || 0,
+      created_at: initialData?.created_at || new Date().toISOString()
+    };
+    setPreviewSkill(mockSkill);
+    setPreviewLevel(0);
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     setFormError(null);
 
     try {
-      const currentMaxLevel = formMaxLevel;
-
       if (!formName.trim()) throw new Error("Skill name is required.");
-      if (currentMaxLevel < 1) throw new Error("Max level must be at least 1.");
+      if (formMaxLevel < 1) throw new Error("Max level must be at least 1.");
 
-      const finalParamDefs = formParamDefs
-        .filter(p => p.key.trim())
-        .map(({key}) => ({ key: key.trim() })); // Strip temporary id
+      const definitions = prepareSkillData().parameters_definition || [];
+      const paramKeysFromDefs = definitions.map(p => p.key);
 
-      const paramKeysFromDefs = finalParamDefs.map(p => p.key);
-      if (finalParamDefs.some(p => !p.key)) {
+      if (definitions.some(p => !p.key)) {
         throw new Error("All defined parameters must have a non-empty key.");
       }
       const uniqueParamKeys = new Set(paramKeysFromDefs);
@@ -325,84 +415,26 @@ useEffect(() => {
         throw new Error("Parameter keys must be unique.");
       }
 
-      const finalLevelValues = formLevelValues
-        .filter(lv => lv.level <= currentMaxLevel) // Only include levels up to max_level
-        .map(lv => {
-          const filteredLevel: SkillLevelValue = { level: lv.level };
-          // Only include keys that are in finalParamDefs
-          finalParamDefs.forEach(pd => {
-            const rawValue = lv[pd.key];
-            if (rawValue && !isNaN(Number(rawValue))) {
-              // Convert to number if it's a valid numeric string
-              filteredLevel[pd.key] = Number(rawValue);
-            } else {
-              // Otherwise, keep it as a string (or null/undefined)
-              filteredLevel[pd.key] = rawValue ?? '';
-            }
-          });
-          return filteredLevel;
-        });
+      const skillDataToSubmit = prepareSkillData();
+      await onSubmit(skillDataToSubmit);
 
-      const skillDataToSubmit: Omit<SkillItem, 'id' | 'created_at'> = {
-        name: formName.trim() || null,
-        icon_url: formIconUrl.trim() || null,
-        skill_type: formSkillTier || SKILL_TIER_OPTIONS[0],
-        activation_type: formActivationType || ACTIVATION_TYPE_OPTIONS[0],
-        max_level: currentMaxLevel,
-        description: formDescriptionTemplate.trim() || null,
-        parameters_definition: finalParamDefs.length > 0 ? finalParamDefs : null,
-        level_values: finalLevelValues.length > 0 ? finalLevelValues : null,
-        // Ensure all properties are explicitly included, even if null
-        cooldown: formCooldown.trim() ? parseInt(formCooldown, 10) : null,
-        range: formRange.trim() ? parseInt(formRange, 10) : null,
-        reduced_energy_regen: null,
-        energy_cost: null, // Default to null, will be set below if active
-      };
-
-      if (formActivationType === 'Active' || formActivationType === 'Permanent') {
-        const parsedEnergyCosts: Record<number, number> = {};
-        Object.entries(energyCosts).forEach(([level, value]) => {
-          if (value && !isNaN(parseInt(value))) {
-            parsedEnergyCosts[parseInt(level)] = parseInt(value);
-          }
-        });
-        skillDataToSubmit.energy_cost = Object.keys(parsedEnergyCosts).length > 0 ? parsedEnergyCosts : null;
-      }
-
-      if (formActivationType === 'Permanent' || formActivationType === 'Active') {
-        const parsedReducedEnergyRegen: Record<number, number> = {};
-        Object.entries(reducedEnergyRegenValues).forEach(([level, value]) => {
-            if (value && !isNaN(parseInt(value))) {
-                parsedReducedEnergyRegen[parseInt(level)] = parseInt(value);
-            }
-        });
-        skillDataToSubmit.reduced_energy_regen = Object.keys(parsedReducedEnergyRegen).length > 0 ? parsedReducedEnergyRegen : null;
-      }
-
-      await onSubmit(skillDataToSubmit); // Call the prop passed by AdminSkillsPage
-
-      // Reset form only if NOT editing, or if parent handles it
+      // Reset form logic
       if (!isEditing) {
-          setFormName('');
-          setFormIconUrl('');
-          setFormSkillTier(SKILL_TIER_OPTIONS[0]);
-          setFormActivationType(ACTIVATION_TYPE_OPTIONS[0]);
-          //setFormMaxLevel("1");
-          setFormCooldown('');
-          // Remove energy cost reset
-          setFormRange('');
-          setFormDescriptionTemplate('');
-          setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage' }]);
-          setEnergyCosts({});
-          setReducedEnergyRegenValues({});
-          // formLevelValues will be reset by its own useEffect when maxLevel and paramDefs reset
+        setFormName('');
+        setFormIconUrl('');
+        setFormSkillTier(SKILL_TIER_OPTIONS[0]);
+        setFormActivationType(ACTIVATION_TYPE_OPTIONS[0]);
+        setFormCooldown('');
+        setFormRange('');
+        setFormDescriptionTemplate('');
+        setFormParamDefs([{ id: crypto.randomUUID(), key: 'damage', hasPvp: false }]);
+        setEnergyCosts({});
+        setReducedEnergyRegenValues({});
       }
       setFormError(null);
 
     } catch (error: unknown) {
       console.error("SkillForm handleSubmit error:", error);
-
-      // Use type guard to safely access `message`
       if (error instanceof Error) {
         setFormError(error.message);
       } else {
@@ -452,14 +484,14 @@ useEffect(() => {
             {formIconUrl ? 'Change Icon' : 'Select Icon from Media'}
           </button>
         </div>
-        
+
         {/* Skill Configuration */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label htmlFor="formSkillTier" className="block mb-1 text-sm font-medium text-gray-300">Skill Type (Tier):</label>
-            <select 
-              id="formSkillTier" 
-              value={formSkillTier || ''} 
+            <select
+              id="formSkillTier"
+              value={formSkillTier || ''}
               onChange={(e) => setFormSkillTier(e.target.value as SkillItem['skill_type'])}
               className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 h-[42px]"
             >
@@ -468,9 +500,9 @@ useEffect(() => {
           </div>
           <div>
             <label htmlFor="formActivationType" className="block mb-1 text-sm font-medium text-gray-300">Activation Type:</label>
-            <select 
-              id="formActivationType" 
-              value={formActivationType || ''} 
+            <select
+              id="formActivationType"
+              value={formActivationType || ''}
               onChange={(e) => setFormActivationType(e.target.value as SkillItem['activation_type'])}
               className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 h-[42px]"
             >
@@ -486,7 +518,6 @@ useEffect(() => {
         </div>
 
         {/* Active Skill Properties */}
-        {/* Active Skill Properties */}
         {(formActivationType === 'Active' || formActivationType === 'Permanent') && (
           <div className="p-4 border border-gray-600 rounded-md space-y-4 mt-4">
             <h3 className="text-lg font-medium text-gray-300">{formActivationType} Skill Properties</h3>
@@ -497,11 +528,11 @@ useEffect(() => {
                     <label htmlFor="formCooldown" className="block mb-1 text-sm font-medium text-gray-300">
                       Cooldown (number):
                     </label>
-                    <input 
-                      type="number" 
-                      id="formCooldown" 
-                      value={formCooldown} 
-                      onChange={(e) => setFormCooldown(e.target.value)} 
+                    <input
+                      type="number"
+                      id="formCooldown"
+                      value={formCooldown}
+                      onChange={(e) => setFormCooldown(e.target.value)}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
                     />
                   </div>
@@ -509,11 +540,11 @@ useEffect(() => {
                 {formActivationType === 'Active' && (
                   <div>
                     <label htmlFor="formRange" className="block mb-1 text-sm font-medium text-gray-300">Range (Optional, number):</label>
-                    <input 
-                      type="number" 
-                      id="formRange" 
-                      value={formRange} 
-                      onChange={(e) => setFormRange(e.target.value)} 
+                    <input
+                      type="number"
+                      id="formRange"
+                      value={formRange}
+                      onChange={(e) => setFormRange(e.target.value)}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100"
                     />
                   </div>
@@ -535,36 +566,29 @@ useEffect(() => {
           </div>
         )}
 
-        {/* Description */}
-        <div>
-          <label htmlFor="formDescriptionTemplate" className="block mb-1 text-sm font-medium text-gray-300">Description (use {'{key}'} for params):</label>
-          <textarea 
-            id="formDescriptionTemplate" 
-            value={formDescriptionTemplate} 
-            onChange={(e) => setFormDescriptionTemplate(e.target.value)} 
-            rows={6}
-            className="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 resize-y block w-full"
-            style={{ overflowWrap: 'break-word', overflowX: 'hidden', wordBreak: 'break-word', boxSizing: 'border-box' }}
-          />
-        </div>
-
-        {/* Parameter Definitions */}
-        <ParameterDefinitions
+        {/* Level Values Table - New Transposed Version */}
+        <LevelValuesTable
+          maxLevel={formMaxLevel}
           paramDefs={formParamDefs}
-          onAdd={handleAddParamDef}
-          onChange={handleParamDefChange}
-          onRemove={handleRemoveParamDef}
+          levelValues={formLevelValues}
+          onChange={handleLevelValueChange}
+          onBulkChange={handleBulkLevelValueChange}
+          onAddParam={handleAddParamDef}
+          onRemoveParam={handleRemoveParamDef}
+          onRenameParam={handleRenameParam}
+          onTogglePvp={handleTogglePvp}
         />
 
-        {/* Level Values Table */}
-        {formParamDefs.filter(p => p.key.trim()).length > 0 && (
-          <LevelValuesTable
-            maxLevel={formMaxLevel}
-            paramDefs={formParamDefs.filter(p => p.key.trim())}
-            levelValues={formLevelValues}
-            onChange={handleLevelValueChange}
+        {/* Description Editor with Autocomplete */}
+        <div>
+          <label htmlFor="formDescriptionTemplate" className="block mb-1 text-sm font-medium text-gray-300">Description (use {'{key}'} for params):</label>
+          <DescriptionEditor
+            value={formDescriptionTemplate}
+            onChange={setFormDescriptionTemplate}
+            paramDefs={formParamDefs}
           />
-        )}
+          <p className="text-xs text-gray-500 mt-1">Tip: Type <code>{'{'}</code> to see available parameters.</p>
+        </div>
 
         <div>
           <h3 className="text-lg font-medium text-gray-300">Linked Items</h3>
@@ -597,9 +621,16 @@ useEffect(() => {
             disabled={isSubmitting}
             className="py-2 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50"
           >
-            {isSubmitting 
-              ? (isEditing ? 'Saving Changes...' : 'Creating Skill...') 
+            {isSubmitting
+              ? (isEditing ? 'Saving Changes...' : 'Creating Skill...')
               : (isEditing ? 'Save Changes' : 'Create Skill')}
+          </button>
+          <button
+            type="button"
+            onClick={handleShowPreview}
+            className="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg border border-purple-500"
+          >
+            Preview Skill
           </button>
           {isEditing && (
             <button
@@ -626,8 +657,8 @@ useEffect(() => {
           <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">Select Skill Icon</h3>
-              <button 
-                onClick={() => setShowIconPickerModal(false)} 
+              <button
+                onClick={() => setShowIconPickerModal(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
                 title="Close"
               >
@@ -639,12 +670,29 @@ useEffect(() => {
                 bucketName="media"
                 initialPath="classes"
                 onFileSelect={handleIconSelectedFromPicker}
-                mode="select" 
+                mode="select"
                 accept="image/*"
               />
             </div>
           </div>
         </div>
+      )}
+
+      {/* Preview Modal */}
+      {previewSkill && (
+        <SkillInfoModal
+          skill={previewSkill}
+          displayLevel={previewLevel}
+          setDisplayLevel={setPreviewLevel}
+          onClose={() => setPreviewSkill(null)}
+          onNext={() => { }} // No-op in preview
+          onPrevious={() => { }} // No-op in preview
+          footer={() => (
+            <div className="flex items-center justify-center gap-2">
+              <LongButton width={280} text="Đóng" onClick={() => setPreviewSkill(null)} />
+            </div>
+          )}
+        />
       )}
     </div>
   );

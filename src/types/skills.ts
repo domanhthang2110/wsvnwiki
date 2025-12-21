@@ -9,10 +9,12 @@ export type Json = Database['public']['Tables']['skills']['Row']['energy_cost'];
 export interface SkillParameterDefinitionInForm {
   id: string; // Used for client-side form management (e.g., unique key for React lists)
   key: string;
+  hasPvp: boolean;
 }
 
 export interface SkillParameterDefinitionStored {
   key: string;
+  hasPvp?: boolean;
 }
 
 export interface SkillLevelValue {
