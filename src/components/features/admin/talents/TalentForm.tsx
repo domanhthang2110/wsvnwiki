@@ -123,26 +123,28 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   }, [initialData]);
 
   useEffect(() => {
-    const currentMaxLevel = formMaxLevel;
-    const baseValuesSource = (isEditing && initialData && initialData.max_level === currentMaxLevel && initialData.level_values)
-      ? initialData.level_values
-      : formLevelValues;
+    setFormLevelValues(prevLevelValues => {
+      const currentMaxLevel = formMaxLevel;
+      const baseValuesSource = (isEditing && initialData && initialData.max_level === currentMaxLevel && initialData.level_values)
+        ? initialData.level_values
+        : prevLevelValues;
 
-    const newLevels: TalentLevelValue[] = [];
-    for (let i = 1; i <= currentMaxLevel; i++) {
-      const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
-      const levelEntry: TalentLevelValue = { level: i };
+      const newLevels: TalentLevelValue[] = [];
+      for (let i = 1; i <= currentMaxLevel; i++) {
+        const existingDataForThisLevel = baseValuesSource.find(l => l.level === i) ?? { level: i };
+        const levelEntry: TalentLevelValue = { level: i };
 
-      formParamDefs.forEach(def => {
-        const trimmedKey = def.key.trim();
-        if (trimmedKey) {
-          levelEntry[trimmedKey] = existingDataForThisLevel[trimmedKey] ?? '';
-        }
-      });
-      newLevels.push(levelEntry);
-    }
-    setFormLevelValues(newLevels);
-  }, [formMaxLevel, formParamDefs, initialData, isEditing, formLevelValues]);
+        formParamDefs.forEach(def => {
+          const trimmedKey = def.key.trim();
+          if (trimmedKey) {
+            levelEntry[trimmedKey] = existingDataForThisLevel[trimmedKey] ?? '';
+          }
+        });
+        newLevels.push(levelEntry);
+      }
+      return newLevels;
+    });
+  }, [formMaxLevel, formParamDefs, initialData, isEditing]);
 
   const handleAddParamDef = () => {
     setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '' }]);
@@ -164,8 +166,10 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         const val = level[oldKey];
         if (val !== undefined) {
           // Create new object without old key, with new key, preserving 'level'
-          const { [oldKey]: _unused, ...rest } = level;
-          return { ...rest, [newKey]: val } as TalentLevelValue;
+          const rest = { ...level };
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [oldKey]: _, ...withoutOldKey } = rest;
+          return { ...withoutOldKey, [newKey]: val } as TalentLevelValue;
         }
         return level;
       });

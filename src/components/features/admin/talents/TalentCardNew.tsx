@@ -15,7 +15,6 @@ interface TalentCardProps {
   onSelect: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  onDuplicate?: () => void;
   onIconChange?: (newIconUrl: string) => void;
 }
 
@@ -26,7 +25,6 @@ export default function TalentCardNew({
   onSelect,
   onEdit,
   onDelete,
-  onDuplicate,
   onIconChange
 }: TalentCardProps) {
   const [showIconPickerModal, setShowIconPickerModal] = useState(false);

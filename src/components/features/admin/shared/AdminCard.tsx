@@ -1,33 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+
 
 interface AdminCardProps<T> {
   item: T;
-  
+
   // Selection state (managed by DataTable)
   isSelected: boolean;
   isBulkMode: boolean;
   onSelect: () => void;
-  
+
   // Standard actions (managed by DataTable)
   onEdit: () => void;
   onDelete: () => void;
   onIconChange?: (newIconUrl: string) => void;
-  
+
   // Flexible content
   children: React.ReactNode;
 }
 
-export default function AdminCard<T>({ 
-  item, 
-  isSelected, 
-  isBulkMode, 
-  onSelect, 
-  onEdit, 
-  onDelete, 
+export default function AdminCard<T>({
+  isSelected,
+  isBulkMode,
+  onSelect,
+  onEdit,
+  onDelete,
   onIconChange,
-  children 
+  children
 }: AdminCardProps<T>) {
   const handleCardClick = () => {
     if (isBulkMode) {
@@ -36,7 +35,7 @@ export default function AdminCard<T>({
   };
 
   return (
-    <div 
+    <div
       className={`
         relative bg-white dark:bg-gray-800 rounded-lg shadow-md border-2 transition-all duration-200 group
         ${isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}
@@ -49,8 +48,8 @@ export default function AdminCard<T>({
         <div className="absolute top-2 right-2 z-10">
           <div className={`
             w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-bold
-            ${isSelected 
-              ? 'bg-blue-500 border-blue-500 text-white' 
+            ${isSelected
+              ? 'bg-blue-500 border-blue-500 text-white'
               : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-400'
             }
           `}>
@@ -58,7 +57,7 @@ export default function AdminCard<T>({
           </div>
         </div>
       )}
-      
+
       {/* Action Buttons (hidden in bulk mode) - Absolutely positioned */}
       {!isBulkMode && (
         <div className="absolute top-4 right-4 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">

@@ -119,7 +119,7 @@ export default function AdminSkillsPage() {
       .from('items')
       .select('*')
       .order('name');
-    
+
     if (error) {
       console.error('Error fetching items:', error);
       setAvailableItems([]);
@@ -154,7 +154,7 @@ export default function AdminSkillsPage() {
           .from('skills')
           .insert([dbData])
           .select();
-        
+
         if (insertError || !data || data.length === 0) {
           throw insertError || new Error('Failed to create skill');
         }
@@ -277,8 +277,8 @@ export default function AdminSkillsPage() {
       <BulkSkillImport onImportSuccess={fetchSkills} />
 
       <div id="skillForm" className="max-w-full overflow-hidden">
-        <SkillForm 
-          onSubmit={handleSkillSubmit} 
+        <SkillForm
+          onSubmit={handleSkillSubmit}
           initialData={selectedSkill}
           isEditing={!!selectedSkill}
           selectedItems={selectedItems}
@@ -326,17 +326,17 @@ export default function AdminSkillsPage() {
           </div>
         </div>
       )}
-      
+
       {listLoading && (
         <LoadingOverlay />
       )}
-      
+
       {listError && (
         <div className="text-red-500 dark:text-red-400">
           Error: {listError}
         </div>
       )}
-      
+
       {!listLoading && !listError && skills.length === 0 && (
         <p className="text-center text-gray-600 dark:text-gray-400">
           No skills found. Add your first skill using the form above!
@@ -369,11 +369,11 @@ export default function AdminSkillsPage() {
                   onToggle={() => toggleClassExpansion(className)}
                 />
                 {expandedClasses[className] && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 mt-4">
                     {classSkills.map((skill) => (
-                      <SkillCard 
-                        key={skill.id} 
-                        skill={skill} 
+                      <SkillCard
+                        key={skill.id}
+                        skill={skill}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onIconChange={handleIconChange}

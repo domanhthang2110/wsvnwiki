@@ -1,7 +1,7 @@
 // src/components/admin/skills/SkillForm.tsx
 'use client';
 
-import { FormEvent, useState, useEffect } from 'react';
+import { FormEvent, useState, useEffect, useCallback } from 'react';
 import { SkillItem, SkillParameterDefinitionInForm, SkillLevelValue } from '@/types/skills'; // Assuming types are here
 import { Item } from '@/types/items';
 import { SKILL_TIER_OPTIONS, ACTIVATION_TYPE_OPTIONS } from '@/types/skills'; // Assuming types are here
@@ -203,7 +203,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
     });
   }, [formMaxLevel, formParamDefs]); // Removed initialData and isEditing from dependencies
 
-  const prepareSkillData = (): Omit<SkillItem, 'id' | 'created_at'> => {
+  const prepareSkillData = useCallback((): Omit<SkillItem, 'id' | 'created_at'> => {
     const currentMaxLevel = formMaxLevel;
 
     const finalParamDefs = formParamDefs
@@ -267,12 +267,12 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
       reduced_energy_regen: finalReducedRegen,
       energy_cost: finalEnergyCost,
     };
-  };
+  }, [formName, formIconUrl, formSkillTier, formActivationType, formMaxLevel, formDescriptionTemplate, formParamDefs, formLevelValues, formCooldown, formRange, energyCosts, reducedEnergyRegenValues]);
 
   // Effect to update liveFormData
   useEffect(() => {
     setLiveFormData(prepareSkillData());
-  }, [formName, formIconUrl, formSkillTier, formActivationType, formMaxLevel, formCooldown, formRange, formDescriptionTemplate, formParamDefs, formLevelValues, energyCosts, reducedEnergyRegenValues]);
+  }, [prepareSkillData]);
 
 
   const handleRenameParam = (id: string, oldKey: string, newKey: string) => {
@@ -309,7 +309,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
     setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '', hasPvp: false }]);
   };
 
-  const handleRemoveParamDef = (idToRemove: string, keyToRemove: string) => {
+  const handleRemoveParamDef = (idToRemove: string) => {
     setFormParamDefs(formParamDefs.filter(param => param.id !== idToRemove));
     // Optional: Clean up level values immediately, though useEffect will likely handle re-shaping
   };
