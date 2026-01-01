@@ -3,11 +3,6 @@ import { TalentParameterDefinitionInForm, TalentLevelValue } from '@/types/talen
 import { SkillParameterDefinitionInForm, SkillLevelValue } from '@/types/skills';
 
 // Define a unified type for internal use within the component
-interface ParameterRowData {
-  id: string; // From Form Definition
-  key: string;
-  hasPvp?: boolean;
-}
 
 type LevelValue = TalentLevelValue | SkillLevelValue;
 
@@ -167,7 +162,7 @@ export default function LevelValuesTable({
             {paramDefs.length === 0 ? (
               <tr>
                 <td colSpan={maxLevel + 1} className="px-6 py-8 text-center text-gray-500 italic">
-                  No parameters defined. Click "Add Parameter" to start.
+                  No parameters defined. Click &quot;Add Parameter&quot; to start.
                 </td>
               </tr>
             ) : (
@@ -273,7 +268,7 @@ export default function LevelValuesTable({
             transform: 'translateX(-50%)' // Center horizontally based on left coord
           }}
         >
-          <div className="text-xs text-gray-400 mb-1">Paste "1/2/3..." here:</div>
+          <div className="text-xs text-gray-400 mb-1">Paste &quot;1/2/3...&quot; here:</div>
           <input
             ref={inputRef}
             type="text"

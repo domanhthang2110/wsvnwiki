@@ -3,10 +3,10 @@
 import { FormEvent, useState, useEffect, useMemo } from 'react';
 import { TalentItem, TalentParameterDefinitionInForm, TalentLevelValue } from '@/types/talents';
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
-import ParameterDefinitions from '@/components/features/admin/shared/ParameterDefinitions';
+
 import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTable';
 import KnowledgeCostRow from './KnowledgeCostRow'; // Import the new component
-import Image from 'next/image';
+
 const CloseIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"></path></svg>;
 
 export interface TalentFormProps {
@@ -142,13 +142,13 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
       newLevels.push(levelEntry);
     }
     setFormLevelValues(newLevels);
-  }, [formMaxLevel, formParamDefs, initialData, isEditing]);
+  }, [formMaxLevel, formParamDefs, initialData, isEditing, formLevelValues]);
 
   const handleAddParamDef = () => {
     setFormParamDefs([...formParamDefs, { id: crypto.randomUUID(), key: '' }]);
   };
 
-  const handleRemoveParamDef = (idToRemove: string, keyToRemove: string) => {
+  const handleRemoveParamDef = (idToRemove: string) => {
     setFormParamDefs(formParamDefs.filter(param => param.id !== idToRemove));
     // Also remove values for this param from levelValues to keep it clean (optional but good)
   };
@@ -164,7 +164,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         const val = level[oldKey];
         if (val !== undefined) {
           // Create new object without old key, with new key, preserving 'level'
-          const { [oldKey]: _, ...rest } = level;
+          const { [oldKey]: _unused, ...rest } = level;
           return { ...rest, [newKey]: val } as TalentLevelValue;
         }
         return level;
@@ -172,7 +172,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     });
   };
 
-  const handleTogglePvp = (id: string, hasPvp: boolean) => {
+  const handleTogglePvp = () => {
     // Talents don't use Pvp for now, so this is no-op
     console.log("Toggle Pvp not supported for talents");
   };

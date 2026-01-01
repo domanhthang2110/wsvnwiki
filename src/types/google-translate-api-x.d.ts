@@ -23,7 +23,7 @@ declare module 'google-translate-api-x' {
                 didYouMean: boolean;
             };
         };
-        raw: any;
+        raw: unknown;
     }
 
     export function translate(
