@@ -21,6 +21,7 @@ const SkillsPage = () => {
   const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [displayLevel, setDisplayLevel] = useState(0);
+  const [showPvp, setShowPvp] = useState(true);
 
   const handleSkillClick = async (skill: Pick<SkillItem, 'id' | 'name' | 'icon_url'>) => {
     setIsModalLoading(true);
@@ -146,6 +147,8 @@ const SkillsPage = () => {
           onClose={handleCloseModal}
           onNext={handleNextSkill}
           onPrevious={handlePreviousSkill}
+          showPvp={showPvp}
+          setShowPvp={setShowPvp}
           footer={() => (
             <div className="flex items-center justify-center gap-2">
               <LongButton

@@ -1,6 +1,6 @@
 import { SkillItem } from '@/types/skills';
 
-export function formatFullSkillDescription(skill: SkillItem): string {
+export function formatFullSkillDescription(skill: SkillItem, showPvp: boolean = true): string {
   if (!skill.description) {
     return "No description template provided.";
   }
@@ -63,8 +63,8 @@ export function formatFullSkillDescription(skill: SkillItem): string {
           pvpStr += '%';
         }
 
-        if (hasDifferentPvp) {
-          return `<span style="color: #9dee05">${pveStr}</span> <span style="color: #ff9999;">(${pvpStr} <img src="/image/ui/pvp_icon.webp" alt="PvP" style="width: 1em; height: 1em; display: inline; vertical-align: middle;" />)</span>`;
+        if (hasDifferentPvp && showPvp) {
+          return `<span style="color: #9dee05">${pveStr}</span> <span style="color: #ff9999;">(${pvpStr} <img src="/image/ui/pvp.webp" alt="PvP" style="width: 1em; height: 1em; display: inline; vertical-align: middle;" />)</span>`;
         } else {
           return `<span style="color: #9dee05">${pveStr}</span>`;
         }
@@ -75,7 +75,7 @@ export function formatFullSkillDescription(skill: SkillItem): string {
   return formattedDesc;
 }
 
-export function formatSkillDescriptionForLevel(skill: SkillItem, level: number): string {
+export function formatSkillDescriptionForLevel(skill: SkillItem, level: number, showPvp: boolean = true): string {
   if (!skill.description) {
     return "No description template provided.";
   }
@@ -113,9 +113,9 @@ export function formatSkillDescriptionForLevel(skill: SkillItem, level: number):
           // Check PvP
           if (paramDef.hasPvp || (pvpVal !== undefined && pvpVal !== null && String(pvpVal) !== val)) {
             const finalPvpVal = (pvpVal !== undefined && pvpVal !== null) ? String(pvpVal) : val;
-            if (finalPvpVal !== val || paramDef.hasPvp) {
+            if ((finalPvpVal !== val || paramDef.hasPvp) && showPvp) {
               const pvpDisplayVal = hasPercent ? `${finalPvpVal}%` : finalPvpVal;
-              pvpPart = ` <span style="color: #ff9999;">(${pvpDisplayVal} <img src="/image/ui/pvp_icon.webp" alt="PvP" style="width: 1em; height: 1em; display: inline; vertical-align: middle;" />)</span>`;
+              pvpPart = ` <span style="color: #ff9999;">(${pvpDisplayVal} <img src="/image/ui/pvp.webp" alt="PvP" style="width: 1em; height: 1em; display: inline; vertical-align: middle;" />)</span>`;
             }
           }
         } else {

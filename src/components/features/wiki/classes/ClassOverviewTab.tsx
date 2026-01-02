@@ -21,6 +21,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
   // --- Skill Modal State and Logic (copied from SkillDisplay) ---
   const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
   const [displayLevel, setDisplayLevel] = useState(0);
+  const [showPvp, setShowPvp] = useState(true);
   const skillsToShow: SkillItem[] = Array.isArray(classItem?.skills)
     ? [...classItem.skills.filter((s: SkillItem) => s.skill_type === 'Race'), ...classItem.skills.filter((s: SkillItem) => s.skill_type === 'Equipment')]
     : [];
@@ -125,6 +126,8 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
               onClose={handleCloseModal}
               onNext={handleNextSkill}
               onPrevious={handlePreviousSkill}
+              showPvp={showPvp}
+              setShowPvp={setShowPvp}
               footer={() => (
                 <div className="flex items-center justify-center gap-2">
                   <LongButton

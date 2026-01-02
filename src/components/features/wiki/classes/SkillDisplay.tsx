@@ -22,6 +22,8 @@ interface SkillInfoModalProps {
   onNext: () => void;
   onPrevious: () => void;
   footer: (modalWidth: number) => React.ReactNode;
+  showPvp: boolean;
+  setShowPvp: (show: boolean) => void;
 }
 
 const getActivationTypeTranslation = (type: 'Active' | 'Passive' | 'Permanent' | string | null) => {
@@ -37,7 +39,7 @@ const getActivationTypeTranslation = (type: 'Active' | 'Passive' | 'Permanent' |
   }
 };
 
-export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLevel, setDisplayLevel, onClose, onNext, onPrevious, footer }) => (
+export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLevel, setDisplayLevel, onClose, onNext, onPrevious, footer, showPvp, setShowPvp }) => (
   <InfoModal
     isOpen={!!skill}
     onClose={onClose}
@@ -47,6 +49,14 @@ export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLe
     onPrevious={onPrevious}
     footer={footer}
   >
+    <button
+      onClick={() => setShowPvp(!showPvp)}
+      className="absolute top-4 right-4 z-[110] transition-opacity duration-200"
+      style={{ opacity: showPvp ? 1 : 0.5 }}
+      title={showPvp ? "Hide PVP" : "Show PVP"}
+    >
+      <img src="/image/ui/pvp_button.webp" alt="PVP Toggle" className="w-8 h-8" />
+    </button>
     <div className="mt-4">
       <div className="flex flex-col">
         <p><strong>{translations.activation_type}:</strong> <span style={{ color: '#9dee05' }}>{getActivationTypeTranslation(skill.activation_type)}</span></p>
@@ -99,9 +109,9 @@ export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLe
       )}
       <div className="min-h-[6em]">
         {displayLevel === 0 ? (
-          <p dangerouslySetInnerHTML={{ __html: formatFullSkillDescription(skill) }} />
+          <p dangerouslySetInnerHTML={{ __html: formatFullSkillDescription(skill, showPvp) }} />
         ) : (
-          <p dangerouslySetInnerHTML={{ __html: formatSkillDescriptionForLevel(skill, displayLevel) }} />
+          <p dangerouslySetInnerHTML={{ __html: formatSkillDescriptionForLevel(skill, displayLevel, showPvp) }} />
         )}
       </div>
     </div>
@@ -111,6 +121,7 @@ export const SkillInfoModal: React.FC<SkillInfoModalProps> = ({ skill, displayLe
 const SkillDisplay: React.FC<SkillDisplayProps> = ({ skills }) => {
   const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
   const [displayLevel, setDisplayLevel] = useState(0);
+  const [showPvp, setShowPvp] = useState(true);
 
   const handleSkillClick = (skill: SkillItem) => {
     setSelectedSkill(skill);
@@ -184,6 +195,8 @@ const SkillDisplay: React.FC<SkillDisplayProps> = ({ skills }) => {
           onClose={handleCloseModal}
           onNext={handleNextSkill}
           onPrevious={handlePreviousSkill}
+          showPvp={showPvp}
+          setShowPvp={setShowPvp}
           footer={() => (
             <div className="flex items-center justify-center gap-2">
               <LongButton

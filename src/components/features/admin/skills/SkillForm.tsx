@@ -53,6 +53,7 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
 
   const [previewSkill, setPreviewSkill] = useState<SkillItem | null>(null);
   const [previewLevel, setPreviewLevel] = useState(0);
+  const [showPvp, setShowPvp] = useState(true);
 
   const [liveFormData, setLiveFormData] = useState<Omit<SkillItem, 'id' | 'created_at'>>({
     name: '',
@@ -687,6 +688,8 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
           onClose={() => setPreviewSkill(null)}
           onNext={() => { }} // No-op in preview
           onPrevious={() => { }} // No-op in preview
+          showPvp={showPvp}
+          setShowPvp={setShowPvp}
           footer={() => (
             <div className="flex items-center justify-center gap-2">
               <LongButton width={280} text="Đóng" onClick={() => setPreviewSkill(null)} />
