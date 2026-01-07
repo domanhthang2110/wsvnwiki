@@ -197,9 +197,9 @@ export default function AdminSkillsPage() {
           items: selectedItems,
           className: 'Uncategorized', // Default, or try to infer?
           classIconUrl: null,
-          energy_cost: data[0].energy_cost as any, // Cast to match type
-          parameters_definition: data[0].parameters_definition as any,
-          level_values: data[0].level_values as any
+          energy_cost: data[0].energy_cost as SkillItem['energy_cost'],
+          parameters_definition: data[0].parameters_definition as SkillItem['parameters_definition'],
+          level_values: data[0].level_values as SkillItem['level_values']
         };
 
         // We might want to re-fetch just this skill or infer class info if possible
