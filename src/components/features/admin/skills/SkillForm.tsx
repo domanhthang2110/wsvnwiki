@@ -9,7 +9,7 @@ import LevelValuesTable from '@/components/features/admin/shared/LevelValuesTabl
 import MediaFileExplorer from '@/components/features/admin/media/MediaFileExplorer';
 import { SkillInfoModal } from '@/components/features/wiki/classes/SkillDisplay';
 import LongButton from '@/components/ui/LongButton';
-import DescriptionEditor from './DescriptionEditor';
+import DescriptionAutocomplete from '@/components/features/admin/shared/DescriptionAutocomplete';
 
 import EnergyCostRow from './EnergyCostRow';
 import ReducedEnergyRegenRow from './ReducedEnergyRegenRow';
@@ -340,6 +340,12 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
     }
   };
 
+  const handleToggleConstant = (id: string, constant: boolean) => {
+    setFormParamDefs(prev => prev.map(p =>
+      p.id === id ? { ...p, constant } : p
+    ));
+  };
+
 
   const handleLevelValueChange = (levelNumber: number, paramKey: string, value: string) => {
     setFormLevelValues(prevLevels => {
@@ -578,17 +584,19 @@ export default function SkillForm({ onSubmit, isEditing, initialData, selectedIt
           onRemoveParam={handleRemoveParamDef}
           onRenameParam={handleRenameParam}
           onTogglePvp={handleTogglePvp}
+          onToggleConstant={handleToggleConstant}
         />
 
         {/* Description Editor with Autocomplete */}
         <div>
-          <label htmlFor="formDescriptionTemplate" className="block mb-1 text-sm font-medium text-gray-300">Description (use {'{key}'} for params):</label>
-          <DescriptionEditor
+          <label htmlFor="formDescriptionTemplate" className="block mb-2 text-sm font-medium text-gray-300">Description:</label>
+          <DescriptionAutocomplete
             value={formDescriptionTemplate}
             onChange={setFormDescriptionTemplate}
-            paramDefs={formParamDefs}
+            parameters={formParamDefs}
+            placeholder="Enter skill description... Type { to insert parameters"
+            rows={6}
           />
-          <p className="text-xs text-gray-500 mt-1">Tip: Type <code>{'{'}</code> to see available parameters.</p>
         </div>
 
         <div>

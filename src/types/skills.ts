@@ -10,11 +10,13 @@ export interface SkillParameterDefinitionInForm {
   id: string; // Used for client-side form management (e.g., unique key for React lists)
   key: string;
   hasPvp: boolean;
+  constant?: boolean; // If true, all levels have the same value
 }
 
 export interface SkillParameterDefinitionStored {
   key: string;
   hasPvp?: boolean;
+  constant?: boolean; // If true, all levels have the same value
 }
 
 export interface SkillLevelValue {

@@ -54,9 +54,26 @@ export function formatFullSkillDescription(skill: SkillItem, showPvp: boolean = 
       formattedDesc = formattedDesc.replace(new RegExp(`\\{${paramDef.key}\\}%?`, 'g'), (match) => {
         const hasPercent = match.endsWith('%');
 
-        const joiner = '/';
-        let pveStr = pveValues.join(joiner);
-        let pvpStr = pvpValues.join(joiner);
+        // Check if all PvE values are the same (constant value)
+        const allPveSame = pveValues.every(v => v === pveValues[0]);
+        // Check if all PvP values are the same (constant value)
+        const allPvpSame = pvpValues.every(v => v === pvpValues[0]);
+
+        let pveStr: string;
+        let pvpStr: string;
+
+        // If all values are the same, show just once
+        if (allPveSame) {
+          pveStr = pveValues[0];
+        } else {
+          pveStr = pveValues.join('/');
+        }
+
+        if (allPvpSame) {
+          pvpStr = pvpValues[0];
+        } else {
+          pvpStr = pvpValues.join('/');
+        }
 
         if (hasPercent) {
           pveStr += '%';

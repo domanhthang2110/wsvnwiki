@@ -10,6 +10,8 @@ import BulkSkillImport from '@/components/features/admin/skills/BulkSkillImport'
 import ItemSelectorModal from '@/components/features/admin/items/ItemSelectorModal';
 import ClassHeader from '@/components/features/admin/skills/ClassHeader';
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
+import { ToastContainer, ToastMessage } from '@/components/ui/Toast';
+import SkillListSidebar from '@/components/features/admin/skills/SkillListSidebar';
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<SkillItem[]>([]);
@@ -20,6 +22,28 @@ export default function AdminSkillsPage() {
   const [availableItems, setAvailableItems] = useState<Item[]>([]);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [expandedClasses, setExpandedClasses] = useState<Record<string, boolean>>({});
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [isSidebarMode, setIsSidebarMode] = useState(false);
+
+  const addToast = (type: 'success' | 'error' | 'info', message: string) => {
+    const id = crypto.randomUUID();
+    setToasts(prev => [...prev, { id, type, message }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Handle responsive layout
+  useEffect(() => {
+    const checkWidth = () => {
+      setIsSidebarMode(window.innerWidth >= 1280); // XL breakpoint
+    };
+
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
 
   // Initialize all classes as expanded by default
   useEffect(() => {
@@ -149,6 +173,12 @@ export default function AdminSkillsPage() {
           throw updateError;
         }
         skillId = selectedSkill.id;
+
+        // Optimistic update for edit
+        setSkills(prev => prev.map(s =>
+          s.id === skillId ? { ...s, ...dbData, items: selectedItems } : s
+        ));
+        addToast('success', 'Skill updated successfully');
       } else {
         const { data, error: insertError } = await supabase
           .from('skills')
@@ -159,6 +189,23 @@ export default function AdminSkillsPage() {
           throw insertError || new Error('Failed to create skill');
         }
         skillId = data[0].id;
+
+        // Optimistic update for create (need to fetch full data or construct it)
+        // For simplicity, we construct it with default values
+        const newSkill: SkillItem = {
+          ...data[0],
+          items: selectedItems,
+          className: 'Uncategorized', // Default, or try to infer?
+          classIconUrl: null,
+          energy_cost: data[0].energy_cost as any, // Cast to match type
+          parameters_definition: data[0].parameters_definition as any,
+          level_values: data[0].level_values as any
+        };
+
+        // We might want to re-fetch just this skill or infer class info if possible
+        // But for now, let's just add it. If class info is missing, it goes to Uncategorized.
+        setSkills(prev => [...prev, newSkill]);
+        addToast('success', 'Skill created successfully');
       }
 
       if (skillId) {
@@ -179,7 +226,15 @@ export default function AdminSkillsPage() {
         }
       }
 
-      await fetchSkills();
+      // await fetchSkills(); // Removed to prevent refresh
+      // setSelectedSkill(null); // Keep selected to allow further edits? Or clear? User asked to "not refresh page... which lose all expanded class skill section"
+      // If we clear selectedSkill, form resets.
+      // If we keep it, we are in edit mode.
+      // Let's keep it selected if editing, or select the new one if creating?
+      // Actually, standard behavior is usually to close form or reset.
+      // But user said "lose all expanded class skill section".
+      // Updating local state preserves expanded sections.
+      // Let's clear selection to return to "Create New" mode, but list state is preserved.
       setSelectedSkill(null);
       setSelectedItems([]);
     } catch (error: unknown) {
@@ -188,7 +243,8 @@ export default function AdminSkillsPage() {
         errorMessage = error.message;
       }
       console.error('Error saving skill:', errorMessage);
-      throw new Error(errorMessage);
+      addToast('error', errorMessage);
+      // throw new Error(errorMessage); // Don't throw, handled by toast
     }
   };
 
@@ -276,14 +332,29 @@ export default function AdminSkillsPage() {
 
       <BulkSkillImport onImportSuccess={fetchSkills} />
 
-      <div id="skillForm" className="max-w-full overflow-hidden">
-        <SkillForm
-          onSubmit={handleSkillSubmit}
-          initialData={selectedSkill}
-          isEditing={!!selectedSkill}
-          selectedItems={selectedItems}
-          onItemSelect={() => setIsItemModalOpen(true)}
-        />
+      <div className="flex flex-col xl:flex-row gap-6">
+        <div className="flex-1 min-w-0">
+          <div id="skillForm" className="max-w-full overflow-hidden">
+            <SkillForm
+              onSubmit={handleSkillSubmit}
+              initialData={selectedSkill}
+              isEditing={!!selectedSkill}
+              selectedItems={selectedItems}
+              onItemSelect={() => setIsItemModalOpen(true)}
+            />
+          </div>
+        </div>
+
+        {isSidebarMode && (
+          <div className="w-80 flex-shrink-0 sticky top-4 h-[calc(100vh-2rem)] overflow-hidden rounded-lg border border-gray-700 shadow-md">
+            <SkillListSidebar
+              skills={skills}
+              selectedSkillId={selectedSkill?.id || null}
+              onSelectSkill={handleEdit}
+              className="h-full"
+            />
+          </div>
+        )}
       </div>
 
       <ItemSelectorModal
@@ -297,17 +368,21 @@ export default function AdminSkillsPage() {
         }}
       />
 
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
-          Existing Skills
-        </h2>
-        <button
-          onClick={handleExport}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-700 dark:hover:bg-blue-800"
-        >
-          Export All as JSON
-        </button>
-      </div>
+      {!isSidebarMode && (
+        <>
+          <div className="flex justify-between items-center mb-4 mt-8">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
+              Existing Skills
+            </h2>
+            <button
+              onClick={handleExport}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-700 dark:hover:bg-blue-800"
+            >
+              Export All as JSON
+            </button>
+          </div>
+        </>
+      )}
 
       {!listLoading && !listError && skills.length > 0 && (
         <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md shadow-sm mb-6">
@@ -343,7 +418,7 @@ export default function AdminSkillsPage() {
         </p>
       )}
 
-      {!listLoading && !listError && skills.length > 0 && (
+      {!isSidebarMode && !listLoading && !listError && skills.length > 0 && (
         <div className="space-y-8">
           {Object.entries(
             skills.reduce((acc, skill) => {
@@ -387,6 +462,9 @@ export default function AdminSkillsPage() {
             ))}
         </div>
       )}
+
+
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

@@ -1,90 +1,139 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation'; // To highlight the active link
-import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/Button/button';
+import {
+  LayoutDashboard,
+  Users,
+  Zap,
+  Package,
+  Star,
+  GitBranch,
+  FileText,
+  Image,
+  Tag,
+  Calendar,
+  LogOut,
+  ExternalLink
+} from 'lucide-react';
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/classes', label: 'Classes' },
-  { href: '/admin/skills', label: 'Skills' },
-  { href: '/admin/items', label: 'Items' },
-  { href: '/admin/talents', label: 'Talents' },
-  { href: '/admin/talent-trees', label: 'Talent Trees' },
-  { href: '/admin/posts', label: 'Posts' },
-  { href: '/admin/media', label: 'Media' },
-  { href: '/admin/tags', label: 'Tags' },
-  { href: '/admin/weekly-schedules', label: 'Weekly Schedules' }
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/classes', label: 'Classes', icon: Users },
+  { href: '/admin/skills', label: 'Skills', icon: Zap },
+  { href: '/admin/items', label: 'Items', icon: Package },
+  { href: '/admin/talents', label: 'Talents', icon: Star },
+  { href: '/admin/talent-trees', label: 'Talent Trees', icon: GitBranch },
+  { href: '/admin/posts', label: 'Posts', icon: FileText },
+  { href: '/admin/media', label: 'Media', icon: Image },
+  { href: '/admin/tags', label: 'Tags', icon: Tag },
+  { href: '/admin/weekly-schedules', label: 'Weekly Schedules', icon: Calendar }
 ];
 
-export function AdminSidebar({ onToggleCollapse }: { onToggleCollapse: (isCollapsed: boolean) => void }) {
+export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // Effect to notify parent of collapse state change
-  useEffect(() => {
-    onToggleCollapse(isCollapsed);
-  }, [isCollapsed, onToggleCollapse]);
+  const [hoveredItem, setHoveredItem] = useState<{ label: string; top: number } | null>(null);
+  const asideRef = useRef<HTMLElement>(null);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/auth/login');
   };
 
+  const handleMouseEnter = (label: string, e: React.MouseEvent<HTMLElement>) => {
+    if (!asideRef.current) return;
+    const itemRect = e.currentTarget.getBoundingClientRect();
+    const asideRect = asideRef.current.getBoundingClientRect();
+    // Calculate top relative to aside, centered on the item
+    const top = itemRect.top - asideRect.top + (itemRect.height / 2);
+    setHoveredItem({ label, top });
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
   return (
-    <aside className={`flex-shrink-0 bg-gray-800 p-4 h-screen sticky top-0 shadow-lg flex flex-col transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-60'}`}>
-      <div className="mb-8 text-center relative">
-        <Link href="/admin" className={`text-2xl font-bold text-blue-400 hover:text-blue-500 ${isCollapsed ? 'hidden' : ''}`}>
-          Wiki Admin
+    <aside ref={asideRef} className="flex-shrink-0 bg-gray-900 border-r border-gray-800 w-16 h-screen sticky top-0 flex flex-col z-50">
+      <div className="h-16 flex items-center justify-center border-b border-gray-800 mb-2">
+        <Link href="/admin" className="text-blue-500 hover:text-blue-400 transition-colors" title="Wiki Admin">
+          <LayoutDashboard className="w-6 h-6" />
         </Link>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className={`absolute top-0 ${isCollapsed ? 'left-1/2 -translate-x-1/2' : '-right-2'} p-1 text-gray-400 hover:text-gray-200 transition-transform duration-300`}
-          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-        >
-          {isCollapsed ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 12h14"></path></svg>
-          ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
-          )}
-        </button>
       </div>
-      <nav className="flex-grow overflow-hidden">
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.href} className="mb-2">
-              <Link
-                href={item.href}
-                className={`flex items-center py-2.5 px-4 rounded-lg text-sm font-medium transition-colors
-                  ${
-                    pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-300 hover:bg-gray-700'
-                  }`}
+
+      <nav className="flex-grow overflow-y-auto overflow-x-hidden py-2 custom-scrollbar">
+        <ul className="flex flex-col gap-1 px-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+            const Icon = item.icon;
+
+            return (
+              <li
+                key={item.href}
+                className="relative"
+                onMouseEnter={(e) => handleMouseEnter(item.label, e)}
+                onMouseLeave={handleMouseLeave}
               >
-                {/* Optional: Add icons here if desired */}
-                <span className={`${isCollapsed ? 'hidden' : ''}`}>{item.label}</span>
-              </Link>
-            </li>
-          ))}
+                <Link
+                  href={item.href}
+                  className={`flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200
+                    ${isActive
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
+                    }`}
+                >
+                  <Icon className="w-5 h-5" />
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
-      <div className={`mt-auto pt-4 border-t border-gray-700 ${isCollapsed ? 'hidden' : ''}`}>
-        <Link
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block py-2.5 px-4 rounded-lg text-sm font-medium transition-colors text-gray-300 hover:bg-gray-700 mb-2"
+
+      <div className="mt-auto p-2 border-t border-gray-800 flex flex-col gap-1">
+        <div
+          className="relative"
+          onMouseEnter={(e) => handleMouseEnter('Return to Wiki', e)}
+          onMouseLeave={handleMouseLeave}
         >
-          Return to Wiki
-        </Link>
-        <Button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 text-white">
-          Log Out
-        </Button>
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center w-12 h-12 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-100 transition-colors"
+          >
+            <ExternalLink className="w-5 h-5" />
+          </Link>
+        </div>
+
+        <div
+          className="relative"
+          onMouseEnter={(e) => handleMouseEnter('Log Out', e)}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center w-12 h-12 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+
+      {/* Render Tooltip Portal-style (but relative to aside) */}
+      {hoveredItem && (
+        <div
+          className="absolute left-full ml-3 px-2 py-1 bg-gray-900 text-white text-xs font-medium rounded border border-gray-700 shadow-xl whitespace-nowrap z-50 pointer-events-none animate-in fade-in slide-in-from-left-1 duration-200"
+          style={{ top: hoveredItem.top, transform: 'translateY(-50%)' }}
+        >
+          {hoveredItem.label}
+          {/* Arrow */}
+          <div className="absolute top-1/2 right-full -translate-y-1/2 -mr-[1px] border-4 border-transparent border-r-gray-700"></div>
+        </div>
+      )}
     </aside>
   );
 }

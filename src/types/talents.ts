@@ -9,10 +9,12 @@ export type Json = Database['public']['Tables']['talents']['Row']['parameters_de
 export interface TalentParameterDefinitionInForm {
   id: string; // Used for client-side form management (e.g., unique key for React lists)
   key: string;
+  constant?: boolean;
 }
 
 export interface TalentParameterDefinitionStored {
   key: string;
+  constant?: boolean;
 }
 
 export interface TalentLevelValue {

@@ -17,6 +17,7 @@ interface LevelValuesTableProps {
   onRemoveParam: (id: string, key: string) => void;
   onRenameParam: (id: string, oldKey: string, newKey: string) => void;
   onTogglePvp: (id: string, hasPvp: boolean) => void;
+  onToggleConstant?: (id: string, constant: boolean) => void; // New: toggle constant value
   isTalent?: boolean; // Talents might not have PvP support, flag to disable if needed
 }
 
@@ -30,6 +31,7 @@ export default function LevelValuesTable({
   onRemoveParam,
   onRenameParam,
   onTogglePvp,
+  onToggleConstant,
   isTalent = false
 }: LevelValuesTableProps) {
 
@@ -201,6 +203,23 @@ export default function LevelValuesTable({
                             </div>
                           )}
 
+                          {!isTalent && onToggleConstant && (
+                            <div className="relative group/tooltip ml-2">
+                              <label className="flex items-center cursor-pointer gap-1.5">
+                                <input
+                                  type="checkbox"
+                                  checked={!!param.constant}
+                                  onChange={(e) => onToggleConstant(param.id, e.target.checked)}
+                                  className="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2 focus:ring-offset-0 focus:ring-offset-gray-900"
+                                />
+                                <span className="text-xs text-gray-400 select-none">Const</span>
+                              </label>
+                              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block px-2 py-1 text-xs text-white bg-black/80 rounded whitespace-nowrap z-50">
+                                Constant Value (All Levels)
+                              </span>
+                            </div>
+                          )}
+
                           {renderPasteButton(param.key)}
 
                           <button
@@ -215,17 +234,33 @@ export default function LevelValuesTable({
                           </button>
                         </div>
                       </td>
-                      {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
-                        <td key={`${param.id}-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                      {param.constant ? (
+                        <td colSpan={maxLevel} className="px-2 py-2">
                           <input
                             type="text"
-                            value={getValue(level, param.key)}
-                            onChange={(e) => onChange(level, param.key, e.target.value)}
-                            className="w-full text-center bg-gray-800 border border-gray-700 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-200 px-2 py-1"
-                            placeholder="-"
+                            value={getValue(1, param.key)}
+                            onChange={(e) => {
+                              for (let i = 1; i <= maxLevel; i++) {
+                                onChange(i, param.key, e.target.value);
+                              }
+                            }}
+                            className="w-full text-center bg-gray-800 border border-gray-700 rounded focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm text-gray-200 px-2 py-1"
+                            placeholder="Value for all levels"
                           />
                         </td>
-                      ))}
+                      ) : (
+                        Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
+                          <td key={`${param.id}-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                            <input
+                              type="text"
+                              value={getValue(level, param.key)}
+                              onChange={(e) => onChange(level, param.key, e.target.value)}
+                              className="w-full text-center bg-gray-800 border border-gray-700 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-200 px-2 py-1"
+                              placeholder="-"
+                            />
+                          </td>
+                        ))
+                      )}
                     </tr>
 
                     {/* PvP Secondary Row */}
@@ -238,17 +273,33 @@ export default function LevelValuesTable({
                             {renderPasteButton(pvpKey)}
                           </div>
                         </td>
-                        {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
-                          <td key={`${param.id}-pvp-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                        {param.constant ? (
+                          <td colSpan={maxLevel} className="px-2 py-2">
                             <input
                               type="text"
-                              value={getValue(level, pvpKey)}
-                              onChange={(e) => onChange(level, pvpKey, e.target.value)}
-                              className="w-full text-center bg-blue-900/20 border border-blue-900/30 rounded focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-sm text-blue-100 px-2 py-1 placeholder-blue-700/50"
-                              placeholder="PvP"
+                              value={getValue(1, pvpKey)}
+                              onChange={(e) => {
+                                for (let i = 1; i <= maxLevel; i++) {
+                                  onChange(i, pvpKey, e.target.value);
+                                }
+                              }}
+                              className="w-full text-center bg-blue-900/20 border border-blue-900/30 rounded focus:ring-1 focus:ring-green-400 focus:border-green-400 text-sm text-blue-100 px-2 py-1 placeholder-blue-700/50"
+                              placeholder="PvP Value (All Levels)"
                             />
                           </td>
-                        ))}
+                        ) : (
+                          Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
+                            <td key={`${param.id}-pvp-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                              <input
+                                type="text"
+                                value={getValue(level, pvpKey)}
+                                onChange={(e) => onChange(level, pvpKey, e.target.value)}
+                                className="w-full text-center bg-blue-900/20 border border-blue-900/30 rounded focus:ring-1 focus:ring-blue-400 focus:border-blue-400 text-sm text-blue-100 px-2 py-1 placeholder-blue-700/50"
+                                placeholder="PvP"
+                              />
+                            </td>
+                          ))
+                        )}
                       </tr>
                     )}
                   </React.Fragment>
