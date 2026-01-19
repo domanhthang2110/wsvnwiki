@@ -46,11 +46,11 @@ export default function AdminTalentsPage() {
 
         if (updateError) {
           console.error("Supabase UPDATE error:", updateError);
-          throw updateError; 
+          throw updateError;
         }
-        
+
         setSelectedTalent(null);
-      
+
       } else {
         // ---- CREATING NEW TALENT ----
         const { error: insertError } = await supabase
@@ -59,10 +59,10 @@ export default function AdminTalentsPage() {
 
         if (insertError) {
           console.error("Supabase INSERT error:", insertError);
-          throw insertError; 
+          throw insertError;
         }
       }
-      
+
       await fetchTalents();
 
     } catch (error: unknown) {
@@ -71,7 +71,7 @@ export default function AdminTalentsPage() {
         errorMessage = error.message;
       }
       console.error('Error saving talent (in AdminTalentsPage):', errorMessage);
-      throw new Error(errorMessage); 
+      throw new Error(errorMessage);
     }
   };
 
@@ -143,7 +143,7 @@ export default function AdminTalentsPage() {
         .eq('id', talent.id);
 
       if (updateError) throw updateError;
-      
+
       // Update local state immediately without reloading
       setTalents(prevTalents =>
         prevTalents.map(t =>
@@ -178,7 +178,7 @@ export default function AdminTalentsPage() {
         .insert([duplicatedTalent]);
 
       if (insertError) throw insertError;
-      
+
       await fetchTalents();
     } catch (error: unknown) {
       let errorMessage = 'An unexpected error occurred.';
@@ -262,15 +262,15 @@ export default function AdminTalentsPage() {
 
   return (
     <>
-      <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
         Manage Talents
       </h1>
 
       <BulkTalentImport onImportSuccess={fetchTalents} />
 
       <div id="talentForm">
-        <TalentForm 
-          onSubmit={handleTalentSubmit} 
+        <TalentForm
+          onSubmit={handleTalentSubmit}
           initialData={selectedTalent}
           isEditing={!!selectedTalent}
         />

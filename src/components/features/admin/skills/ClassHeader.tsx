@@ -10,8 +10,8 @@ interface ClassHeaderProps {
 
 const ClassHeader: React.FC<ClassHeaderProps> = ({ className, classIconUrl, isExpanded, onToggle }) => {
   return (
-    <div 
-      className="flex items-center py-3 border-b border-gray-700 cursor-pointer hover:bg-gray-800 transition-colors -mx-4 px-4"
+    <div
+      className="flex items-center py-2 border-b border-gray-700 cursor-pointer hover:bg-gray-800 transition-colors -mx-4 px-4"
       onClick={onToggle}
     >
       {classIconUrl && (

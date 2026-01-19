@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
-import wsrvLoader from '@/lib/utils/imageLoader';
+import wsrvLoader from '@/utils/imageLoader';
 
 interface TimelineEvent {
   id: string;
@@ -165,8 +165,8 @@ const TimelineCard = ({ event, index }: { event: TimelineEvent, index: number })
 
               {event.faction && event.faction !== 'Neutral' && (
                 <div className={`mt-8 flex items-center gap-4 p-4 rounded-lg border-l-4 ${event.faction === 'Sentinel'
-                    ? 'bg-blue-900/10 border-blue-500/50'
-                    : 'bg-red-900/10 border-red-500/50'
+                  ? 'bg-blue-900/10 border-blue-500/50'
+                  : 'bg-red-900/10 border-red-500/50'
                   }`}>
                   <Image
                     loader={wsrvLoader}

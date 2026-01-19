@@ -30,7 +30,7 @@ export default function AdminClassesPage() {
     });
     setAssignedSkillIds(newAssignedSkillIds);
   }, [classes]);
-  
+
   const fetchClasses = useCallback(async () => {
     // Use client-side supabase for fetching
     const { data, error } = await supabase
@@ -62,7 +62,7 @@ export default function AdminClassesPage() {
       .from('skills')
       .select('*')
       .order('name');
-    
+
     if (error) {
       console.error('Error fetching skills:', error);
       setAvailableSkills([]); // Clear skills on error
@@ -80,7 +80,7 @@ export default function AdminClassesPage() {
     setPageError(null); // Clear previous page errors
     try {
       let classId: number;
-      
+
       // Create an object with only the properties that belong to the 'classes' table
       const classTablePayload = {
         name: formData.name,
@@ -105,14 +105,14 @@ export default function AdminClassesPage() {
           .from('classes')
           .insert([classTablePayload])
           .select();
-        
+
         if (insertError || !data || data.length === 0) {
           // Instead of throwing, return the error
           return { success: false, error: insertError?.message || 'Failed to create class: Unknown error' };
         }
         classId = data[0].id;
       }
-      
+
       // --- Handle Skill Associations ---
       if (classId) {
         const { error: deleteSkillsError } = await supabase
@@ -152,7 +152,7 @@ export default function AdminClassesPage() {
 
       if (error && typeof error === 'object' && 'message' in error) {
         const err = error as { message: string; code?: string };
-        
+
         if (err.code === '23505') {
           if (err.message.includes('classes_name_key')) {
             userMessage = 'A class with this name already exists. Please choose a different name.';
@@ -200,8 +200,8 @@ export default function AdminClassesPage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-100 mb-8">Manage Classes</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold text-gray-100 mb-4">Manage Classes</h1>
 
       {pageError && (
         <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 rounded-md flex items-center gap-2">
@@ -237,14 +237,14 @@ export default function AdminClassesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {classes.map(cls => (
             <div key={cls.id} className="relative group">
-              <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 transition-all">
+              <div className="p-3 bg-gray-800 border border-gray-700 rounded-lg hover:border-gray-600 transition-all">
                 <div className="flex items-start space-x-3">
                   {/* Class Logo (formerly Avatar) */}
                   <div className="w-12 h-12 flex-shrink-0 rounded bg-gray-700 relative overflow-hidden">
                     {cls.image_assets?.logo ? (
-                      <Image 
-                        src={cls.image_assets.logo || ''} 
-                        alt={cls.name} 
+                      <Image
+                        src={cls.image_assets.logo || ''}
+                        alt={cls.name}
                         fill
                         className="object-cover rounded"
                         draggable={false}
@@ -297,7 +297,7 @@ export default function AdminClassesPage() {
                         const btn = e.currentTarget;
                         const content = btn.nextElementSibling as HTMLElement;
                         const expanded = btn.getAttribute('aria-expanded') === 'true';
-                        
+
                         btn.setAttribute('aria-expanded', (!expanded).toString());
                         if (expanded) {
                           content.style.height = '0';
@@ -309,34 +309,34 @@ export default function AdminClassesPage() {
                       aria-expanded="false"
                     >
                       <span>Skills ({cls.skills.length})</span>
-                      <svg 
-                        className="w-4 h-4 transform transition-transform" 
+                      <svg
+                        className="w-4 h-4 transform transition-transform"
                         style={{
                           transform: 'rotate(0deg)',
                           transition: 'transform 0.2s'
                         }}
-                        fill="none" 
-                        stroke="currentColor" 
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
-                    <div 
+                    <div
                       className="overflow-hidden transition-all duration-200"
                       style={{ height: '0' }}
                     >
                       <div className="flex flex-wrap gap-2 py-2">
                         {cls.skills.map(skill => (
-                          <div 
-                            key={skill.id} 
+                          <div
+                            key={skill.id}
                             className="flex items-center gap-2 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded"
                           >
                             {skill.icon_url ? (
                               <div className="w-4 h-4 relative overflow-hidden">
-                                <Image 
-                                  src={skill.icon_url || ''} 
-                                  alt={skill.name || 'Skill icon'} 
+                                <Image
+                                  src={skill.icon_url || ''}
+                                  alt={skill.name || 'Skill icon'}
                                   fill
                                   className="object-cover rounded"
                                   draggable={false}

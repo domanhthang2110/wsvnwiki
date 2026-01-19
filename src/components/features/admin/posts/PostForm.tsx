@@ -17,7 +17,7 @@ interface PostFormProps {
   onSubmit: (data: PostFormData) => Promise<boolean | void>;
   initialData?: PostItem | null;
   isEditing: boolean;
-  postType: 'guide' | 'other'; 
+  postType: 'guide' | 'other';
 }
 
 export default function PostForm({ onSubmit, initialData, isEditing, postType }: PostFormProps) {
@@ -46,7 +46,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
   const triggerSave = useCallback(async (): Promise<boolean> => {
     setIsSubmitting(true);
     setFormError(null);
-    
+
     if (!title.trim() || !slug.trim() || !contentHtml.trim() || selectedTypeId === '') {
       setFormError("Title, Slug, Content, and Type are required.");
       setIsSubmitting(false);
@@ -54,8 +54,8 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     }
 
     const postData: PostFormData = {
-      title: title.trim(), 
-      slug: slug.trim(), 
+      title: title.trim(),
+      slug: slug.trim(),
       content: contentHtml,
       featured_image_url: featuredImageUrl.trim() || null,
       status,
@@ -63,19 +63,19 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       // For simplicity, let's set/update it if status is 'published'
       published_at: status === 'published' ? new Date().toISOString() : (isEditing && initialData?.published_at ? initialData.published_at : null),
       tag_ids: Array.from(selectedTagIds),
-      type_id: Number(selectedTypeId), 
+      type_id: Number(selectedTypeId),
     };
 
     try {
       const success = await onSubmit(postData);
       if (success !== false) { // Assuming onSubmit returns true on success or void, and false/throws on error
         if (!isEditing) { // Reset form only if creating a new post
-          setTitle(''); 
+          setTitle('');
           setContentHtml('');
-          setFeaturedImageUrl(''); 
-          setStatus('draft'); 
+          setFeaturedImageUrl('');
+          setStatus('draft');
           setSelectedTagIds(new Set());
-          setSelectedTypeId(''); 
+          setSelectedTypeId('');
         }
         // Optionally, provide a success message to the user here (e.g., using a toast notification)
         return true;
@@ -119,7 +119,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       setContentHtml(typeof initialData.content === 'string' ? initialData.content : '');
       setFeaturedImageUrl(initialData.featured_image_url || '');
       setStatus((initialData.status as 'draft' | 'published') || 'draft'); // Cast initialData.status
-      setSelectedTypeId(initialData.type_id || ''); 
+      setSelectedTypeId(initialData.type_id || '');
 
       if (isEditing && initialData.id) {
         const fetchPostTags = async () => {
@@ -128,16 +128,16 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         };
         fetchPostTags();
       }
-    } else { 
+    } else {
       setTitle('');
       setContentHtml('');
-      setFeaturedImageUrl(''); 
-      setStatus('draft'); 
+      setFeaturedImageUrl('');
+      setStatus('draft');
       setSelectedTagIds(new Set());
-      setSelectedTypeId(''); 
+      setSelectedTypeId('');
     }
   }, [initialData, isEditing]);
-  
+
   // Removed autosave useEffect
 
   // --- 4. OTHER HANDLER FUNCTIONS ---
@@ -162,7 +162,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     });
   };
 
-  
+
   const handleFeaturedImageChange = (newUrl: string) => {
     setFeaturedImageUrl(newUrl);
   };
@@ -178,7 +178,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
   const openImagePicker = (target: 'featured' | 'tiptap', editor?: Editor) => {
     setImageTarget(target);
-    if (editor) editorRef.current = editor; 
+    if (editor) editorRef.current = editor;
     setShowMediaPickerModal(true);
   };
 
@@ -191,7 +191,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
   const handleImageUrlSubmit = () => {
     if (!imageUrlInput.trim()) return;
-    
+
     if (imageTarget === 'featured') {
       handleFeaturedImageChange(imageUrlInput.trim());
     } else if (imageTarget === 'tiptap' && editorRef.current) {
@@ -233,16 +233,16 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
     }
     setShowMediaPickerModal(false);
     setImageTarget(null);
-    void editorRef.current?.commands.focus(); 
+    void editorRef.current?.commands.focus();
   };
-  
+
 
   // --- 5. RENDER ---
   return (
-    <div className="mb-10 p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
-      <div className="flex justify-between items-center mb-6">
+    <div className="mb-6 p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200">
-            {isEditing ? `Edit ${initialData?.title || 'Post'}` : `Create New ${postType}`}
+          {isEditing ? `Edit ${initialData?.title || 'Post'}` : `Create New ${postType}`}
         </h2>
         {/* Removed saveStatus display */}
       </div>
@@ -253,7 +253,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         </div>
       )}
 
-      <form onSubmit={(e) => { e.preventDefault(); triggerSave(); }} className="space-y-6">
+      <form onSubmit={(e) => { e.preventDefault(); triggerSave(); }} className="space-y-4">
         <div>
           <label htmlFor="postTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title:</label>
           <input type="text" id="postTitle" value={title} onChange={(e) => handleTitleChange(e.target.value)} required className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
@@ -265,11 +265,11 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
         <div>
           <label htmlFor="postTypeSelector" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Type:</label>
-          <select 
-            id="postTypeSelector" 
-            value={selectedTypeId} 
-            onChange={(e) => handleTypeChange(e.target.value === '' ? '' : Number(e.target.value))} 
-            required 
+          <select
+            id="postTypeSelector"
+            value={selectedTypeId}
+            onChange={(e) => handleTypeChange(e.target.value === '' ? '' : Number(e.target.value))}
+            required
             className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[42px]"
           >
             <option value="" disabled>Select a type...</option>
@@ -280,20 +280,20 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
         </div>
 
         <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image:</label>
-            {featuredImageUrl && (
-              <div className="relative w-40 h-40 max-h-40 rounded border p-1 dark:border-gray-600 mb-2 overflow-hidden">
-                <NextImage src={featuredImageUrl} alt="Featured" fill className="object-contain" />
-              </div>
-            )}
-            <div className="flex gap-2">
-              <button type="button" onClick={() => openImagePicker('featured')} className="py-2 px-3 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                  {featuredImageUrl ? 'Change from Files' : 'Select from Files'}
-              </button>
-              <button type="button" onClick={() => openImageUrlInput('featured')} className="py-2 px-3 text-sm rounded-md border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">
-                  Enter Image URL
-              </button>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image:</label>
+          {featuredImageUrl && (
+            <div className="relative w-40 h-40 max-h-40 rounded border p-1 dark:border-gray-600 mb-2 overflow-hidden">
+              <NextImage src={featuredImageUrl} alt="Featured" fill className="object-contain" />
             </div>
+          )}
+          <div className="flex gap-2">
+            <button type="button" onClick={() => openImagePicker('featured')} className="py-2 px-3 text-sm rounded-md border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+              {featuredImageUrl ? 'Change from Files' : 'Select from Files'}
+            </button>
+            <button type="button" onClick={() => openImageUrlInput('featured')} className="py-2 px-3 text-sm rounded-md border border-blue-500 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+              Enter Image URL
+            </button>
+          </div>
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags:</label>
@@ -303,7 +303,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             ))}
           </div>
         </div>
-            
+
         <div className="w-full">
           <TiptapEditor
             key={initialData?.id || 'new-post'} // This 'key' is critical
@@ -313,7 +313,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
             onImageUrlOpen={(editor) => openImageUrlInput('tiptap', editor)}
           />
         </div>
-            
+
         <div>
           <label htmlFor="postStatus" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status:</label>
           <select id="postStatus" value={status} onChange={(e) => handleStatusChange(e.target.value as 'draft' | 'published')} className="mt-1 w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[42px]">
@@ -324,7 +324,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
 
         <div className="flex items-center space-x-4 pt-4">
           <button type="submit" disabled={isSubmitting} className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md disabled:opacity-50">
-            {isSubmitting ? 'Saving...' : (isEditing ? 'Save Changes' : `Create Post`)} 
+            {isSubmitting ? 'Saving...' : (isEditing ? 'Save Changes' : `Create Post`)}
           </button>
           <button type="button" onClick={() => setShowContentPreview(true)} className="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md">Preview Content</button>
           <button type="button" onClick={() => setShowWikiPreview(true)} className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md">Wiki Preview</button>
@@ -348,14 +348,14 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
       {showWikiPreview && (
         <div className="fixed inset-0 z-50 bg-gray-900">
           {/* Sticky Close Button */}
-          <button 
-            onClick={() => setShowWikiPreview(false)} 
+          <button
+            onClick={() => setShowWikiPreview(false)}
             className="fixed top-4 right-4 z-60 p-3 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg transition-colors"
             title="Close Wiki Preview"
           >
             <CloseIcon />
           </button>
-          
+
           {/* Fullscreen Wiki Content */}
           <div className="h-full overflow-y-auto">
             <GuideContentRenderer
@@ -374,7 +374,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 {imageTarget === 'featured' ? 'Select Featured Image' : 'Select Content Image'}
               </h3>
-              <button onClick={() => {setShowMediaPickerModal(false); editorRef.current?.commands.focus();}} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
+              <button onClick={() => { setShowMediaPickerModal(false); editorRef.current?.commands.focus(); }} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
             </div>
             <div className="flex-grow overflow-y-auto min-h-[300px]">
               <MediaFileExplorer bucketName="media" onFileSelect={handleFileSelectedFromPicker} mode="select" accept="image/*" />
@@ -390,7 +390,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                 {imageTarget === 'featured' ? 'Enter Featured Image URL' : 'Enter Image URL'}
               </h3>
-              <button onClick={() => {setShowImageUrlModal(false); editorRef.current?.commands.focus();}} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
+              <button onClick={() => { setShowImageUrlModal(false); editorRef.current?.commands.focus(); }} className="p-1 text-gray-500 hover:text-red-500"><CloseIcon /></button>
             </div>
             <div className="space-y-4">
               <div>
@@ -416,7 +416,7 @@ export default function PostForm({ onSubmit, initialData, isEditing, postType }:
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => {setShowImageUrlModal(false); editorRef.current?.commands.focus();}}
+                  onClick={() => { setShowImageUrlModal(false); editorRef.current?.commands.focus(); }}
                   className="py-2 px-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   Cancel

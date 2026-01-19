@@ -60,11 +60,11 @@ const WeeklyScheduleForm: React.FC<WeeklyScheduleFormProps> = ({ schedule, onSuc
   };
 
   return (
-    <div className="mb-10 p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
-      <h2 className="text-xl font-semibold mb-6 text-gray-200">
+    <div className="mb-6 p-3 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
+      <h2 className="text-xl font-semibold mb-4 text-gray-200">
         {schedule ? 'Edit Schedule' : 'Add New Schedule'}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block mb-1 text-sm font-medium text-gray-300">
             Event Name:

@@ -32,7 +32,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
 
   return (
     <div
-      className={`bg-gray-800 rounded-lg shadow-md p-4 flex flex-col max-w-xs cursor-pointer ${isSelected ? 'border-2 border-blue-500' : 'border border-gray-700'
+      className={`bg-gray-800 rounded-lg shadow-md p-3 flex flex-col max-w-xs cursor-pointer ${isSelected ? 'border-2 border-blue-500' : 'border border-gray-700'
         }`}
       onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
     >
@@ -57,13 +57,13 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
       </div>
 
       {isDetailsExpanded && (
-        <div className="mt-4">
-          <p className="text-gray-300 text-sm mb-2 break-words">Description: <span dangerouslySetInnerHTML={{ __html: formattedDescription }} /></p>
-          <p className="text-gray-300 text-sm mb-2">Max Level: {skill.max_level || 'N/A'}</p>
-          <p className="text-gray-300 text-sm mb-2">Skill Type: {skill.skill_type || 'N/A'}</p>
-          <p className="text-gray-300 text-sm mb-2">Activation Type: {skill.activation_type || 'N/A'}</p>
-          <p className="text-gray-300 text-sm mb-2">Cooldown: {skill.cooldown || 'N/A'}</p>
-          <p className="text-gray-300 text-sm mb-2">Energy Cost: {formattedEnergyCost}</p>
+        <div className="mt-2">
+          <p className="text-gray-300 text-sm mb-1 break-words">Description: <span dangerouslySetInnerHTML={{ __html: formattedDescription }} /></p>
+          <p className="text-gray-300 text-sm mb-1">Max Level: {skill.max_level || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-1">Skill Type: {skill.skill_type || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-1">Activation Type: {skill.activation_type || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-1">Cooldown: {skill.cooldown || 'N/A'}</p>
+          <p className="text-gray-300 text-sm mb-1">Energy Cost: {formattedEnergyCost}</p>
 
           {skill.items && skill.items.length > 0 && (
             <div className="mt-2">
@@ -100,7 +100,7 @@ const SkillCard: React.FC<SkillCardProps> = ({ skill, onEdit, onDelete, onIconCh
         </div>
       )}
 
-      <div className="flex justify-end space-x-1 mt-4">
+      <div className="flex justify-end space-x-1 mt-2">
         <button
           onClick={(e) => {
             e.stopPropagation();

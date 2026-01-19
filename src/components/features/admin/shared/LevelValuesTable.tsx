@@ -134,8 +134,8 @@ export default function LevelValuesTable({
   };
 
   return (
-    <div className="mt-6 overflow-hidden border border-gray-700 rounded-lg bg-gray-900 shadow-sm">
-      <div className="flex justify-between items-center px-4 py-3 bg-gray-800 border-b border-gray-700">
+    <div className="mt-4 overflow-hidden border border-gray-700 rounded-lg bg-gray-900 shadow-sm">
+      <div className="flex justify-between items-center px-3 py-2 bg-gray-800 border-b border-gray-700">
         <h3 className="text-lg font-medium text-gray-200">Parameter Configuration</h3>
         <button
           type="button"
@@ -150,11 +150,11 @@ export default function LevelValuesTable({
         <table className="min-w-full divide-y divide-gray-700">
           <thead>
             <tr>
-              <th scope="col" className="px-4 py-3 bg-gray-800 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-64 min-w-[250px] sticky left-0 z-10 border-r border-gray-700 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
+              <th scope="col" className="px-3 py-2 bg-gray-800 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-64 min-w-[250px] sticky left-0 z-10 border-r border-gray-700 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                 Parameter Name
               </th>
               {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
-                <th key={level} scope="col" className="px-3 py-3 bg-gray-800 text-center text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[80px]">
+                <th key={level} scope="col" className="px-2 py-2 bg-gray-800 text-center text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[80px]">
                   Lv {level}
                 </th>
               ))}
@@ -163,7 +163,7 @@ export default function LevelValuesTable({
           <tbody className="bg-gray-900 divide-y divide-gray-800">
             {paramDefs.length === 0 ? (
               <tr>
-                <td colSpan={maxLevel + 1} className="px-6 py-8 text-center text-gray-500 italic">
+                <td colSpan={maxLevel + 1} className="px-6 py-4 text-center text-gray-500 italic">
                   No parameters defined. Click &quot;Add Parameter&quot; to start.
                 </td>
               </tr>
@@ -176,7 +176,7 @@ export default function LevelValuesTable({
                   <React.Fragment key={param.id}>
                     {/* Main Parameter Row */}
                     <tr className="group hover:bg-gray-800/50 transition-colors">
-                      <td className="px-4 py-2 whitespace-nowrap border-r border-gray-800 bg-gray-900 group-hover:bg-gray-800/50 sticky left-0 z-10">
+                      <td className="px-3 py-1.5 whitespace-nowrap border-r border-gray-800 bg-gray-900 group-hover:bg-gray-800/50 sticky left-0 z-10">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -250,7 +250,7 @@ export default function LevelValuesTable({
                         </td>
                       ) : (
                         Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
-                          <td key={`${param.id}-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                          <td key={`${param.id}-lv${level}`} className="px-2 py-1 whitespace-nowrap">
                             <input
                               type="text"
                               value={getValue(level, param.key)}
@@ -266,7 +266,7 @@ export default function LevelValuesTable({
                     {/* PvP Secondary Row */}
                     {hasPvp && !isTalent && (
                       <tr className="bg-blue-900/10">
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-gray-800 bg-gray-900/95 sticky left-0 z-10 pl-8">
+                        <td className="px-3 py-1.5 whitespace-nowrap border-r border-gray-800 bg-gray-900/95 sticky left-0 z-10 pl-8">
                           <div className="flex items-center gap-2 text-xs text-blue-300 font-medium">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             <span className="flex-grow">PvP Value</span>
@@ -289,7 +289,7 @@ export default function LevelValuesTable({
                           </td>
                         ) : (
                           Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
-                            <td key={`${param.id}-pvp-lv${level}`} className="px-2 py-2 whitespace-nowrap">
+                            <td key={`${param.id}-pvp-lv${level}`} className="px-2 py-1 whitespace-nowrap">
                               <input
                                 type="text"
                                 value={getValue(level, pvpKey)}

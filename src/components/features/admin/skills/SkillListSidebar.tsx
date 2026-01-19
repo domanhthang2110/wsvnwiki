@@ -51,8 +51,8 @@ export default function SkillListSidebar({
 
     return (
         <div className={`flex flex-col h-full bg-gray-900 border-l border-gray-700 ${className}`}>
-            <div className="p-4 border-b border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-200 mb-2">Skills</h3>
+            <div className="p-3 border-b border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-200 mb-1">Skills</h3>
                 <input
                     type="text"
                     placeholder="Search skills..."
@@ -62,7 +62,7 @@ export default function SkillListSidebar({
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
                 {filteredClasses.map(className => {
                     const classSkills = groupedSkills[className].filter(s =>
                         (s.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,7 +77,7 @@ export default function SkillListSidebar({
                         <div key={className} className="rounded-md overflow-hidden border border-gray-800">
                             <button
                                 onClick={() => toggleClass(className)}
-                                className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-800 hover:bg-gray-700 transition-colors border-b border-gray-700"
+                                className="w-full flex items-center justify-between px-3 py-1.5 bg-gray-800 hover:bg-gray-700 transition-colors border-b border-gray-700"
                             >
                                 <div className="flex items-center gap-2">
                                     {classSkills[0]?.classIconUrl && (
@@ -94,7 +94,7 @@ export default function SkillListSidebar({
                                         <button
                                             key={skill.id}
                                             onClick={() => onSelectSkill(skill)}
-                                            className={`w-full text-left px-3 pl-8 py-2 text-sm border-l-2 transition-colors flex items-center gap-2 ${selectedSkillId === skill.id
+                                            className={`w-full text-left px-3 pl-8 py-1.5 text-sm border-l-2 transition-colors flex items-center gap-2 ${selectedSkillId === skill.id
                                                 ? 'border-blue-500 bg-blue-500/10 text-blue-400'
                                                 : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-gray-800'
                                                 }`}

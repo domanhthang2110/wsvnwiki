@@ -1,6 +1,6 @@
 import { EventItem } from '@/types/events';
 import Image from 'next/image';
-import wsrvLoader from '@/lib/utils/imageLoader';
+import wsrvLoader from '@/utils/imageLoader';
 
 interface EventCardProps {
   event: EventItem;

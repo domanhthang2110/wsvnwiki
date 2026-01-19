@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState, useMemo, ForwardedRef } from 'react';
-import Image from 'next/image';
 
 // Constants
 export type FrameStyleType = 'yellow' | 'red' | 'green';
@@ -61,7 +60,6 @@ interface IconFrameProps {
   onClick?: (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => void;
   isActive?: boolean;
   style?: React.CSSProperties; // Add style prop
-  priority?: boolean; // New prop for Next/Image priority
   // These props allow the parent to be notified of hover events
   onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void;
@@ -79,7 +77,6 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
   onMouseEnter: parentOnMouseEnter,
   onMouseLeave: parentOnMouseLeave,
   style, // Destructure the new style prop
-  priority, // Destructure the new priority prop
 }, ref: ForwardedRef<HTMLDivElement>) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -201,6 +198,7 @@ const IconFrame = React.forwardRef<HTMLDivElement, IconFrameProps>(({
     >
       {contentImageUrl && ( // Conditionally render img tag only if contentImageUrl exists
         <div style={contentImageWrapperStyle}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             draggable={false}
             src={contentImageUrl}

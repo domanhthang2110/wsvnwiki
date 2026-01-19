@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { usePageLoading } from '@/hooks/usePageLoading';
 
 interface PostPageWrapperProps {
@@ -9,7 +9,6 @@ interface PostPageWrapperProps {
 
 export function PostPageWrapper({ children }: PostPageWrapperProps) {
   const { showPageLoading, hidePageLoading } = usePageLoading();
-  const [isContentReady, setIsContentReady] = useState(false);
   const hasShownLoading = useRef(false);
 
   useEffect(() => {
@@ -20,7 +19,6 @@ export function PostPageWrapper({ children }: PostPageWrapperProps) {
 
       // Wait for content to be ready
       const timer = setTimeout(() => {
-        setIsContentReady(true);
         hidePageLoading();
       }, 600);
 
@@ -28,7 +26,7 @@ export function PostPageWrapper({ children }: PostPageWrapperProps) {
         clearTimeout(timer);
       };
     }
-  }, []); // Empty dependency array to run only once
+  }, [showPageLoading, hidePageLoading]);
 
   // Always render children, loading overlay handles the visual state
   return <>{children}</>;

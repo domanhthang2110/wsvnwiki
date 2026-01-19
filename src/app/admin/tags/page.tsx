@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { supabase } from '@/lib/supabase/client'; 
+import { supabase } from '@/lib/supabase/client';
 import { Edit3, Trash2, Tag, Type, AlertTriangle } from 'lucide-react';
 import { slugify } from '@/lib/utils'; // Import slugify from utils
 import LoadingOverlay from '@/components/ui/LoadingOverlay';
@@ -53,9 +53,9 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
     // Auto-generate slug from name, unless editing and name hasn't changed
     // Or if the initial slug was different (though we're enforcing slugify(name) now)
     if (!isEditing || (initialData && name !== initialData.name)) {
-        setSlug(slugify(name));
+      setSlug(slugify(name));
     } else if (isEditing && initialData) {
-        setSlug(slugify(name)); // Always keep slug in sync with name
+      setSlug(slugify(name)); // Always keep slug in sync with name
     }
   }, [name, isEditing, initialData]);
 
@@ -86,7 +86,7 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl mb-10">
+    <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-xl mb-6">
       <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
         {isEditing ? `Edit ${initialData?.category === 'tags' ? 'Tag' : 'Type'}` : 'Create New Tag/Type'}
       </h2>
@@ -100,7 +100,7 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>
@@ -114,7 +114,7 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
             type="text"
             value={slug}
             readOnly // Slug is not directly editable
-            className="mt-1 block w-full p-3 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm cursor-not-allowed"
+            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm cursor-not-allowed"
           />
         </div>
 
@@ -127,7 +127,7 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
             value={category}
             onChange={(e) => setCategory(e.target.value as 'tags' | 'types')}
             disabled={isEditing} // Cannot change category when editing
-            className={`mt-1 block w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 ${isEditing ? 'bg-gray-100 dark:bg-gray-700/50 cursor-not-allowed' : ''}`}
+            className={`mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 ${isEditing ? 'bg-gray-100 dark:bg-gray-700/50 cursor-not-allowed' : ''}`}
           >
             <option value="tags">Tag</option>
             <option value="types">Type</option>
@@ -172,13 +172,13 @@ function TaxonomyForm({ onSubmit, initialData, isEditing, onCancelEdit }: Taxono
 // --- TaxonomyCard Component ---
 function TaxonomyCard({ item, categoryName, onEdit, onDelete }: TaxonomyCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4 flex flex-col justify-between transition-all hover:shadow-xl">
+    <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-3 flex flex-col justify-between transition-all hover:shadow-xl">
       <div>
         <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-1">{item.name}</h3>
         <p className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full inline-block">
           Slug: {item.slug}
         </p>
-         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
           Created: {new Date(item.created_at).toLocaleDateString()}
         </p>
       </div>
@@ -207,13 +207,13 @@ export default function AdminTaxonomyPage() {
 
   const [tags, setTags] = useState<TaxonomyItem[]>([]);
   const [types, setTypes] = useState<TaxonomyItem[]>([]);
-  
+
   const [tagsLoading, setTagsLoading] = useState(true);
   const [typesLoading, setTypesLoading] = useState(true);
-  
+
   const [tagsError, setTagsError] = useState<string | null>(null);
   const [typesError, setTypesError] = useState<string | null>(null);
-  
+
   const [selectedItem, setSelectedItem] = useState<{ id?: number; name: string; category: 'tags' | 'types' } | null>(null);
 
   const fetchTableData = useCallback(async (tableName: 'tags' | 'types') => {
@@ -255,7 +255,7 @@ export default function AdminTaxonomyPage() {
     try {
       if (selectedItem && selectedItem.id) { // Editing existing item
         if (selectedItem.category !== category) {
-            throw new Error("Cannot change the category of an existing item."); // Should be prevented by disabled form field
+          throw new Error("Cannot change the category of an existing item."); // Should be prevented by disabled form field
         }
         const { error: updateError } = await supabase
           .from(category) // category comes from selectedItem, which is fixed
@@ -320,7 +320,7 @@ export default function AdminTaxonomyPage() {
     if (items.length === 0) return <p className="text-center text-gray-600 dark:text-gray-400 py-4">No {categoryName}s found. Add one using the form above.</p>;
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {items.map((item) => (
           <TaxonomyCard
             key={`${categoryKey}-${item.id}`}
@@ -335,7 +335,7 @@ export default function AdminTaxonomyPage() {
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <header className="mb-8 text-center">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">
           Taxonomy Management
@@ -355,17 +355,17 @@ export default function AdminTaxonomyPage() {
       {/* Tags Section */}
       <section className="mt-12">
         <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-300 dark:border-gray-700">
-            <Tag className="text-blue-600 dark:text-blue-400" size={28}/>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Existing Tags</h2>
+          <Tag className="text-blue-600 dark:text-blue-400" size={28} />
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Existing Tags</h2>
         </div>
         {renderList(tags, 'Tag', 'tags', tagsLoading, tagsError)}
       </section>
 
       {/* Types Section */}
       <section className="mt-12">
-         <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-300 dark:border-gray-700">
-            <Type className="text-purple-600 dark:text-purple-400" size={28}/>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Existing Types</h2>
+        <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-300 dark:border-gray-700">
+          <Type className="text-purple-600 dark:text-purple-400" size={28} />
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Existing Types</h2>
         </div>
         {renderList(types, 'Type', 'types', typesLoading, typesError)}
       </section>

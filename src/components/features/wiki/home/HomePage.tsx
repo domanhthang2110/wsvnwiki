@@ -9,7 +9,7 @@ import styles from './HomePage.module.css';
 import EventModal from '../events/EventModal';
 import IconFrame from '@/components/shared/IconFrame';
 import NewbiePostCard from './NewbiePostCard';
-import wsrvLoader from '@/lib/utils/imageLoader';
+import wsrvLoader from '@/utils/imageLoader';
 
 const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }) => {
   const [events, setEvents] = useState<EventItem[]>([]);

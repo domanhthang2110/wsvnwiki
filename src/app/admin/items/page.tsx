@@ -47,11 +47,11 @@ export default function AdminItemsPage() {
 
         if (updateError) {
           console.error("Supabase UPDATE error:", updateError);
-          throw updateError; 
+          throw updateError;
         }
-        
+
         setSelectedItem(null);
-      
+
       } else {
         // ---- CREATING NEW ITEM ----
         const { error: insertError } = await supabase
@@ -60,10 +60,10 @@ export default function AdminItemsPage() {
 
         if (insertError) {
           console.error("Supabase INSERT error:", insertError);
-          throw insertError; 
+          throw insertError;
         }
       }
-      
+
       await fetchItems();
 
     } catch (error: unknown) {
@@ -72,7 +72,7 @@ export default function AdminItemsPage() {
         errorMessage = error.message;
       }
       console.error('Error saving item (in AdminItemsPage):', errorMessage);
-      throw new Error(errorMessage); 
+      throw new Error(errorMessage);
     }
   };
 
@@ -162,7 +162,7 @@ export default function AdminItemsPage() {
         .eq('id', item.id);
 
       if (updateError) throw updateError;
-      
+
       // Update local state immediately without reloading
       setItems(prevItems =>
         prevItems.map(i =>
@@ -235,7 +235,7 @@ export default function AdminItemsPage() {
 
   return (
     <>
-      <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
         Manage Items
       </h1>
 

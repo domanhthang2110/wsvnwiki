@@ -166,12 +166,12 @@ export default function ClassForm({
   }, [currentTiptapEditor]); // Dependency on currentTiptapEditor
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-semibold text-gray-100 mb-6">
+    <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-lg p-3">
+      <h2 className="text-xl font-semibold text-gray-100 mb-4">
         {isEditing ? 'Edit Class' : 'Create New Class'}
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Class Name
@@ -331,9 +331,9 @@ export default function ClassForm({
               <div key={skill.id} className="flex-none" style={{ width: 'min(100%, 300px)' }}>
                 <SkillCard
                   skill={skill}
-                  onEdit={() => {}}
-                  onDelete={() => {}}
-                  onIconChange={() => {}}
+                  onEdit={() => { }}
+                  onDelete={() => { }}
+                  onIconChange={() => { }}
                   isSelected={false}
                 />
               </div>
@@ -377,10 +377,10 @@ export default function ClassForm({
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100">
                 Select {currentImageField === 'logo_url' ? 'Class Logo' :
-                        currentImageField === 'avatar_url' ? 'Class Avatar' :
-                        currentImageField === 'banner_url' ? 'Class Banner' : 'Image'}
+                  currentImageField === 'avatar_url' ? 'Class Avatar' :
+                    currentImageField === 'banner_url' ? 'Class Banner' : 'Image'}
               </h3>
-              <button 
+              <button
                 onClick={() => setMediaExplorerOpen(false)}
                 className="p-1 text-gray-400 hover:text-red-400"
               >

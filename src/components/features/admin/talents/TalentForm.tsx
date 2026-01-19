@@ -27,6 +27,7 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
     () => [{ id: crypto.randomUUID(), key: 'value' }]
   );
   const [formLevelValues, setFormLevelValues] = useState<TalentLevelValue[]>([]);
+  const [showRawData, setShowRawData] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -294,11 +295,11 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
   };
 
   return (
-    <div className="mb-10 p-6 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
-      <h2 className="text-xl font-semibold mb-6 text-gray-200">
+    <div className="mb-6 p-3 border border-gray-700 rounded-lg bg-gray-800 shadow-md">
+      <h2 className="text-xl font-semibold mb-4 text-gray-200">
         {isEditing ? `Edit Talent: ${initialData?.name || ''}` : 'Create New Talent'}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="formName" className="block mb-1 text-sm font-medium text-gray-300">
             Talent Name:
@@ -402,11 +403,22 @@ export default function TalentForm({ onSubmit, isEditing, initialData }: TalentF
         </div>
       </form>
 
-      <div className="mt-4 p-4 bg-gray-900 border border-gray-700 rounded">
-        <h3 className="text-lg font-semibold text-gray-200 mb-2">Raw Form Data</h3>
-        <pre className="text-xs text-gray-300 bg-gray-800 p-2 rounded overflow-auto max-h-60">
-          {JSON.stringify(liveFormData, null, 2)}
-        </pre>
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={() => setShowRawData(!showRawData)}
+          className="text-xs text-gray-500 hover:text-gray-300 underline"
+        >
+          {showRawData ? 'Hide Raw Data' : 'Show Raw Data'}
+        </button>
+        {showRawData && (
+          <div className="mt-2 p-4 bg-gray-900 border border-gray-700 rounded overflow-hidden">
+            <h3 className="text-lg font-semibold text-gray-200 mb-2">Raw Form Data</h3>
+            <pre className="text-xs text-gray-300 bg-gray-800 p-2 rounded max-h-60 block w-full" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowX: 'hidden', boxSizing: 'border-box' }}>
+              {JSON.stringify(liveFormData, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
 
       {showIconPickerModal && (

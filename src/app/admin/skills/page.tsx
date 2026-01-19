@@ -326,13 +326,13 @@ export default function AdminSkillsPage() {
 
   return (
     <>
-      <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">
         Manage Skills
       </h1>
 
       <BulkSkillImport onImportSuccess={fetchSkills} />
 
-      <div className="flex flex-col xl:flex-row gap-6">
+      <div className="flex flex-col xl:flex-row gap-4">
         <div className="flex-1 min-w-0">
           <div id="skillForm" className="max-w-full overflow-hidden">
             <SkillForm
@@ -370,7 +370,7 @@ export default function AdminSkillsPage() {
 
       {!isSidebarMode && (
         <>
-          <div className="flex justify-between items-center mb-4 mt-8">
+          <div className="flex justify-between items-center mb-2 mt-4">
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
               Existing Skills
             </h2>
@@ -385,9 +385,9 @@ export default function AdminSkillsPage() {
       )}
 
       {!listLoading && !listError && skills.length > 0 && (
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md shadow-sm mb-6">
+        <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md shadow-sm mb-4">
           <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Skill Type Overview</h3>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {Object.entries(skillTypeCounts).sort(([typeA], [typeB]) => typeA.localeCompare(typeB)).map(([type, count]) => (
               <div key={type} className="flex items-center space-x-1">
                 <span className="text-gray-700 dark:text-gray-300">{type}:</span>
@@ -419,7 +419,7 @@ export default function AdminSkillsPage() {
       )}
 
       {!isSidebarMode && !listLoading && !listError && skills.length > 0 && (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {Object.entries(
             skills.reduce((acc, skill) => {
               const className = skill.className || 'Uncategorized';
@@ -444,7 +444,7 @@ export default function AdminSkillsPage() {
                   onToggle={() => toggleClassExpansion(className)}
                 />
                 {expandedClasses[className] && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 mt-2">
                     {classSkills.map((skill) => (
                       <SkillCard
                         key={skill.id}

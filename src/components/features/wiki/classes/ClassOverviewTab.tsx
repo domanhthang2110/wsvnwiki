@@ -69,7 +69,7 @@ const ClassOverviewTab: React.FC<ClassOverviewTabProps> = ({ classItem }) => {
         <div className={styles.leftColumn}>
           <div className={styles.classHeader}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <IconFrame size={64} styleType="yellow" altText={classItem?.name} contentImageUrl={classItem?.image_assets?.logo || null} priority={true} />
+              <IconFrame size={64} styleType="yellow" altText={classItem?.name} contentImageUrl={classItem?.image_assets?.logo || null} />
               <div className={styles.classInfo}>
                 <h2 className={styles.className} style={{ fontSize: '1.6rem' }}>{classItem?.name}</h2>
                 {classData && (
