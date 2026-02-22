@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import { useTalentTreeStore } from '../v2/store';
+import { useTalentTreeStore } from './store';
 import { TalentTreeItem } from '@/types/talents';
 import { Input } from '@/components/ui/Input';
 import { Switch } from '@/components/ui/Switch/switch';
@@ -33,21 +33,26 @@ const DraggablePaletteItem = ({ type, label, width }: { type: string, label: str
             className={`flex items-center gap-2 p-1.5 rounded bg-gray-800 border border-gray-700 hover:bg-gray-700 cursor-grab active:cursor-grabbing transition-colors ${isDragging ? 'opacity-50' : ''}`}
             title={label}
         >
-            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 flex items-center justify-center shrink-0 overflow-visible">
                 {type === 'free_composite' ? (
                     <div className="scale-[0.5] origin-center">
                         <FreeCompositeFrame isUnlocked={true} />
                     </div>
                 ) : (
-                    <IconFrame
-                        size={28}
-                        styleType="yellow"
-                        contentImageUrl={null}
-                        frameType={
-                            type === 'key' ? 'key' :
-                                type === 'lesser' ? 'lesser' : 'regular'
-                        }
-                    />
+                    <div className="relative">
+                        <IconFrame
+                            size={28}
+                            styleType="yellow"
+                            contentImageUrl={null}
+                            frameType={
+                                type === 'key' ? 'key' :
+                                    type === 'lesser' ? 'lesser' : 'regular'
+                            }
+                            // -> ADJUSTMENT OFFSETS FOR LESSER & KEY in SIDEBAR PALETTE <-
+                            style={(type === 'key') ? { marginLeft: '-2.5px', marginTop: '0px' } :
+                                (type === 'lesser') ? { marginLeft: '-1px', marginTop: '0px' } : undefined}
+                        />
+                    </div>
                 )}
             </div>
             <span className="text-[11px] font-medium text-gray-300 truncate">{label}</span>

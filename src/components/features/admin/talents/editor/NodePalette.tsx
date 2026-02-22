@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import { useTalentTreeStore } from '../v2/store';
+import { useTalentTreeStore } from './store';
 import IconFrame from '@/components/shared/IconFrame';
 
 const ItemTypes = {

@@ -3,15 +3,15 @@
 import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useTalentTreeData } from '../v2/useTalentTreeData';
-import { useTreeInteraction } from '../v2/useTreeInteraction';
+import { useTalentTreeData } from './useTalentTreeData';
+import { useTreeInteraction } from './useTreeInteraction';
 import EditorCanvas from './EditorCanvas';
 import EditorSidebar from './EditorSidebar';
-import TalentSelectModal from '../v2/TalentSelectModal';
-import { useTalentTreeStore } from '../v2/store';
+import TalentSelectModal from './TalentSelectModal';
+import { useTalentTreeStore } from './store';
 import { TalentNode } from '@/types/talents';
 
-const TalentTreeEditorV3: React.FC = () => {
+const TalentTreeEditor: React.FC = () => {
     // Reuse data fetching and interactions from V2
     useTalentTreeData();
     const { handleSaveTree, handleDeleteTree, handleEditTree, handleClearGrid } = useTreeInteraction();
@@ -55,4 +55,4 @@ const TalentTreeEditorV3: React.FC = () => {
     );
 };
 
-export default TalentTreeEditorV3;
+export default TalentTreeEditor;

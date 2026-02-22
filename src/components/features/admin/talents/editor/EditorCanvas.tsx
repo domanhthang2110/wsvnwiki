@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { useDrop, useDrag } from 'react-dnd';
 import { TransformWrapper, TransformComponent, ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch';
-import { useTalentTreeStore } from '../v2/store';
+import { useTalentTreeStore } from './store';
 import { TalentNode, TalentEdge } from '@/types/talents';
 import IconFrame from '@/components/shared/IconFrame';
 import FreeCompositeFrame from '@/components/ui/FreeCompositeFrame';
@@ -119,10 +119,12 @@ const DraggableNode = ({ node, onClick }: { node: TalentNode, onClick: (n: Talen
     return (
         <div
             ref={(n) => { drag(n) }}
-            className={`nopan cursor-grab relative flex items-center justify-center group ${isDragging ? 'opacity-50' : ''}`}
+            className={`nopan cursor-grab relative flex items-center justify-center group shrink-0 ${isDragging ? 'opacity-50' : ''}`}
             style={{
-                width: node.node_type === 'free_composite' ? 'auto' : TALENT_CELL_SIZE,
-                height: node.node_type === 'free_composite' ? 'auto' : TALENT_CELL_SIZE,
+                width: node.node_type === 'free_composite' ? 'auto' :
+                    (node.node_type === 'key' || node.node_type === 'lesser') ? TALENT_CELL_SIZE + 12 : TALENT_CELL_SIZE,
+                height: node.node_type === 'free_composite' ? 'auto' :
+                    (node.node_type === 'key' || node.node_type === 'lesser') ? TALENT_CELL_SIZE + 12 : TALENT_CELL_SIZE,
                 zIndex: 20, // High z-index for the node itself
                 overflow: 'visible' // Ensure sprites aren't cut off
             }}
@@ -141,8 +143,11 @@ const DraggableNode = ({ node, onClick }: { node: TalentNode, onClick: (n: Talen
                         node.node_type === 'key' ? 'key' :
                             node.node_type === 'lesser' ? 'lesser' : 'regular'
                     }
-                    // Adjust left offset for key/lesser frames to center them visually if needed, similar to V2 logic
-                    style={(node.node_type === 'key' || node.node_type === 'lesser') ? { marginLeft: '-4px' } : undefined}
+                // Adjust left offset for key/lesser frames to center them visually if needed, similar to V2 logic
+                // -> ADJUSTMENT OFFSETS FOR LESSER & KEY <-
+                // You can change `marginLeft` and `marginTop` values below to shift the frame around without moving the cell itself.
+                // For example: { marginLeft: '-8px', marginTop: '-4px' } moves it 8px left and 4px up.
+
                 />
             )}
             {node.group_id && (
@@ -215,58 +220,100 @@ const EditorCanvasContent = ({ onEditNode, hoveredCell }: { onEditNode: (n: Tale
 
                 if (edge && direction) {
                     cellContent = (
-                        <img
-                            src="/image/talent_arrow.webp"
-                            alt="arrow"
-                            className="object-contain w-4 h-4"
-                            style={{
-                                transform: direction === 'down' ? 'rotate(90deg)' :
-                                    direction === 'left' ? 'rotate(180deg)' :
-                                        direction === 'up' ? 'rotate(270deg)' : 'none'
-                            }}
-                            onContextMenu={(e) => { e.preventDefault(); removeEdge(edge!.id); }}
-                        />
+                        <div
+                            className="nopan flex items-center justify-center w-full h-full cursor-pointer hover:opacity-75 hover:bg-red-500/20 rounded z-30 relative transition-all"
+                            onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); removeEdge(edge!.id); }}
+                            onClick={(e) => { e.stopPropagation(); removeEdge(edge!.id); }}
+                        >
+                            <img
+                                src="/image/talent_arrow.webp"
+                                alt="arrow"
+                                className="object-contain w-4 h-4 pointer-events-none"
+                                style={{
+                                    transform: direction === 'down' ? 'rotate(90deg)' :
+                                        direction === 'left' ? 'rotate(180deg)' :
+                                            direction === 'up' ? 'rotate(270deg)' : 'none'
+                                }}
+                            />
+                        </div>
                     );
                 }
             }
 
             // Overlay for Composite Background
+            // -> ADJUSTMENT FOR COMPOSITE FRAME SIZE <-
+            // You can adjust the transform scale(1.1) to 1.2 or 1.0 depending on how much larger you want the frame to bleed out out of its container bounding box.
             const compositeBg = mainComposite ? (
                 <div
-                    className="absolute pointer-events-none z-0"
+                    className="absolute pointer-events-none z-[-1]"
                     style={{
                         width: `calc(${TALENT_CELL_SIZE}px * 3 + ${ARROW_CELL_SIZE}px * 2)`,
                         height: `${TALENT_CELL_SIZE}px`,
                         backgroundImage: `url('/image/talents/composite_talent.webp')`,
-                        backgroundSize: 'contain',
+                        backgroundSize: '100% 100%',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
                         left: `calc((${TALENT_CELL_SIZE}px + ${ARROW_CELL_SIZE}px) * -1)`,
+                        transform: 'scale(1.19)'
                     }}
                 />
             ) : null;
 
             // Anchor Buttons
+            const hasSameGroup = (tx: number, ty: number) => {
+                if (!node || !node.group_id) return false;
+                const target = treeData.nodes.find(n => n.x === tx && n.y === ty);
+                return target?.group_id === node.group_id;
+            };
+
             const anchors = (node && selectedNodeId === node.id) ? (
                 <>
                     {/* Simplified Anchor Logic for UI */}
                     {/* NOTE: We aren't doing the complex check for existing edges here for brevity, but interactivity works via onLink logic */}
-                    <button
-                        className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-2 bg-red-500/50 hover:bg-red-500 z-20"
-                        onClick={(e) => { e.stopPropagation(); linkNode(node, 'up'); }}
-                    />
-                    <button
-                        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-2 bg-red-500/50 hover:bg-red-500 z-20"
-                        onClick={(e) => { e.stopPropagation(); linkNode(node, 'down'); }}
-                    />
-                    <button
-                        className="absolute top-1/2 -left-2 -translate-y-1/2 w-2 h-4 bg-red-500/50 hover:bg-red-500 z-20"
-                        onClick={(e) => { e.stopPropagation(); linkNode(node, 'left'); }}
-                    />
-                    <button
-                        className="absolute top-1/2 -right-2 -translate-y-1/2 w-2 h-4 bg-red-500/50 hover:bg-red-500 z-20"
-                        onClick={(e) => { e.stopPropagation(); linkNode(node, 'right'); }}
-                    />
+                    {!hasSameGroup(c, r - 2) && (
+                        <div
+                            title="Create connection up"
+                            className="absolute -top-5 left-1/2 -translate-x-1/2 w-5 h-4 cursor-pointer group z-30 drop-shadow-md hover:drop-shadow-lg"
+                            onClick={(e) => { e.stopPropagation(); linkNode(node, 'up'); }}
+                        >
+                            <div className="w-full h-full bg-blue-300 flex items-center justify-center transition-all group-hover:bg-green-300" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}>
+                                <div className="w-[80%] h-[80%] mt-[10%] bg-blue-600 group-hover:bg-green-500 transition-all" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+                            </div>
+                        </div>
+                    )}
+                    {!hasSameGroup(c, r + 2) && (
+                        <div
+                            title="Create connection down"
+                            className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-5 h-4 cursor-pointer group z-30 drop-shadow-md hover:drop-shadow-lg"
+                            onClick={(e) => { e.stopPropagation(); linkNode(node, 'down'); }}
+                        >
+                            <div className="w-full h-full bg-blue-300 flex items-center justify-center transition-all group-hover:bg-green-300" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)' }}>
+                                <div className="w-[80%] h-[80%] mb-[10%] bg-blue-600 group-hover:bg-green-500 transition-all" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)' }} />
+                            </div>
+                        </div>
+                    )}
+                    {!hasSameGroup(c - 2, r) && node.node_type !== 'free_composite' && (
+                        <div
+                            title="Create connection left"
+                            className="absolute top-1/2 -left-5 -translate-y-1/2 w-4 h-5 cursor-pointer group z-30 drop-shadow-md hover:drop-shadow-lg"
+                            onClick={(e) => { e.stopPropagation(); linkNode(node, 'left'); }}
+                        >
+                            <div className="w-full h-full bg-blue-300 flex items-center justify-center transition-all group-hover:bg-green-300" style={{ clipPath: 'polygon(0 50%, 100% 100%, 100% 0)' }}>
+                                <div className="w-[80%] h-[80%] ml-[10%] bg-blue-600 group-hover:bg-green-500 transition-all" style={{ clipPath: 'polygon(0 50%, 100% 100%, 100% 0)' }} />
+                            </div>
+                        </div>
+                    )}
+                    {!hasSameGroup(c + 2, r) && node.node_type !== 'free_composite' && (
+                        <div
+                            title="Create connection right"
+                            className="absolute top-1/2 -right-5 -translate-y-1/2 w-4 h-5 cursor-pointer group z-30 drop-shadow-md hover:drop-shadow-lg"
+                            onClick={(e) => { e.stopPropagation(); linkNode(node, 'right'); }}
+                        >
+                            <div className="w-full h-full bg-blue-300 flex items-center justify-center transition-all group-hover:bg-green-300" style={{ clipPath: 'polygon(100% 50%, 0 0, 0 100%)' }}>
+                                <div className="w-[80%] h-[80%] mr-[10%] bg-blue-600 group-hover:bg-green-500 transition-all" style={{ clipPath: 'polygon(100% 50%, 0 0, 0 100%)' }} />
+                            </div>
+                        </div>
+                    )}
                 </>
             ) : null;
 
@@ -281,7 +328,7 @@ const EditorCanvasContent = ({ onEditNode, hoveredCell }: { onEditNode: (n: Tale
                         gridColumn: c + 1,
                         gridRow: r + 1,
                         overflow: 'visible',
-                        zIndex: node ? 10 : (isArrowCell ? 5 : 1)
+                        zIndex: mainComposite ? 5 : (node ? 30 : (isArrowCell ? 5 : 1))
                     }}
                     onClick={() => { if (node) setSelectedNodeId(node.id); else setSelectedNodeId(null); }}
                     onContextMenu={(e) => {
@@ -446,19 +493,32 @@ const EditorCanvas: React.FC<{ onEditNode: (n: TalentNode) => void }> = ({ onEdi
             // Free composites MUST move individually even if they have a group_id.
             const isStrictGroup = item.group_id && (item.node_type === 'composite' || item.node_type === 'composite_sub');
 
+            const movingNodeIds: string[] = [];
+
             if (isStrictGroup) {
                 // Move all nodes in the strictly bound group
                 newNodes = newNodes.map(n => {
-                    if (n.group_id === item.group_id) return { ...n, x: n.x + dx, y: n.y + dy };
+                    if (n.group_id === item.group_id) {
+                        movingNodeIds.push(n.id);
+                        return { ...n, x: n.x + dx, y: n.y + dy };
+                    }
                     return n;
                 });
             } else {
                 newNodes = newNodes.map(n => {
-                    if (n.id === item.id) return { ...n, x: finalX, y: finalY };
+                    if (n.id === item.id) {
+                        movingNodeIds.push(n.id);
+                        return { ...n, x: finalX, y: finalY };
+                    }
                     return n;
                 });
             }
-            setTreeData({ nodes: newNodes, edges: treeData.edges });
+
+            const newEdges = treeData.edges.filter(
+                e => !movingNodeIds.includes(e.source) && !movingNodeIds.includes(e.target)
+            );
+
+            setTreeData({ nodes: newNodes, edges: newEdges });
         }
     };
 
@@ -502,39 +562,26 @@ const EditorCanvas: React.FC<{ onEditNode: (n: TalentNode) => void }> = ({ onEdi
         if (!isOver) setHoveredCell(null);
     }, [isOver]);
 
-    /* Zoom to fit logic on first load
+    // Center horizontally and align top on load
     React.useEffect(() => {
         const timer = setTimeout(() => {
             if (transformRef.current) {
                 const dropZone = document.getElementById('v3-canvas-drop-zone');
                 if (dropZone) {
                     const containerWidth = dropZone.clientWidth;
-                    const containerHeight = dropZone.clientHeight;
-
-                    // Grid dimensions (No horizontal padding, only 50px top padding)
                     const gridWidth = Math.ceil(TOTAL_COLS / 2) * TALENT_CELL_SIZE + Math.floor(TOTAL_COLS / 2) * ARROW_CELL_SIZE;
-                    const gridHeight = Math.ceil(TOTAL_ROWS / 2) * TALENT_CELL_SIZE + Math.floor(TOTAL_ROWS / 2) * ARROW_CELL_SIZE + 50;
+                    const initialScale = 0.6;
 
-                    // Zoom to fit width primarily
-                    const scaleX = (containerWidth - 40) / gridWidth; // 40px margin
-
-                    // Increase default zoom a bit (1.2x scaleX) but don't exceed 1.5 comfortably
-                    let initialScale = Math.min(scaleX * 1.1, 1.2);
-
-                    // Hard min limit for initial zoom to prevent tiny dots on very small screens
-                    initialScale = Math.max(0.6, initialScale);
-
-                    // Center it
+                    // Center it horizontally, top align vertically
                     const x = (containerWidth - gridWidth * initialScale) / 2;
                     const y = 0;
 
                     transformRef.current.setTransform(x, y, initialScale, 0);
                 }
             }
-        }, 150); // Small delay to ensure container is measured
+        }, 50);
         return () => clearTimeout(timer);
     }, []);
-    */
 
     return (
         <div
@@ -544,10 +591,11 @@ const EditorCanvas: React.FC<{ onEditNode: (n: TalentNode) => void }> = ({ onEdi
         >
             <div className="absolute inset-0">
                 <TransformWrapper
+                    ref={transformRef}
                     initialScale={0.6}
                     minScale={0.5}
                     maxScale={2}
-                    centerOnInit={true}
+                    centerOnInit={false}
                     limitToBounds={true}
                     disablePadding={true}
                     panning={{ excluded: ['nopan'] }}
