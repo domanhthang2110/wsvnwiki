@@ -4,20 +4,19 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useTalentTreeInteractiveStore } from './talent-tree-store';
 
-
+import Dropdown from '@/components/ui/Dropdown/Dropdown';
+import LongButton from '@/components/ui/LongButton';
 
 interface TotalTalentCostDisplayProps {
   onReset: () => void;
 }
 
 const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset }) => {
-  const [activeTab, setActiveTab] = useState<'summary' | 'breakdown' | 'stats' | 'builds'>('summary');
-  const [targetKnowledge, setTargetKnowledge] = useState<number>(0); // Initialize with 0, will update in effect
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [activeTab, setActiveTab] = useState<'summary' | 'builds'>('summary');
   const [buildName, setBuildName] = useState('');
   const [showSaveInput, setShowSaveInput] = useState(false);
+  const [shareError, setShareError] = useState('');
 
-  // Get store functions and data
   const {
     saveBuild,
     loadBuild,
@@ -49,11 +48,8 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
         if (talent?.knowledge_levels && node) {
           if (node.group_id) {
             if (!processedGroupIds.has(node.group_id)) {
-              const groupNodes = nodes.filter(
-                (n) => n.group_id === node.group_id
-              );
-              const mainNode =
-                groupNodes.find((n) => n.is_group_main) || groupNodes[0];
+              const groupNodes = nodes.filter((n) => n.group_id === node.group_id);
+              const mainNode = groupNodes.find((n) => n.is_group_main) || groupNodes[0];
               const mainTalent = talentInfoMap.get(mainNode.talent_id);
 
               if (mainTalent?.knowledge_levels) {
@@ -63,11 +59,7 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
                   talentCost += mainTalent.knowledge_levels[i] || 0;
                 }
                 if (talentCost > 0) {
-                  breakdown.push({
-                    name: "Talent cluster",
-                    level: mainNodeLevel,
-                    cost: talentCost,
-                  });
+                  breakdown.push({ name: 'Talent cluster', level: mainNodeLevel, cost: talentCost });
                   total += talentCost;
                 }
               }
@@ -79,11 +71,7 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
               talentCost += talent.knowledge_levels[i] || 0;
             }
             if (talentCost > 0) {
-              breakdown.push({
-                name: talent.name,
-                level: level,
-                cost: talentCost,
-              });
+              breakdown.push({ name: talent.name, level, cost: talentCost });
               total += talentCost;
             }
           }
@@ -93,258 +81,125 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
     return { totalCost: total, costBreakdown: breakdown };
   }, [selectedNodeLevels, talentInfoMap, nodes, nodeMap]);
 
-  // Update target knowledge when total cost changes if it's 0 (initial load)
-  React.useEffect(() => {
-    if (targetKnowledge === 0 && totalCost > 0) {
-      setTargetKnowledge(totalCost);
+  const dropdownOptions = [
+    { id: 'summary', label: 'Tổng quan (Summary)' },
+    { id: 'builds', label: 'Lưu trữ (Builds)' }
+  ];
+  const currentTabIndex = dropdownOptions.findIndex(o => o.id === activeTab);
+
+  const handleShare = () => {
+    if (totalCost === 0) {
+      setShareError('Chưa có talent nào được chọn!');
+      setShareCode('');
+      return;
     }
-  }, [totalCost, targetKnowledge]);
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const talentCount = costBreakdown.length;
-    const avgCostPerTalent = talentCount > 0 ? Math.round(totalCost / talentCount) : 0;
-    const maxCostTalent = costBreakdown.reduce((max, item) => item.cost > max.cost ? item : max, { cost: 0, name: '', level: 0 });
-    const totalLevels = costBreakdown.reduce((sum, item) => sum + item.level, 0);
-
-    return {
-      talentCount,
-      avgCostPerTalent,
-      maxCostTalent,
-      totalLevels,
-      efficiency: talentCount > 0 ? Math.round((totalLevels / talentCount) * 100) / 100 : 0
-    };
-  }, [costBreakdown, totalCost]);
-
-  // Calculate knowledge needed
-  const knowledgeNeeded = Math.max(0, targetKnowledge - totalCost);
-  const knowledgeProgress = targetKnowledge > 0 ? Math.min(100, (totalCost / targetKnowledge) * 100) : 0;
-
-  if (isMinimized) {
-    return (
-      <div className="w-16 flex-shrink-0 bg-gradient-to-b from-amber-900/90 to-amber-950/90 backdrop-blur-sm border border-amber-700/50 rounded-l-lg shadow-2xl">
-        <div className="p-2 flex flex-col items-center space-y-2">
-          <button
-            onClick={() => setIsMinimized(false)}
-            className="w-10 h-10 bg-amber-600/20 hover:bg-amber-600/40 rounded-lg border border-amber-500/30 transition-all duration-200 flex items-center justify-center group"
-          >
-            <Image src="/image/talents/calculator.svg" width={20} height={20} alt="Expand" className="group-hover:scale-110 transition-transform" />
-          </button>
-          <div className="text-amber-200 text-xs font-bold text-center transform -rotate-90 whitespace-nowrap">
-            {totalCost}
-          </div>
-        </div>
-      </div>
-    );
-  }
+    setShareError('');
+    const code = generateBuildCode();
+    setShareCode(code);
+    navigator.clipboard?.writeText(code);
+  };
 
   return (
-    <div className="w-80 h-full flex-shrink-0 bg-gradient-to-b from-amber-900/90 to-amber-950/90 backdrop-blur-sm border border-amber-700/50 rounded-l-lg shadow-2xl flex flex-col">
+    <div className="w-80 h-full flex-shrink-0 bg-[#1a1a1a] border-l-[3px] border-[#e6ce63] flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-amber-700/50 bg-gradient-to-r from-amber-800/50 to-amber-900/50">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-amber-600/30 rounded-lg flex items-center justify-center border border-amber-500/30">
-              <Image src="/image/talents/calculator.svg" width={16} height={16} alt="Calculator" />
-            </div>
-            <h3 className="text-lg font-bold text-amber-100 drop-shadow-lg">Talent Calculator</h3>
-          </div>
-          <div className="flex space-x-1">
-            <button
-              onClick={() => setIsMinimized(true)}
-              className="w-6 h-6 bg-amber-600/20 hover:bg-amber-600/40 rounded border border-amber-500/30 transition-all duration-200 flex items-center justify-center text-amber-200 text-xs"
-            >
-              −
-            </button>
-            <button
-              onClick={onReset}
-              className="px-3 py-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg border border-red-500/50 transition-all duration-200 text-sm font-medium shadow-lg"
-            >
-              Reset
-            </button>
-          </div>
+      <div className="p-3 border-b-[3px] border-[#e6ce63] bg-[#0a0a0a] flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <Image src="/image/talents/calculator.svg" width={20} height={20} alt="Calculator" />
+          <h3 className="text-base text-[#feda5d]" style={{ textShadow: '1px 1px 0px black' }}>Máy tính (Calc)</h3>
         </div>
+        <LongButton text="Reset" width={80} onClick={onReset} />
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-amber-700/50 bg-amber-900/30">
-        {[
-          { id: 'summary', label: 'Summary', icon: '📊' },
-          { id: 'breakdown', label: 'Details', icon: '📋' },
-          { id: 'stats', label: 'Stats', icon: '📈' },
-          { id: 'builds', label: 'Builds', icon: '💾' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as 'summary' | 'breakdown' | 'stats' | 'builds')}
-            className={`flex-1 px-3 py-2 text-sm font-medium transition-all duration-200 ${activeTab === tab.id
-              ? 'bg-amber-600/30 text-amber-100 border-b-2 border-amber-400'
-              : 'text-amber-300 hover:text-amber-100 hover:bg-amber-700/20'
-              }`}
-          >
-            <span className="mr-1">{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+      {/* Tab Navigation via Dropdown */}
+      <div className="flex justify-center border-b-[3px] border-[#e6ce63] bg-[#111111] p-2">
+        <Dropdown
+          title={dropdownOptions[currentTabIndex].label}
+          width="240px"
+          showArrows={true}
+          onPrevious={() => setActiveTab(dropdownOptions[(currentTabIndex - 1 + dropdownOptions.length) % dropdownOptions.length].id as any)}
+          onNext={() => setActiveTab(dropdownOptions[(currentTabIndex + 1) % dropdownOptions.length].id as any)}
+        >
+          {dropdownOptions.map((opt) => (
+            <a
+              key={opt.id}
+              href="#"
+              className={`flex items-center justify-center gap-x-2 py-2 text-[#e6ce63] ${activeTab === opt.id ? 'bg-[#2a2a2a]' : 'hover:bg-[#2a2a2a]'}`}
+              onClick={(e) => {
+                if (e && e.preventDefault) e.preventDefault();
+                setActiveTab(opt.id as any);
+              }}
+            >
+              <span>{opt.label}</span>
+            </a>
+          ))}
+        </Dropdown>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-track-amber-900/20 scrollbar-thumb-amber-600/50 hover:scrollbar-thumb-amber-500/70">
+      <div className="flex-1 p-3 overflow-y-auto scrollbar-thin scrollbar-track-[#1a1a1a] scrollbar-thumb-[#e6ce63]">
         {activeTab === 'summary' && (
-          <div className="space-y-4">
-            {/* Total Cost Display */}
-            <div className="bg-gradient-to-r from-amber-800/30 to-amber-900/30 rounded-lg p-4 border border-amber-600/30">
-              <div className="text-center">
-                <p className="text-amber-300 text-sm font-medium">Total Knowledge Cost</p>
-                <p className="text-3xl font-bold text-amber-100 drop-shadow-lg">{totalCost.toLocaleString()}</p>
-              </div>
+          <div className="space-y-3 text-[#e6ce63]">
+            {/* Total Cost */}
+            <div className="bg-[#2a2a2a] p-3 text-center border-[2px] border-[#e6ce63]">
+              <p className="text-xs uppercase text-gray-400 mb-1">Tổng Knowledge</p>
+              <p className="text-3xl font-mono text-[#feda5d]" style={{ textShadow: '2px 2px 0px black' }}>{totalCost.toLocaleString()}</p>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <p className="text-amber-300 text-xs">Talents</p>
-                <p className="text-xl font-bold text-amber-100">{stats.talentCount}</p>
+            {/* Breakdown */}
+            <div className="border-[2px] border-[#e6ce63]">
+              <div className="bg-[#2a2a2a] px-2 py-1 text-xs uppercase text-gray-400 border-b-[2px] border-[#e6ce63]">
+                Chi tiết (Breakdown)
               </div>
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <p className="text-amber-300 text-xs">Avg Cost</p>
-                <p className="text-xl font-bold text-amber-100">{stats.avgCostPerTalent}</p>
-              </div>
-            </div>
-
-            {/* Knowledge Target */}
-            <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-amber-300 text-sm font-medium">Knowledge Target</label>
-                <input
-                  type="number"
-                  value={targetKnowledge}
-                  onChange={(e) => setTargetKnowledge(Number(e.target.value) || 0)}
-                  className="w-20 px-2 py-1 bg-amber-900/50 border border-amber-600/30 rounded text-amber-100 text-sm"
-                  min="0"
-                />
-              </div>
-              <div className="w-full bg-amber-900/50 rounded-full h-2 border border-amber-600/30">
-                <div
-                  className="bg-gradient-to-r from-amber-500 to-amber-400 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${knowledgeProgress}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-xs text-amber-300 mt-1">
-                <span>{totalCost}</span>
-                <span>{knowledgeNeeded > 0 ? `Need: ${knowledgeNeeded}` : 'Target reached!'}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'breakdown' && (
-          <div className="space-y-2">
-            {costBreakdown.length === 0 ? (
-              <div className="text-center py-8 text-amber-400">
-                <p className="text-lg">🎯</p>
-                <p className="text-sm">No talents selected</p>
-                <p className="text-xs text-amber-500">Start building your talent tree!</p>
-              </div>
-            ) : (
-              costBreakdown.map((item, index) => (
-                <div key={index} className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20 hover:bg-amber-800/30 transition-colors">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="font-semibold text-amber-100 text-sm">{item.name}</p>
-                      <p className="text-amber-300 text-xs">Level {item.level}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-amber-100">{item.cost}</p>
-                      <p className="text-amber-400 text-xs">{((item.cost / totalCost) * 100).toFixed(1)}%</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-
-        {activeTab === 'stats' && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-3">
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <div className="flex justify-between">
-                  <span className="text-amber-300 text-sm">Total Talents</span>
-                  <span className="text-amber-100 font-bold">{stats.talentCount}</span>
-                </div>
-              </div>
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <div className="flex justify-between">
-                  <span className="text-amber-300 text-sm">Total Levels</span>
-                  <span className="text-amber-100 font-bold">{stats.totalLevels}</span>
-                </div>
-              </div>
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <div className="flex justify-between">
-                  <span className="text-amber-300 text-sm">Avg Levels/Talent</span>
-                  <span className="text-amber-100 font-bold">{stats.efficiency}</span>
-                </div>
-              </div>
-              <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                <div className="flex justify-between">
-                  <span className="text-amber-300 text-sm">Avg Cost/Talent</span>
-                  <span className="text-amber-100 font-bold">{stats.avgCostPerTalent}</span>
-                </div>
-              </div>
-              {stats.maxCostTalent.cost > 0 && (
-                <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-                  <p className="text-amber-300 text-sm mb-1">Most Expensive</p>
-                  <p className="text-amber-100 font-bold text-sm">{stats.maxCostTalent.name}</p>
-                  <p className="text-amber-400 text-xs">Cost: {stats.maxCostTalent.cost}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="border-t border-amber-700/50 pt-4">
-              <p className="text-amber-300 text-sm font-medium mb-2">Quick Actions</p>
-              <div className="space-y-2">
-                <button
-                  onClick={() => setTargetKnowledge(totalCost * 1.5)}
-                  className="w-full px-3 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-100 rounded-lg border border-amber-500/30 transition-all duration-200 text-sm"
-                >
-                  Set Target +50%
-                </button>
-                <button
-                  onClick={() => navigator.clipboard?.writeText(`Total Knowledge Cost: ${totalCost}\nTalents: ${stats.talentCount}\nBreakdown:\n${costBreakdown.map(item => `• ${item.name} (Lvl ${item.level}): ${item.cost}`).join('\n')}`)}
-                  className="w-full px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-100 rounded-lg border border-blue-500/30 transition-all duration-200 text-sm"
-                >
-                  📋 Copy Build
-                </button>
+              <div className="divide-y divide-[#333333]">
+                {costBreakdown.length === 0 ? (
+                  <div className="text-center py-6 text-gray-500 text-xs">Chưa có Talent nào</div>
+                ) : (
+                  costBreakdown.map((item, index) => {
+                    const matchedTalent = Array.from(talentInfoMap.values()).find(t => t.name === item.name);
+                    const iconUrl = matchedTalent?.icon_url;
+                    return (
+                      <div key={index} className="flex justify-between items-center px-2 py-1.5 hover:bg-[#2a2a2a]">
+                        <div className="flex items-center gap-2">
+                          {iconUrl && (
+                            <Image src={iconUrl} width={20} height={20} alt="" style={{ imageRendering: 'pixelated' }} />
+                          )}
+                          <div>
+                            <p className="text-[#e6ce63] text-xs max-w-[110px] truncate" title={item.name}>{item.name}</p>
+                            <p className="text-gray-500 text-[10px]">Cấp {item.level}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono text-[#feda5d] text-xs">{item.cost}</p>
+                          <p className="text-gray-500 text-[10px]">{((item.cost / totalCost) * 100).toFixed(1)}%</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
         )}
 
         {activeTab === 'builds' && (
-          <div className="space-y-4">
-            {/* Save Current Build */}
-            <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-              <p className="text-amber-300 text-sm font-medium mb-2">Save Current Build</p>
+          <div className="space-y-3 text-[#e6ce63]">
+            {/* Save Build */}
+            <div className="border-[2px] border-[#e6ce63] bg-[#2a2a2a] p-3">
+              <p className="text-xs uppercase text-gray-400 text-center mb-2">Lưu Build Hiện Tại</p>
               {!showSaveInput ? (
-                <button
-                  onClick={() => setShowSaveInput(true)}
-                  disabled={totalCost === 0}
-                  className="w-full px-3 py-2 bg-green-600/20 hover:bg-green-600/30 disabled:bg-gray-600/20 disabled:text-gray-400 text-green-100 rounded-lg border border-green-500/30 transition-all duration-200 text-sm"
-                >
-                  💾 Save Build
-                </button>
+                <div className="flex justify-center">
+                  <LongButton text="Lưu Build" width={160} onClick={() => setShowSaveInput(true)} />
+                </div>
               ) : (
                 <div className="space-y-2">
                   <input
                     type="text"
                     value={buildName}
                     onChange={(e) => setBuildName(e.target.value)}
-                    placeholder="Enter build name..."
-                    className="w-full px-3 py-2 bg-amber-900/50 border border-amber-600/30 rounded text-amber-100 text-sm"
+                    placeholder="Tên build..."
+                    className="w-full px-2 py-1 bg-[#0a0a0a] border-[2px] border-[#e6ce63] text-[#feda5d] font-mono text-sm outline-none"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === 'Enter' && buildName.trim()) {
                         saveBuild(buildName);
                         setSavedBuilds(getSavedBuilds());
                         setBuildName('');
@@ -352,232 +207,112 @@ const TotalTalentCostDisplay: React.FC<TotalTalentCostDisplayProps> = ({ onReset
                       }
                     }}
                   />
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
+                  <div className="flex space-x-2 justify-center">
+                    <LongButton text="OK" width={80} onClick={() => {
+                      if (buildName.trim()) {
                         saveBuild(buildName);
                         setSavedBuilds(getSavedBuilds());
                         setBuildName('');
                         setShowSaveInput(false);
-                      }}
-                      className="flex-1 px-3 py-1 bg-green-600/20 hover:bg-green-600/30 text-green-100 rounded border border-green-500/30 transition-all duration-200 text-sm"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowSaveInput(false);
-                        setBuildName('');
-                      }}
-                      className="flex-1 px-3 py-1 bg-gray-600/20 hover:bg-gray-600/30 text-gray-100 rounded border border-gray-500/30 transition-all duration-200 text-sm"
-                    >
-                      Cancel
-                    </button>
+                      }
+                    }} />
+                    <LongButton text="Hủy" width={80} onClick={() => {
+                      setShowSaveInput(false);
+                      setBuildName('');
+                    }} />
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Share/Import Build Codes */}
-            <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-              <p className="text-amber-300 text-sm font-medium mb-2">Share Build</p>
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    const code = generateBuildCode();
-                    setShareCode(code);
-                    navigator.clipboard?.writeText(code);
-                  }}
-                  disabled={totalCost === 0}
-                  className="w-full px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 disabled:bg-gray-600/20 disabled:text-gray-400 text-blue-100 rounded-lg border border-blue-500/30 transition-all duration-200 text-sm"
-                >
-                  🔗 Generate Share Code
-                </button>
-                {shareCode && (
-                  <div className="space-y-2">
-                    <div className="bg-amber-900/50 rounded p-2 border border-amber-600/30">
-                      <p className="text-amber-300 text-xs mb-1">Share Code (copied to clipboard):</p>
-                      <p className="text-amber-100 text-xs font-mono break-all">{shareCode}</p>
-                    </div>
-                    <p className="text-amber-400 text-xs">Share this code with others to let them import your build!</p>
-                  </div>
-                )}
+            {/* Share Code */}
+            <div className="border-[2px] border-[#e6ce63] bg-[#1a1a1a] p-3 space-y-2">
+              <p className="text-xs uppercase text-gray-400 text-center">Chia Sẻ Build</p>
+              <div className="flex justify-center">
+                <LongButton text="Lấy Mã Chia Sẻ" width={200} onClick={handleShare} />
               </div>
-            </div>
-
-            <div className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20">
-              <p className="text-amber-300 text-sm font-medium mb-2">Import Build Code</p>
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={importCode}
-                  onChange={(e) => setImportCode(e.target.value)}
-                  placeholder="Paste build code here..."
-                  className="w-full px-3 py-2 bg-amber-900/50 border border-amber-600/30 rounded text-amber-100 text-sm font-mono"
-                />
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => {
-                      if (importCode.trim()) {
-                        const success = loadFromBuildCode(importCode.trim());
-                        if (success) {
-                          setImportCode('');
-                          alert('Build loaded successfully!');
-                        } else {
-                          alert('Invalid build code. Please check and try again.');
-                        }
-                      }
-                    }}
-                    disabled={!importCode.trim()}
-                    className="flex-1 px-3 py-2 bg-green-600/20 hover:bg-green-600/30 disabled:bg-gray-600/20 disabled:text-gray-400 text-green-100 rounded-lg border border-green-500/30 transition-all duration-200 text-sm"
-                  >
-                    📥 Import Build
-                  </button>
-                  <button
-                    onClick={() => setImportCode('')}
-                    className="px-3 py-2 bg-gray-600/20 hover:bg-gray-600/30 text-gray-100 rounded-lg border border-gray-500/30 transition-all duration-200 text-sm"
-                  >
-                    Clear
-                  </button>
+              {shareError && (
+                <p className="text-red-400 text-xs text-center border border-red-700 bg-[#1a0000] px-2 py-1">{shareError}</p>
+              )}
+              {shareCode && (
+                <div className="bg-[#0a0a0a] border-[2px] border-dashed border-[#e6ce63] p-2 text-center">
+                  <p className="text-[10px] text-gray-500 mb-1">Đã copy vào bộ nhớ tạm:</p>
+                  <p className="text-[#feda5d] text-xs font-mono break-all">{shareCode}</p>
                 </div>
+              )}
+
+              <hr className="border-gray-700" />
+
+              <p className="text-xs uppercase text-gray-400 text-center">Nhập Mã Build</p>
+              <input
+                type="text"
+                value={importCode}
+                onChange={(e) => setImportCode(e.target.value)}
+                placeholder="Paste mã build vào đây..."
+                className="w-full px-2 py-1 bg-[#0a0a0a] border-[2px] border-[#e6ce63] text-[#feda5d] text-xs font-mono outline-none"
+              />
+              <div className="flex space-x-2 justify-center">
+                <LongButton text="Nhập" width={80} onClick={() => {
+                  if (importCode.trim()) {
+                    const success = loadFromBuildCode(importCode.trim());
+                    if (success) {
+                      setImportCode('');
+                      alert('Tải build thành công!');
+                    } else {
+                      alert('Mã build không hợp lệ.');
+                    }
+                  }
+                }} />
+                <LongButton text="Xóa" width={80} onClick={() => setImportCode('')} />
               </div>
             </div>
 
             {/* Saved Builds List */}
             <div>
-              <p className="text-amber-300 text-sm font-medium mb-2">Saved Builds ({savedBuilds.length})</p>
+              <p className="text-xs uppercase text-gray-400 text-center mb-2">Danh sách đã lưu ({savedBuilds.length})</p>
               {savedBuilds.length === 0 ? (
-                <div className="text-center py-8 text-amber-400">
-                  <p className="text-lg">💾</p>
-                  <p className="text-sm">No saved builds</p>
-                  <p className="text-xs text-amber-500">Save your first build above!</p>
-                </div>
+                <div className="text-center py-4 text-gray-600 text-xs border-[2px] border-dashed border-gray-700">Chưa có build nào.</div>
               ) : (
-                <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin scrollbar-track-amber-900/20 scrollbar-thumb-amber-600/50">
+                <div className="space-y-2">
                   {savedBuilds.map((build) => (
-                    <div key={build.id} className="bg-amber-800/20 rounded-lg p-3 border border-amber-600/20 hover:bg-amber-800/30 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <p className="font-semibold text-amber-100 text-sm">{build.name}</p>
-                          <p className="text-amber-300 text-xs">
-                            {new Date(build.timestamp).toLocaleDateString()} • {build.talentCount} talents • {build.totalCost} cost
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex space-x-1">
-                        <button
-                          onClick={() => {
-                            loadBuild(build);
-                          }}
-                          className="flex-1 px-2 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-100 rounded border border-blue-500/30 transition-all duration-200 text-xs"
-                        >
-                          📥 Load
-                        </button>
-                        <button
-                          onClick={() => {
-                            // Generate v2 code from saved build data
-                            const classId = nodes[0]?.id.split('-')[0] || 'unknown';
-
-                            // Create node ID to index mapping
-                            const nodeIdMap = new Map<string, number>();
-                            nodes.forEach((node, index) => {
-                              nodeIdMap.set(node.id, index);
-                            });
-
-                            const compactPairs: string[] = [];
-                            for (const [nodeId, level] of Object.entries(build.selectedNodeLevels)) {
-                              if (Number(level) > 0) {
-                                const nodeIndex = nodeIdMap.get(nodeId);
-                                if (nodeIndex !== undefined) {
-                                  compactPairs.push(`${nodeIndex},${level}`);
-                                }
-                              }
+                    <div key={build.id} className="bg-[#2a2a2a] p-2 border-[2px] border-[#e6ce63]">
+                      <p className="text-[#e6ce63] text-sm truncate">{build.name}</p>
+                      <p className="text-gray-500 text-[10px] font-mono mb-2">
+                        {new Date(build.timestamp).toLocaleDateString()} · {build.talentCount} talents · {build.totalCost} knw
+                      </p>
+                      <div className="flex flex-wrap gap-1 justify-center">
+                        <LongButton text="Tải" width={90} onClick={() => loadBuild(build)} />
+                        <LongButton text="Chia Sẻ" width={110} onClick={() => {
+                          const classId = nodes[0]?.id.split('-')[0] || 'unknown';
+                          const nodeIdMap = new Map<string, number>();
+                          nodes.forEach((node, index) => nodeIdMap.set(node.id, index));
+                          const compactPairs: string[] = [];
+                          for (const [nodeId, level] of Object.entries(build.selectedNodeLevels)) {
+                            if (Number(level) > 0) {
+                              const nodeIndex = nodeIdMap.get(nodeId);
+                              if (nodeIndex !== undefined) compactPairs.push(`${nodeIndex},${level}`);
                             }
-
-                            const dataString = compactPairs.join(';');
-                            const encoded = btoa(dataString);
-                            const code = `${classId}_${encoded}`;
-                            navigator.clipboard?.writeText(code);
-                            alert('Share code copied to clipboard!');
-                          }}
-                          className="flex-1 px-2 py-1 bg-purple-600/20 hover:bg-purple-600/30 text-purple-100 rounded border border-purple-500/30 transition-all duration-200 text-xs"
-                        >
-                          🔗 Share
-                        </button>
+                          }
+                          const code = `${classId}_${btoa(compactPairs.join(';'))}`;
+                          navigator.clipboard?.writeText(code);
+                          alert('Đã copy mã chia sẻ!');
+                        }} />
                         <button
                           onClick={() => {
-                            navigator.clipboard?.writeText(`Build: ${build.name}\nCost: ${build.totalCost}\nTalents: ${build.talentCount}\nSaved: ${new Date(build.timestamp).toLocaleString()}`);
-                          }}
-                          className="flex-1 px-2 py-1 bg-amber-600/20 hover:bg-amber-600/30 text-amber-100 rounded border border-amber-500/30 transition-all duration-200 text-xs"
-                        >
-                          📋 Info
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm(`Delete build "${build.name}"?`)) {
+                            if (confirm(`Xóa build "${build.name}"?`)) {
                               deleteBuild(build.id);
                               setSavedBuilds(getSavedBuilds());
                             }
                           }}
-                          className="px-2 py-1 bg-red-600/20 hover:bg-red-600/30 text-red-100 rounded border border-red-500/30 transition-all duration-200 text-xs"
+                          className="w-full mt-1 bg-red-950 border border-red-700 text-red-300 uppercase text-xs py-1 hover:bg-red-900"
                         >
-                          🗑️
+                          Xóa
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Import/Export */}
-            <div className="border-t border-amber-700/50 pt-4">
-              <p className="text-amber-300 text-sm font-medium mb-2">Import/Export</p>
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    const data = JSON.stringify(savedBuilds, null, 2);
-                    const blob = new Blob([data], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'talent-builds.json';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
-                  className="w-full px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-100 rounded-lg border border-purple-500/30 transition-all duration-200 text-sm"
-                >
-                  📤 Export All Builds
-                </button>
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        try {
-                          const importedBuilds = JSON.parse(event.target?.result as string);
-                          localStorage.setItem('talentBuilds', JSON.stringify(importedBuilds));
-                          setSavedBuilds(getSavedBuilds());
-                        } catch (error) {
-                          alert('Invalid file format');
-                        }
-                      };
-                      reader.readAsText(file);
-                    }
-                  }}
-                  className="hidden"
-                  id="import-builds"
-                />
-                <label
-                  htmlFor="import-builds"
-                  className="w-full px-3 py-2 bg-orange-600/20 hover:bg-orange-600/30 text-orange-100 rounded-lg border border-orange-500/30 transition-all duration-200 text-sm cursor-pointer block text-center"
-                >
-                  📥 Import Builds
-                </label>
-              </div>
             </div>
           </div>
         )}

@@ -15,18 +15,21 @@ export default function EventCard({ event, onOpenModal }: EventCardProps) {
       onClick={() => onOpenModal(event)}
       style={{ borderStyle: 'double', borderWidth: '4px', borderColor: '#4a5568' }} // Simulating double border
     >
-      {event.imageUrl && (
-        <div className="w-full h-48 relative">
-          <Image
-            loader={wsrvLoader}
-            src={event.imageUrl}
-            fill
-            alt={event.title}
-            className=" object-cover flex-shrink-0" /* Added flex-shrink-0 */
-            draggable={false}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          /></div>
-      )}
+      <div className="w-full h-48 relative">
+        <Image
+          loader={event.imageUrl ? wsrvLoader : undefined}
+          src={event.imageUrl || '/image/ui/news_placeholder.png'}
+          fill
+          alt={event.title}
+          className="object-cover flex-shrink-0"
+          draggable={false}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = '/image/ui/news_placeholder.png';
+            (e.currentTarget as HTMLImageElement).srcset = '';
+          }}
+        />
+      </div>
       <div className="p-6 text-white flex flex-col flex-grow"> {/* Ensure all text inside is white, added flex-grow */}
         <h2 className="text-xl font-bold line-clamp-none">{event.title}</h2>
         {event.author && <p className="text-xs text-gray-300 mb-2">by {event.author}</p>} {/* Added mb-2 for spacing */}

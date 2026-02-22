@@ -148,6 +148,22 @@ const ClassContent: React.FC<ClassContentProps> = ({ classes }) => {
         const classToSelect = classes.find(c => c.name === classInfo.name);
         if (classToSelect) {
           handleOpenDetail(classToSelect);
+          return;
+        }
+      }
+    }
+
+    // Auto-select the first class of the first faction if nothing is selected yet
+    if (classes.length > 0 && !selectedClass) {
+      // Find the first faction in FACTION_ORDER that actually has classes
+      for (const faction of FACTION_ORDER) {
+        const firstFactionClassInfo = CLASSES_DATA.find(c => c.faction === faction);
+        if (firstFactionClassInfo) {
+          const defaultClassToSelect = classes.find(c => c.name === firstFactionClassInfo.name);
+          if (defaultClassToSelect) {
+            handleOpenDetail(defaultClassToSelect);
+            break;
+          }
         }
       }
     }

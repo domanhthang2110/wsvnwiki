@@ -112,19 +112,21 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
               className={styles.newsCard}
               onClick={() => onOpenModal(event)}
             >
-              {event.imageUrl && (
-                <div className={styles.newsImageContainer}>
-                  <Image
-                    loader={wsrvLoader}
-                    src={event.imageUrl}
-                    alt={event.title}
-                    width={300}
-                    height={200}
-                    className={styles.newsImage}
-                    sizes="(max-width: 768px) 100vw, 300px"
-                  />
-                </div>
-              )}
+              <div className={styles.newsImageContainer}>
+                <Image
+                  loader={event.imageUrl ? wsrvLoader : undefined}
+                  src={event.imageUrl || '/image/ui/news_placeholder.png'}
+                  alt={event.title}
+                  width={300}
+                  height={200}
+                  className={styles.newsImage}
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/image/ui/news_placeholder.png';
+                    (e.currentTarget as HTMLImageElement).srcset = '';
+                  }}
+                />
+              </div>
               <div className={styles.newsContent}>
                 <h3 className={styles.newsTitle}>{event.title}</h3>
                 <div className={styles.newsDate}>
@@ -141,6 +143,11 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
       <button className={`${styles.carouselButton} ${styles.carouselButtonRight}`} onClick={() => scroll('right')}>
         &#8250;
       </button>
+      <div className={styles.viewMoreRow}>
+        <Link href="/events" className={styles.viewMoreButton}>
+          Xem thêm →
+        </Link>
+      </div>
     </div>
   );
 };

@@ -118,7 +118,7 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
 
     return {
       treeWidth: colOffsets[normalizedWidth - 1] + talentWidth,
-      treeHeight: rowOffsets[normalizedHeight - 1] + talentWidth,
+      treeHeight: rowOffsets[normalizedHeight - 1] + talentWidth + 40, // Added 40px explicitly to the calculated height to avoid cutoffs
       columnOffsets: colOffsets,
       rowOffsets: rowOffsets,
       minX,
@@ -223,6 +223,7 @@ const TalentTreeView: React.FC<TalentTreeViewProps> = ({
               width: `${treeWidth}px`,
               height: `${treeHeight}px`,
               paddingTop: "20px",
+              paddingBottom: "50px", // Added to prevent bottom row clipping
             }}
             contentClass="flex items-center justify-center"
           >

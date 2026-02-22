@@ -180,6 +180,25 @@
     0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.viewMoreRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.viewMoreButton {
+  font-size: 0.8rem;
+  color: #718096;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.viewMoreButton:hover {
+  color: #e2e8f0;
+}
+
 .newsCarousel {
   overflow: hidden;
 }
