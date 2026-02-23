@@ -1,6 +1,5 @@
 import { useState } from 'react'; // Import useState
-import Image from 'next/image';
-import wsrvLoader from '@/utils/imageLoader';
+import SafeImage from '@/components/shared/SafeImage';
 import { EventItem } from '@/types/events';
 import LongButton from '@/components/ui/LongButton'; // Import LongButton
 interface EventModalProps {
@@ -63,17 +62,12 @@ export default function EventModal({ event, isOpen, onClose }: EventModalProps) 
         <div className="p-8 pr-16 text-white flex-grow overflow-y-auto">
           {/* Banner image */}
           <div className="w-full h-48 relative mb-6 overflow-hidden">
-            <Image
-              loader={event.imageUrl ? wsrvLoader : undefined}
-              src={event.imageUrl || '/image/ui/news_placeholder.png'}
+            <SafeImage
+              src={event.imageUrl}
               fill
               alt={event.title}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 768px"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/image/ui/news_placeholder.png';
-                (e.currentTarget as HTMLImageElement).srcset = '';
-              }}
             />
           </div>
           <h2 className="text-3xl font-bold mb-4">{event.title}</h2>

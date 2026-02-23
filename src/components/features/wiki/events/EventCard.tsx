@@ -1,6 +1,5 @@
 import { EventItem } from '@/types/events';
-import Image from 'next/image';
-import wsrvLoader from '@/utils/imageLoader';
+import SafeImage from '@/components/shared/SafeImage';
 
 interface EventCardProps {
   event: EventItem;
@@ -16,18 +15,13 @@ export default function EventCard({ event, onOpenModal }: EventCardProps) {
       style={{ borderStyle: 'double', borderWidth: '4px', borderColor: '#4a5568' }} // Simulating double border
     >
       <div className="w-full h-48 relative">
-        <Image
-          loader={event.imageUrl ? wsrvLoader : undefined}
-          src={event.imageUrl || '/image/ui/news_placeholder.png'}
+        <SafeImage
+          src={event.imageUrl}
           fill
           alt={event.title}
           className="object-cover flex-shrink-0"
           draggable={false}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = '/image/ui/news_placeholder.png';
-            (e.currentTarget as HTMLImageElement).srcset = '';
-          }}
         />
       </div>
       <div className="p-6 text-white flex flex-col flex-grow"> {/* Ensure all text inside is white, added flex-grow */}

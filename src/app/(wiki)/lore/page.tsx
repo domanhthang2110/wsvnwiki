@@ -1,9 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import classContentStyles from '@/components/features/wiki/classes/ClassContent.module.css';
 import wsrvLoader from '@/utils/imageLoader';
+
+// ─── Data ────────────────────────────────────────────────────────────────────
 
 interface TimelineEvent {
   id: string;
@@ -14,251 +17,245 @@ interface TimelineEvent {
   image?: string;
   type: 'major' | 'battle' | 'discovery' | 'founding';
   content: string;
+  isMain: true;
 }
 
-const timelineEvents: TimelineEvent[] = [
+interface LorePost {
+  id: string;
+  title: string;
+  summary: string;
+  href: string;
+  tag?: string;
+}
+
+const mainTimeline: TimelineEvent[] = [
   {
     id: '1',
-    year: 'Age of Creation',
-    title: 'The First Awakening',
-    description: 'The ancient gods forge the world of Arinar, breathing life into the first races.',
+    year: 'Kỷ nguyên Sáng tạo',
+    title: 'Thế Giới Thức Tỉnh',
+    description: 'Các vị thần tối thượng tạo ra Arinar, thổi hồn vào những chủng tộc đầu tiên.',
     faction: 'Neutral',
     image: '/image/ui/big_logo.webp',
     type: 'major',
-    content: 'In the primordial darkness, the ancient gods gathered their divine essence to create Arinar. The Firstborn emerged from the sacred groves, blessed with eternal wisdom and connection to nature. The Chosen were granted divine favor, becoming the guardians of holy light. From the mountain peaks came the Mountain Clan, hardy and resilient. And from the shadows, the Forsaken rose, masters of dark arts and forbidden knowledge.'
+    content: 'Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối. Trong bóng tối nguyên thủy, các vị thần tối thượng tập hợp thần lực để tạo ra Arinar. Những người Firstborn xuất hiện từ những khu rừng thiêng liêng, được ban tặng trí tuệ vĩnh cửu và sự kết nối với thiên nhiên. Chosen được ban ân sủng thần thánh, trở thành người bảo vệ ánh sáng thiêng liêng. Từ những đỉnh núi cao, Mountain Clan hùng mạnh bước ra. Và từ bóng tối, Forsaken nổi lên, bậc thầy về nghệ thuật đen tối.',
+    isMain: true,
   },
   {
     id: '2',
-    year: '1st Era',
-    title: 'The Great Schism',
-    description: 'Ideological differences split the races into two opposing factions: Sentinel and Legion.',
+    year: 'Kỷ nguyên 1',
+    title: 'Cuộc Đại Chia Ly',
+    description: 'Sự khác biệt về tư tưởng chia tách các chủng tộc thành hai phe đối lập: Sentinel và Legion.',
     faction: 'Neutral',
-    image: '/image/faction_split.webp',
+    image: '/image/ui/big_logo.webp',
     type: 'major',
-    content: 'As the races grew in power and influence, fundamental disagreements about the future of Arinar emerged. The Chosen and Firstborn, believing in order, justice, and protection of the innocent, formed the Sentinel alliance. Meanwhile, the Mountain Clan and Forsaken, valuing strength, freedom, and the right to forge one\'s own destiny, united under the Legion banner. This division would shape the fate of Arinar for millennia to come.'
+    content: 'Khi các chủng tộc phát triển mạnh mẽ, những bất đồng cơ bản về tương lai Arinar nổi lên. Chosen và Firstborn, tin vào trật tự và công lý, hình thành liên minh Sentinel. Trong khi đó, Mountain Clan và Forsaken, đề cao sức mạnh và tự do, đoàn kết dưới ngọn cờ Legion. Sự chia rẽ này định hình số phận Arinar hàng nghìn năm.',
+    isMain: true,
   },
   {
     id: '3',
-    year: '2nd Era',
-    title: 'Battle of Crimson Fields',
-    description: 'The first major conflict between Sentinel and Legion forces claims thousands of lives.',
+    year: 'Kỷ nguyên 2',
+    title: 'Trận Chiến Cánh Đồng Đỏ',
+    description: 'Cuộc xung đột lớn đầu tiên giữa Sentinel và Legion cướp đi hàng nghìn sinh mạng.',
     faction: 'Neutral',
     image: '/image/factions/elf_badge.webp',
     type: 'battle',
-    content: 'The fertile plains of what would become known as the Crimson Fields witnessed the first large-scale battle between the newly formed factions. Sentinel forces, led by Chosen Paladins and Firstborn Rangers, clashed with Legion armies of Mountain Clan Barbarians and Forsaken Death Knights. The battle raged for seven days and nights, turning the green fields red with blood. Though neither side achieved decisive victory, the conflict established the eternal struggle that defines Arinar.'
+    content: 'Những đồng bằng màu mỡ sau này được gọi là Cánh Đồng Đỏ đã chứng kiến trận chiến quy mô lớn đầu tiên giữa hai phe. Lực lượng Sentinel, dẫn đầu bởi Paladin Chosen và Ranger Firstborn, đụng độ với quân đoàn Legion gồm Barbarian Mountain Clan và Death Knight Forsaken. Trận chiến kéo dài bảy ngày bảy đêm, nhuộm đỏ những cánh đồng xanh.',
+    isMain: true,
   },
   {
     id: '4',
-    year: '3rd Era',
-    title: 'Discovery of the Ancient Relics',
-    description: 'Powerful artifacts from the Age of Creation are unearthed, shifting the balance of power.',
+    year: 'Kỷ nguyên 3',
+    title: 'Khám Phá Cổ Vật',
+    description: 'Những hiện vật quyền năng từ Kỷ nguyên Sáng tạo được khai quật, thay đổi cán cân quyền lực.',
     faction: 'Neutral',
     image: '/image/talents/key_talent.webp',
     type: 'discovery',
-    content: 'Deep within forgotten ruins, explorers from both factions discovered ancient relics imbued with primordial magic. These artifacts granted incredible powers to those who could master them, leading to the development of advanced combat techniques and magical abilities. The discovery sparked a new arms race as both Sentinel and Legion sought to claim these powerful items, leading to countless expeditions into dangerous territories.'
+    content: 'Sâu trong những tàn tích bị lãng quên, các nhà thám hiểm từ cả hai phe phát hiện ra những cổ vật cổ xưa ẩn chứa phép thuật nguyên thủy. Những hiện vật này ban tặng sức mạnh phi thường cho ai có thể làm chủ chúng, dẫn đến sự phát triển của các kỹ thuật chiến đấu và khả năng ma thuật tiên tiến.',
+    isMain: true,
   },
   {
     id: '5',
-    year: '4th Era',
-    title: 'Founding of the Great Cities',
-    description: 'Major settlements are established, becoming centers of faction power and culture.',
+    year: 'Kỷ nguyên 4',
+    title: 'Xây Dựng Đại Thành Phố',
+    description: 'Các khu định cư lớn được thành lập, trở thành trung tâm quyền lực và văn hóa của mỗi phe.',
     faction: 'Neutral',
     image: '/image/ui/cloud/cloud.webp',
     type: 'founding',
-    content: 'As the factions solidified their territories, great cities rose from the wilderness. The Sentinel established gleaming bastions of light and order, with towering spires and sacred temples. The Legion built formidable fortresses carved from mountain stone and wreathed in shadow. These cities became not just military strongholds, but centers of learning, culture, and the unique philosophies that drive each faction.'
+    content: 'Khi các phe củng cố lãnh thổ, những thành phố vĩ đại mọc lên từ hoang dã. Sentinel xây dựng những thành trì ánh sáng huy hoàng với tháp cao và đền thờ thiêng liêng. Legion dựng nên những pháo đài kiên cố chạm khắc từ đá núi và bao phủ trong bóng tối. Những thành phố này trở thành không chỉ là căn cứ quân sự mà còn là trung tâm học thuật và văn hóa.',
+    isMain: true,
   },
   {
     id: '6',
-    year: '5th Era',
-    title: 'The Eternal War Begins',
-    description: 'Formal declaration of eternal conflict as both factions claim rightful dominion over Arinar.',
+    year: 'Kỷ nguyên 5',
+    title: 'Cuộc Chiến Vĩnh Cửu',
+    description: 'Tuyên chiến chính thức khi cả hai phe đều tuyên bố quyền thống trị hợp pháp với Arinar.',
     faction: 'Neutral',
     image: '/image/factions/mc_badge.webp',
     type: 'major',
-    content: 'After centuries of skirmishes and uneasy truces, both factions formally declared their intent to claim dominion over all of Arinar. The Sentinel proclaimed their divine mandate to bring order and justice to the world, while the Legion asserted their right to freedom and strength. Thus began the Eternal War - not a single conflict, but an ongoing struggle that continues to this day, with heroes from both sides rising to defend their beliefs and way of life.'
-  }
+    content: 'Sau nhiều thế kỷ xung đột lẻ tẻ và những hiệp định tạm bợ, cả hai phe chính thức tuyên bố ý định chinh phục toàn bộ Arinar. Sentinel tuyên bố sứ mệnh thần thánh mang lại trật tự và công lý. Legion khẳng định quyền tự do và sức mạnh. Cuộc Chiến Vĩnh Cửu bắt đầu — không phải một cuộc xung đột đơn lẻ, mà là cuộc đấu tranh bất tận vẫn tiếp diễn đến ngày nay.',
+    isMain: true,
+  },
 ];
 
-const getTypeIcon = (type: string) => {
-  switch (type) {
-    case 'major': return '⭐';
-    case 'battle': return '⚔️';
-    case 'discovery': return '🔍';
-    case 'founding': return '🏰';
-    default: return '📜';
-  }
+const supplementalPosts: LorePost[] = [
+  { id: 's1', title: 'Huyền Thoại Về Bóng Tối Nguyên Thủy', summary: 'Câu chuyện về những gì tồn tại trước khi Arinar được tạo ra.', href: '#', tag: 'Thần Thoại' },
+  { id: 's2', title: 'Lịch Sử Tộc Người Firstborn', summary: 'Biên niên sử chi tiết về tộc người cổ đại nhất Arinar.', href: '#', tag: 'Chủng Tộc' },
+  { id: 's3', title: 'Bí Mật Của Forsaken', summary: 'Màn bí mật che giấu nguồn gốc thực sự của tộc người Quỷ.', href: '#', tag: 'Bí Ẩn' },
+  { id: 's4', title: 'Truyền Thuyết Về Vũ Khí Cổ Đại', summary: 'Những cây vũ khí huyền thoại từng thay đổi cục diện chiến tranh.', href: '#', tag: 'Vật Phẩm' },
+  { id: 's5', title: 'Anh Hùng Của Thời Đại Vàng', summary: 'Chân dung những chiến binh xuất sắc nhất lịch sử Arinar.', href: '#', tag: 'Nhân Vật' },
+  { id: 's6', title: 'Địa Lý Huyền Bí Của Arinar', summary: 'Khám phá các vùng đất và địa điểm đặc biệt trên thế giới.', href: '#', tag: 'Thế Giới' },
+];
+
+const typeIcon: Record<string, string> = {
+  major: '⭐',
+  battle: '⚔️',
+  discovery: '🔍',
+  founding: '🏰',
 };
 
-const TimelineCard = ({ event, index }: { event: TimelineEvent, index: number }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isLeft = index % 2 === 0;
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function LorePage() {
+  const [activeId, setActiveId] = useState(mainTimeline[0].id);
+  const active = mainTimeline.find(e => e.id === activeId)!;
 
   return (
-    <div className={`relative flex flex-col md:flex-row w-full mb-12 md:mb-24 ${isLeft ? 'md:flex-row-reverse' : ''}`}>
-      {/* Central Timeline Point (Desktop) */}
-      <div className="hidden md:flex absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 justify-center">
-        <div className="absolute top-8 w-10 h-10 rounded-full border-4 border-[#e6ce63] bg-gray-950 flex items-center justify-center z-20 shadow-[0_0_20px_rgba(230,206,99,0.5)] transition-all duration-300 group-hover:scale-110">
-          <span className="text-lg">{getTypeIcon(event.type)}</span>
-        </div>
-      </div>
+    <div className={`${classContentStyles.pixelBackground} flex flex-col`} style={{ minHeight: '100vh' }}>
 
-      {/* Spacing for the other side on desktop */}
-      <div className="hidden md:block w-1/2" />
-
-      {/* Content Container */}
-      <div className={`w-full md:w-1/2 px-4 md:px-12 relative ${isLeft ? 'md:text-right' : 'md:text-left'}`}>
-        {/* Mobile Dot (Hidden on Desktop) */}
-        <div className="md:hidden absolute left-0 top-1.5 w-6 h-6 rounded-full border-2 border-[#e6ce63] bg-gray-950 flex items-center justify-center z-10 shadow-[0_0_10px_rgba(230,206,99,0.3)]">
-          <span className="text-[10px]">{getTypeIcon(event.type)}</span>
+      {/* ── Header + timeline rail ── */}
+      <div className="bg-[#05070a] border-b border-[#e6ce63]/10">
+        {/* Header */}
+        <div className="text-center pt-5 pb-2">
+          <h1
+            className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#e6ce63] to-[#a18a2d] tracking-[.15em]"
+            style={{ fontFamily: "'Cinzel', serif" }}
+          >
+            BIÊN NIÊN SỬ
+          </h1>
+          <p className="text-gray-500 text-xs tracking-widest uppercase mt-1 italic">The Chronicles of Arinar</p>
         </div>
 
-        {/* The Card */}
-        <div
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`group relative p-[1px] rounded-lg transition-all duration-500 cursor-pointer overflow-hidden
-            ${isExpanded ? 'scale-100 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'scale-[0.98] hover:scale-100 shadow-xl shadow-black/20'}
-          `}
-        >
-          {/* Animated Gold Border Effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#e6ce63] via-[#a18a2d] to-[#e6ce63] opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Horizontal Timeline Rail */}
+        <div className="relative flex-shrink-0 px-6 py-4">
+          {/* Connecting line */}
+          <div className="absolute top-1/2 left-12 right-12 h-[2px] bg-[#e6ce63]/20 -translate-y-1/2" />
 
-          {/* Internal Card Content */}
-          <div className="relative bg-[#0b0f16] p-6 rounded-[7px] h-full flex flex-col gap-4">
-            {/* Header Content */}
-            <div className={`flex flex-col ${isLeft ? 'md:items-end' : 'md:items-start'}`}>
-              <span className="text-[#e6ce63] font-serif text-sm tracking-[0.2em] uppercase mb-1">
-                {event.year}
-              </span>
-              <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-2 group-hover:text-[#e6ce63] transition-colors duration-300" style={{ fontFamily: "'Cinzel', serif" }}>
-                {event.title}
-              </h3>
-              <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-[#e6ce63]/50 to-transparent" />
-            </div>
-
-            {/* Description (Preview) */}
-            <p className={`text-gray-400 text-sm md:text-base leading-relaxed transition-all duration-500 ${isExpanded ? 'opacity-0 h-0 hidden' : 'opacity-100'}`}>
-              {event.description}
-            </p>
-
-            {/* Expanded Content View */}
-            <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              {event.image && (
-                <div className="relative w-full aspect-video mb-6 rounded-lg overflow-hidden border-2 border-[#e6ce63]/20 group-hover:border-[#e6ce63]/40 transition-colors">
-                  <Image
-                    loader={wsrvLoader}
-                    src={event.image}
-                    alt={event.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 90vw, (max-width: 1200px) 45vw, 600px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                </div>
-              )}
-
-              <div className="relative">
-                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-[#e6ce63]/20 rounded-full" />
-                <p className="pl-6 text-gray-200 text-lg italic leading-relaxed font-light">
-                  &ldquo;{event.content}&rdquo;
-                </p>
-              </div>
-
-              {event.faction && event.faction !== 'Neutral' && (
-                <div className={`mt-8 flex items-center gap-4 p-4 rounded-lg border-l-4 ${event.faction === 'Sentinel'
-                  ? 'bg-blue-900/10 border-blue-500/50'
-                  : 'bg-red-900/10 border-red-500/50'
-                  }`}>
-                  <Image
-                    loader={wsrvLoader}
-                    src={event.faction === 'Sentinel' ? '/image/factions/elf_badge.webp' : '/image/factions/mc_badge.webp'}
-                    alt={event.faction}
-                    width={32}
-                    height={32}
-                    className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-                  />
-                  <div>
-                    <span className="text-[10px] uppercase tracking-widest text-[#e6ce63] block mb-0.5">Historical Record</span>
-                    <span className="text-white font-bold">{event.faction} Involvement</span>
+          <div className="relative flex justify-between items-center">
+            {mainTimeline.map((event, i) => {
+              const isActive = event.id === activeId;
+              return (
+                <button
+                  key={event.id}
+                  onClick={() => setActiveId(event.id)}
+                  className="flex flex-col items-center gap-1 group flex-1"
+                  aria-label={event.title}
+                >
+                  {/* Dot */}
+                  <div
+                    className={`relative w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 z-10
+                      ${isActive
+                        ? 'border-[#e6ce63] bg-[#e6ce63]/20 shadow-[0_0_16px_rgba(230,206,99,0.5)] scale-110'
+                        : 'border-[#e6ce63]/30 bg-[#0b0f16] group-hover:border-[#e6ce63]/70 group-hover:scale-105'
+                      }`}
+                  >
+                    <span className="text-sm">{typeIcon[event.type]}</span>
+                    {isActive && (
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#e6ce63]" />
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
+                  {/* Year label */}
+                  <span
+                    className={`text-[10px] text-center leading-tight transition-colors duration-300 max-w-[70px]
+                      ${isActive ? 'text-[#e6ce63]' : 'text-gray-500 group-hover:text-gray-300'}`}
+                  >
+                    {event.year}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-            {/* Toggle Indicator */}
-            <div className={`mt-2 flex items-center justify-center text-[#e6ce63] transition-transform duration-500 ${isExpanded ? 'rotate-180' : ''}`}>
-              <span className="text-xs tracking-widest uppercase font-bold mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {isExpanded ? 'Consolidate' : 'Explore'}
-              </span>
-              <span className="text-2xl animate-bounce-slow">▼</span>
+
+
+      </div> {/* end sticky rail */}
+
+
+      {/* ── Detail Panel — grows naturally, page scrolls ── */}
+      <div className="mx-6 mt-4 mb-8 border border-[#e6ce63]/30 bg-[#0b0f16]/80">
+        <div key={active.id} className="flex min-h-[300px] animate-fade-in">
+          {/* Image side */}
+          {active.image && (
+            <div className="relative w-64 flex-shrink-0 hidden md:block">
+              <Image
+                loader={wsrvLoader}
+                src={active.image}
+                alt={active.title}
+                fill
+                className="object-cover opacity-60"
+                sizes="256px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0b0f16]" />
             </div>
+          )}
+
+          {/* Text side */}
+          <div className="flex-1 p-6">
+            <span className="text-[#e6ce63]/60 text-xs tracking-widest uppercase mb-2 block">{active.year}</span>
+            <h2
+              className="text-3xl font-bold text-white mb-3"
+              style={{ fontFamily: "'Cinzel', serif" }}
+            >
+              {active.title}
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-4">{active.description}</p>
+            <div className="h-px w-16 bg-[#e6ce63]/30 mb-4" />
+            <p className="text-gray-300 text-sm leading-relaxed italic">
+              &ldquo;{active.content}&rdquo;
+            </p>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-export default function LorePage() {
-  return (
-    <div className={`${classContentStyles.pixelBackground} min-h-screen relative overflow-x-hidden pb-32`}>
-      {/* Google Fonts Injection */}
-      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet" />
-
-      {/* Decorative Background Elements */}
-      <div className="fixed inset-0 pointer-events-none opacity-20 bg-[url('https://www.transparenttextures.com/patterns/parchment.png')] mix-blend-overlay" />
-      <div className="fixed top-0 left-0 w-full h-64 bg-gradient-to-b from-black/80 to-transparent pointer-events-none z-10" />
-
-      {/* Hero Header */}
-      <div className="relative z-20 max-w-6xl mx-auto px-6 pt-24 pb-16 md:pt-40 md:pb-32 text-center">
-        <div className="inline-block relative">
-          <div className="absolute inset-0 blur-3xl bg-[#e6ce63]/20 rounded-full" />
-          <h1 className="relative text-5xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#e6ce63] to-[#a18a2d] tracking-[.15em] mb-4" style={{ fontFamily: "'Cinzel', serif" }}>
-            LORE
-          </h1>
-          <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#e6ce63] to-transparent opacity-50" />
-        </div>
-        <p className="mt-8 text-gray-400 text-lg md:text-xl font-light tracking-widest uppercase max-w-2xl mx-auto italic">
-          The Chronicles of Arinar
-        </p>
-        <p className="mt-4 text-[#e6ce63]/60 font-serif italic text-sm md:text-base">
-          &ldquo;Behold the tapestry of existence, woven from thread of blood and light.&rdquo;
-        </p>
-      </div>
-
-      {/* Timeline Section */}
-      <div className="relative max-w-7xl mx-auto px-6">
-        {/* Central Vertical Line (Desktop) */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#e6ce63] via-[#a18a2d]/30 to-[#e6ce63] opacity-20" />
-
-        {/* Mobile Sidebar Line */}
-        <div className="md:hidden absolute left-[11px] top-0 bottom-0 w-[1px] bg-gradient-to-b from-[#e6ce63]/50 to-transparent" />
-
-        <div className="flex flex-col w-full">
-          {timelineEvents.map((event, index) => (
-            <TimelineCard key={event.id} event={event} index={index} />
+      {/* ── Below the fold: supplemental posts ── */}
+      <div className="px-6 pb-16 pt-8 border-t border-[#e6ce63]/10">
+        <h2
+          className="text-xl font-bold text-[#e6ce63]/70 tracking-widest uppercase mb-6 text-center"
+          style={{ fontFamily: "'Cinzel', serif" }}
+        >
+          Tài Liệu Khác
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {supplementalPosts.map(post => (
+            <Link
+              key={post.id}
+              href={post.href}
+              className="group block bg-[#0b0f16] border border-[#e6ce63]/15 hover:border-[#e6ce63]/50 p-4 transition-all duration-300 hover:bg-[#11171f]"
+            >
+              {post.tag && (
+                <span className="inline-block text-[10px] uppercase tracking-widest text-[#e6ce63]/50 border border-[#e6ce63]/20 px-2 py-0.5 mb-2">
+                  {post.tag}
+                </span>
+              )}
+              <h3 className="text-white text-sm font-semibold mb-1 group-hover:text-[#e6ce63] transition-colors leading-snug">
+                {post.title}
+              </h3>
+              <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{post.summary}</p>
+            </Link>
           ))}
         </div>
       </div>
 
-      {/* Footer Decoration */}
-      <div className="mt-20 text-center relative z-20">
-        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#e6ce63] to-transparent mx-auto mb-8" />
-        <p className="text-[#e6ce63] font-serif text-sm tracking-widest uppercase opacity-40 italic">
-          More to be unraveled...
-        </p>
-      </div>
+      {/* Cinzel font */}
+      <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet" />
 
-      {/* Animations Helper */}
-      <style jsx global>{`
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(5px); }
+      <style global jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s infinite ease-in-out;
-        }
-        body {
-          background-color: #05070a;
+        .animate-fade-in {
+          animation: fade-in 0.35s ease both;
         }
       `}</style>
     </div>

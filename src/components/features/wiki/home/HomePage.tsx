@@ -8,6 +8,7 @@ import Image from 'next/image';
 import styles from './HomePage.module.css';
 import EventModal from '../events/EventModal';
 import IconFrame from '@/components/shared/IconFrame';
+import SafeImage from '@/components/shared/SafeImage';
 import NewbiePostCard from './NewbiePostCard';
 import wsrvLoader from '@/utils/imageLoader';
 
@@ -113,18 +114,13 @@ const LatestNews = ({ onOpenModal }: { onOpenModal: (event: EventItem) => void }
               onClick={() => onOpenModal(event)}
             >
               <div className={styles.newsImageContainer}>
-                <Image
-                  loader={event.imageUrl ? wsrvLoader : undefined}
-                  src={event.imageUrl || '/image/ui/news_placeholder.png'}
+                <SafeImage
+                  src={event.imageUrl}
                   alt={event.title}
                   width={300}
                   height={200}
                   className={styles.newsImage}
                   sizes="(max-width: 768px) 100vw, 300px"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/image/ui/news_placeholder.png';
-                    (e.currentTarget as HTMLImageElement).srcset = '';
-                  }}
                 />
               </div>
               <div className={styles.newsContent}>
